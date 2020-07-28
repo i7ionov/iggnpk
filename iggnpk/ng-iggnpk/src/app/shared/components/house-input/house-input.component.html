@@ -1,0 +1,39 @@
+<dx-form #form>
+  <dxi-item
+    dataField="address"
+    [template]="'addressTemplate'">
+    <dxo-label text="Адрес">
+
+    </dxo-label>
+    <dxi-validation-rule
+      type="custom"
+      [validationCallback]="isNotNull"
+      message="Адрес обязателен для заполнения">
+    </dxi-validation-rule>
+  </dxi-item>
+  <div *dxTemplate="let data of 'addressTemplate'">
+    <dx-select-box [dataSource]="addresses" [displayExpr]="displayExpr"
+                   searchEnabled="true" [value]="value.address" (valueChange)="addressChange($event)"></dx-select-box>
+  </div>
+
+  <dxi-item
+    dataField="number"
+    [template]="'numberTemplate'">
+    <dxo-label text="Номер дома">
+    </dxo-label>
+    <dxi-validation-rule
+      type="required"
+      message="Номер дома обязателен для заполнения">
+    </dxi-validation-rule>
+  </dxi-item>
+  <div *dxTemplate="let data of 'numberTemplate'">
+    <dx-autocomplete #houseAutocomplete [dataSource]="houses" [value]="value.number" (valueChange)="houseChange($event)"
+                     searchExpr="number" valueExpr="number"></dx-autocomplete>
+  </div>
+
+</dx-form>
+
+
+
+
+

@@ -1,0 +1,58 @@
+from .models import User, House, Address, Organization, File
+from rest_framework import serializers
+from tools.dynamic_fields_model_serializer import DynamicFieldsModelSerializer
+
+
+
+
+
+class AddressSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = Address
+        fields = '__all__'
+
+
+class HouseSerializer(DynamicFieldsModelSerializer):
+    address = AddressSerializer()
+
+    class Meta:
+        model = House
+        fields = '__all__'
+
+
+class OrganizationSerializer(DynamicFieldsModelSerializer):
+
+    class Meta:
+        model = Organization
+        fields = '__all__'
+
+
+class UserSerializer(DynamicFieldsModelSerializer):
+    """Сериализация пользователя"""
+    groups = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    organization = OrganizationSerializer(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ("id", "username", "email", "groups", "organization")
+
+
+class FileSerializer(DynamicFieldsModelSerializer):
+    owner = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='id'
+    )
+    datafile = serializers.FileField()
+    size = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = File
+        fields = '__all__'
+        read_only_fields = ('created', 'datafile', 'owner', 'size', 'name')
+
+    def get_size(self, obj):
+        return obj.datafile.size
+
+    def get_name(self, obj):
+        return obj.datafile.name

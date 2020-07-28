@@ -1,0 +1,29 @@
+<ng-content></ng-content>
+
+<div class="menu-container">
+  <dx-tree-view
+    expandEvent="click"
+    width="100%"
+    [items]="items"
+    (onInitialized)="onMenuInitialized($event)"
+    (onItemClick)="onItemClick($event)"
+    (onContentReady)="updateSelection($event)"
+    (onSelectionChanged)="updateSelection($event)"
+    [selectByClick]="true"
+    selectionMode="single"
+    keyExpr="path"
+    itemTemplate="list-item">
+    <div *dxTemplate="let data of 'list-item'; let index = index">
+      <div class="dx-item-content dx-treeview-item-content">
+        <table>
+          <tr>
+            <td *ngIf="!!data.icon"><i  class="dx-icon menu-icon ion-md-{{ data.icon }}"></i></td>
+            <td><span>{{ data.text }}</span></td>
+          </tr>
+        </table>
+
+      </div>
+    </div>
+
+  </dx-tree-view>
+</div>

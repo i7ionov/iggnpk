@@ -1,0 +1,52 @@
+version: '3.7'
+networks:
+  default:
+    external:
+      name: network
+services:
+ postgres:
+  restart: always
+  container_name: iggnpk_postgres
+  build:
+   context: .
+   dockerfile: dockerfiles/docker_postgres.conf
+  ports:
+  - "5432:5432"
+  volumes:
+      - ./dbdata:/var/lib/postgresql/data
+ django:
+  restart: always
+  container_name: iggnpk_django
+  volumes:
+   - ./iggnpk:/iggnpk
+   - sock:/tmp
+  build:
+   context: .
+   dockerfile: dockerfiles/docker_django.conf
+  depends_on:
+   - postgres
+  command: uwsgi --ini /etc/uwsgi.ini
+  #command: bash -c "python /iggnpk/manage.py collectstatic --noinput && python /iggnpk/manage.py migrate && python /iggnpk/manage.py runserver 0.0.0.0:8000"
+  ports:
+   - "8000:8000"
+
+ nginx:
+  restart: always
+  container_name: iggnpk_nginx
+  volumes:
+   - ./iggnpk:/iggnpk
+   - sock:/sock
+  build:
+   context: .
+   dockerfile: dockerfiles/docker_nginx.conf
+  depends_on:
+   - django
+  ports:
+    - "8080:8080"
+    - "443:443"
+  environment:
+      - VIRTUAL_HOST=iggnpk.ru
+      - LETSENCRYPT_HOST=iggnpk.ru
+      - LETSENCRYPT_EMAIL=i7ionov@gmail.com
+volumes:
+ sock:

@@ -1,0 +1,15 @@
+<dx-form>
+  <dxi-item
+    dataField="value"
+    [template]="'orgTemplate'">
+    <dxo-label text="Организация">
+
+    </dxo-label>
+  </dxi-item>
+  <div *dxTemplate="let data of 'orgTemplate'">
+    <dx-select-box [dataSource]="dataSource" [displayExpr]="displayExpr" [disabled]="disabled"
+      searchEnabled="true" [value]="value" (valueChange)="organizationChange($event)"></dx-select-box>
+  </div>
+
+</dx-form>
+

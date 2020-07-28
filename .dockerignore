@@ -1,0 +1,6 @@
+**/.idea/
+**/iggnpk/media/
+**/iggnpk/venv/
+**/iggnpk/ng-iggnpk/node_modules/
+**/iggnpk/venv/
+**/iggnpk/iggnpk/local_settings.py
