@@ -55,8 +55,7 @@
               "src/themes/generated/theme.base.css",
               "src/themes/generated/theme.additional.css",
               "src/dx-styles.scss",
-              "src/styles.scss",
-              "node_modules/ionicons/dist/scss/ionicons.scss"
+              "src/styles.scss"
             ],
             "scripts": []
           },
