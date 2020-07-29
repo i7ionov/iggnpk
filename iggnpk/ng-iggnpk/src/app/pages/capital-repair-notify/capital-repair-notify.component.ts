@@ -39,7 +39,16 @@ export class CapitalRepairNotifyComponent implements OnInit {
   rejectButtonVisibility = false;
   sendForApprovalButtonVisibility = false;
   saveButtonVisibility = false;
-  organizationSelectIsReadOnly = true;
+  get organizationSelectIsReadOnly(){
+    if (this.auth.current_user)
+    {
+      return this.auth.current_user.groups.indexOf(UserGroup.Admin) == -1
+    }
+    else
+    {
+      return false
+    }
+  };
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -50,8 +59,6 @@ export class CapitalRepairNotifyComponent implements OnInit {
 
 
   setPermissions(user) {
-
-    this.organizationSelectIsReadOnly = user.groups.indexOf(UserGroup.Admin) == -1;
 
     if (this.notify.organization.id == this.auth.current_user.organization.id || user.groups.indexOf(UserGroup.Admin) != -1) {
       if (this.notify.status.id == NotifyStatus.Approving) {
