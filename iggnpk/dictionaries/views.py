@@ -116,6 +116,7 @@ class AddressViewSet(viewsets.ModelViewSet):
             queryset = Address.objects.all()
             for keyword in keywords:
                 queryset = queryset.filter(Q(area__icontains=keyword) | Q(city__icontains=keyword) | Q(street__icontains=keyword))
+            queryset = queryset[:10]
             serializer = AddressSerializer(queryset, many=True)
             data = {'items': serializer.data}
             return Response(data)
