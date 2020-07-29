@@ -8,8 +8,8 @@ from dictionaries.models import House, Organization, File
 
 class CreditOrganization(models.Model):
     name = models.CharField(max_length=100, verbose_name='Наименование кредитной организации')
-    inn = models.CharField(max_length=30, blank=True, verbose_name='ИНН')
-    bik = models.CharField(max_length=30, blank=True, verbose_name='БИК')
+    inn = models.CharField(max_length=100, blank=True, verbose_name='ИНН')
+    bik = models.CharField(max_length=100, blank=True, verbose_name='БИК')
     correspondent_account = models.CharField(max_length=30, blank=True, verbose_name='Корреспондентский счет')
 
     def __str__(self):
@@ -20,7 +20,7 @@ class Branch(models.Model):
     credit_organization = models.ForeignKey(CreditOrganization, on_delete=models.SET_NULL, null=True, verbose_name='Кредитная рганизация',
                                             blank=True)
     address = models.CharField(max_length=100, verbose_name='Адрес')
-    kpp = models.CharField(max_length=30, blank=True, verbose_name='КПП')
+    kpp = models.CharField(max_length=100, blank=True, verbose_name='КПП')
 
     def __str__(self):
         return f'{self.credit_organization.name} {self.address}'
@@ -44,7 +44,7 @@ class Notify(models.Model):
     credit_organization_branch = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True,
                                             verbose_name='Кредитная организация',
                                             blank=True)
-    account_number = models.CharField(max_length=30, blank=True, verbose_name='Номер счета')
+    account_number = models.CharField(max_length=300, blank=True, verbose_name='Номер счета')
     account_opening_date = models.DateField(verbose_name='Дата открытия счета')
     monthly_contribution_amount = models.FloatField(verbose_name='Ежемесячный размер взноса')
     protocol_details = models.CharField(max_length=100, verbose_name='Реквизиты протокола')
