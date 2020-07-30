@@ -21,7 +21,7 @@
         <dx-button type="default" text="Войти" (onClick)="onLoginClick($event)" width="100%"></dx-button>
     </div>
     <div class="dx-field">
-        <dx-button type="normal" text="Создать учетную запись" width="100%"></dx-button>
+        <dx-button type="normal" text="Создать учетную запись" width="100%" (onClick)="onRegisterClick($event)"></dx-button>
     </div>
   <div *ngIf="errors">
     <ul>

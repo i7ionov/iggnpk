@@ -44,6 +44,10 @@ export class LoginFormComponent implements OnInit{
       this.router.navigate(['/']);
     }
   }
+
+  onRegisterClick($event: any) {
+    this.router.navigate(['/register-form']);
+  }
 }
 
 @NgModule({

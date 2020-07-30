@@ -4,8 +4,9 @@ from rest_framework.parsers import FileUploadParser, MultiPartParser, FormParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
-from .models import User, House, Address, Organization, File
-from .serializers import UserSerializer, HouseSerializer, AddressSerializer, OrganizationSerializer, FileSerializer
+from .models import User, House, Address, Organization, File, OrganizationType
+from .serializers import UserSerializer, HouseSerializer, AddressSerializer, OrganizationSerializer, FileSerializer, \
+    OrganizationTypeSerializer
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
@@ -55,7 +56,7 @@ class HouseViewSet(viewsets.ModelViewSet):
 
 
 class OrganizationViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated, ]
+    permission_classes = []
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
 
@@ -86,6 +87,10 @@ class OrganizationViewSet(viewsets.ModelViewSet):
             return Response(data)
         else:
             return Response()
+    def types(self, request):
+        data = OrganizationTypeSerializer(OrganizationType.objects.all(), many=True)
+
+        return Response(data.data)
 
 
 class AddressViewSet(viewsets.ModelViewSet):
@@ -124,15 +129,30 @@ class AddressViewSet(viewsets.ModelViewSet):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated, ]
+    permission_classes = []
     queryset = User.objects.all()
-    parser_class = (FileUploadParser,)
     serializer_class = UserSerializer
 
     def me(self, request, pk=None):
         me = request.user
         serializer = self.serializer_class(me)
         return Response(serializer.data)
+
+    def create(self, request, pk=None):
+        item = self.serializer_class(data=request.data)
+        item.is_valid(raise_exception=True)
+        if item.is_valid():
+            #item.save(email=request.data['email'], password = request.data['password'])
+            org, created = Organization.objects.get_or_create(inn=request.data['organization']['inn'])
+            print(request.data)
+            if created:
+                org.name = request.data['organization']['name']
+                org.ogrn = request.data['organization']['ogrn']
+                org.type.id = request.data['organization']['type']['id']
+            item.save(organization = org)
+            return Response(item.data)
+        else:
+            return Response(item.errors, status=400)
 
 
 class FileViewSet(viewsets.ModelViewSet):

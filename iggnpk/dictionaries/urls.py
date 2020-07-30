@@ -21,6 +21,7 @@ urlpatterns = [
     path('organizations/', views.OrganizationViewSet.as_view({'get': 'list'})),
     path('organizations/<int:pk>/', views.OrganizationViewSet.as_view({'get': 'retrieve'})),
     path('organizations/search/', views.OrganizationViewSet.as_view({'get': 'search'})),
+    path('organizations/types/', views.OrganizationViewSet.as_view({'get': 'types'})),
     path('isorgnotexists/', views.is_org_is_not_exists),
     path('houses/', views.HouseViewSet.as_view({'get': 'list'})),
     path('houses/<int:pk>/', views.HouseViewSet.as_view({'get': 'retrieve'})),
@@ -28,7 +29,7 @@ urlpatterns = [
     path('addresses/<int:pk>/', views.AddressViewSet.as_view({'get': 'retrieve'})),
     path('addresses/search/', views.AddressViewSet.as_view({'get': 'search'})),
     path('users/me/', views.UserViewSet.as_view({'get': 'me'})),
-
+    path('users/create/', views.UserViewSet.as_view({'post': 'create'})),
     path('files/create/', views.FileViewSet.as_view({'post': 'upload'})),
 
 ]

@@ -31,12 +31,15 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
+class OrganizationType(models.Model):
+    text = models.CharField(max_length=30, blank=True)
 
 class Organization(models.Model):
     inn = models.CharField(max_length=30, blank=True)
     ogrn = models.CharField(max_length=30, blank=True)
     name = models.CharField(max_length=100, blank=True)
-    REQUIRED_FIELDS = ['inn', 'ogrn']
+    type = models.ForeignKey(OrganizationType, on_delete=models.SET_NULL, null=True, blank=True)
+    REQUIRED_FIELDS = ['name', 'inn', 'ogrn', 'type']
 
 
 class User(AbstractUser):

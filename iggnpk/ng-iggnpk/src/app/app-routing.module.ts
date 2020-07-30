@@ -22,6 +22,7 @@ import {HouseInputModule} from "./shared/components/house-input/house-input.comp
 import {FormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
 import {FileSizePipe} from "./shared/pipes/filesize.pipe";
+import {RegisterFormComponent} from "./shared/components/register-form/register-form.component";
 
 
 const routes: Routes = [
@@ -53,6 +54,10 @@ const routes: Routes = [
   {
     path: 'login-form',
     component: LoginFormComponent
+  },
+  {
+    path: 'register-form',
+    component: RegisterFormComponent
   },
   {
     path: '**',
