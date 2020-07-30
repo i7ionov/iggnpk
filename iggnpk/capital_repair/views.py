@@ -111,7 +111,12 @@ class NotifiesViewSet(viewsets.ModelViewSet):
             status = NotifyStatus.objects.get(id=1)
             branch = Branch.objects.get(id=request.data['credit_organization_branch']['id'])
             house, created = House.objects.get_or_create(address_id=request.data['house']['address']['id'], number=request.data['house']['number'])
-            item.save(organization=request.user.organization, date=datetime.today().date(), status=status,
+
+            if request.user.is_staff:
+                org = Organization.objects.get(id=request.data['organization']['id'])
+            else:
+                org = request.user.organization
+            item.save(organization=org, date=datetime.today().date(), status=status,
                       credit_organization_branch=branch, house=house)
             return Response(item.data)
         else:
@@ -122,7 +127,10 @@ class NotifiesViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         serializer = self.serializer_class(instance=instance, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
-        org = upd_foreign_key('organization', data, instance, Organization)
+        if request.user.is_staff:
+            org = upd_foreign_key('organization', data, instance, Organization)
+        else:
+            org = instance.organization
         branch = upd_foreign_key('credit_organization_branch', data, instance, Branch)
         house = House.objects.get_or_create_new('house', data, instance)
         status = upd_foreign_key('status', data, instance, NotifyStatus)
