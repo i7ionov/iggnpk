@@ -11,7 +11,8 @@ import {DxValidationGroupModule} from 'devextreme-angular/ui/validation-group';
 import {Organization} from "../../interfaces/organization";
 import {OrganizationService} from "../../services/organization.service";
 import {DxSelectBoxModule} from "devextreme-angular";
-import ArrayStore from "devextreme/data/array_store";
+import {alert} from "devextreme/ui/dialog";
+
 
 @Component({
   selector: 'app-register-form',
@@ -35,18 +36,55 @@ export class RegisterFormComponent implements OnInit {
     return this.user.password;
   };
 
-  constructor(private authService: AuthService, public appInfo: AppInfoService, private router: Router, private orgService: OrganizationService) {
 
+  orgUsersCount(params) {
+    return new Promise((resolve, reject) => {
+      this.authService.getOrgUserCount(params.value)
+        .toPromise()
+        .then((res: any) => {
+          resolve(res.count < 1);
+        })
+        .catch(error => {
+          console.error("Server-side validation error", error);
+
+          reject("Cannot contact validation server");
+        });
+    })
+  }
+
+  isEmailUsed(params) {
+    return new Promise((resolve, reject) => {
+      this.authService.getEmailIsUsed(params.value)
+        .toPromise()
+        .then((res: any) => {
+          resolve(!res.result);
+        })
+        .catch(error => {
+          console.error("Server-side validation error", error);
+
+          reject("Cannot contact validation server");
+        });
+    })
+  }
+
+  constructor(private authService: AuthService, public appInfo: AppInfoService, private router: Router, private orgService: OrganizationService) {
+    this.orgUsersCount = this.orgUsersCount.bind(this);
+    this.isEmailUsed = this.isEmailUsed.bind(this);
   }
 
   onRegisterClick(args) {
+
     if (!args.validationGroup.validate().isValid) {
       return;
     }
     this.authService.createUser(this.user).subscribe(res => {
-      //localStorage.setItem('token', res.auth_token);
-      //this.router.navigate(['/']);
-      console.log(res)
+
+      let result = alert("<i>Регистрация учетной записи произведена успешно.<br>" +
+        "Ожидайте активации учетной записи сотрудником Инспекции.<br>" +
+        "Уведомление об активации вы получите на указанную электронную почту.</i>", "Регистрация завершена успешно");
+      result.then((dialogResult) => {
+        this.router.navigate(['/login-page']);
+      });
 
     }, error => {
       this.errors = error.error;
@@ -55,7 +93,9 @@ export class RegisterFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.orgService.types().subscribe(res=>{
+
+
+    this.orgService.types().subscribe(res => {
       this.orgTypes = res;
     });
 

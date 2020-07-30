@@ -14,23 +14,24 @@ from tools import dev_extreme
 
 
 @api_view()
-def is_org_is_not_exists(request):
-    result = True
+def org_users_count(request):
+    if 'inn' in request.GET:
+        try:
+            org = Organization.objects.get(inn=request.GET['inn'])
+            return Response({"count": org.user_set.count()})
+        except Organization.DoesNotExist:
+            pass
+    return Response({"count": 0})
+
+
+@api_view()
+def is_email_already_used(request):
     if 'email' in request.GET:
-        email = request.GET['email']
-        if User.objects.filter(email=email).count() > 0:
-            result = False
-    elif 'inn' in request.GET:
-        inn = request.GET['inn']
-        if User.objects.filter(inn=inn).count() > 0:
-            result = False
-    elif 'ogrn' in request.GET:
-        ogrn = request.GET['ogrn']
-        if User.objects.filter(ogrn=ogrn).count() > 0:
-            result = False
-    else:
-        return Response({"message": 'Электронная почта не указана'})
-    return Response({"message": result})
+        try:
+            return Response({"result": User.objects.filter(email=request.GET['email']).count() > 0})
+        except Organization.DoesNotExist:
+            pass
+    return Response({"result": False})
 
 
 class HouseViewSet(viewsets.ModelViewSet):
@@ -141,16 +142,18 @@ class UserViewSet(viewsets.ModelViewSet):
     def create(self, request, pk=None):
         item = self.serializer_class(data=request.data)
         item.is_valid(raise_exception=True)
+
         if item.is_valid():
-            #item.save(email=request.data['email'], password = request.data['password'])
+            if request.data['password'] != request.data['re_password']:
+                return Response({'password': 'Пароли не совпадают'}, status=400)
             org, created = Organization.objects.get_or_create(inn=request.data['organization']['inn'])
             print(request.data)
             if created:
                 org.name = request.data['organization']['name']
                 org.ogrn = request.data['organization']['ogrn']
-                org.type.id = request.data['organization']['type']['id']
-            item.save(organization = org)
-            return Response(item.data)
+                org.type = OrganizationType.objects.get(id=request.data['organization']['type']['id'])
+            User.objects.create_user(username=request.data['username'], organization=org, password=request.data['password'], email=request.data['email'])
+            return Response(status=200)
         else:
             return Response(item.errors, status=400)
 

@@ -43,6 +43,14 @@ export class AuthService {
     return this.http.post<any>(`${environment.backend_url}/api/v1/dict/users/create/`, user)
   }
 
+  getOrgUserCount(inn):Observable<any>{
+    return this.http.get<any>(`${environment.backend_url}/api/v1/dict/org_users_count/?inn=${inn}`)
+  }
+
+  getEmailIsUsed(email):Observable<any>{
+    return this.http.get<any>(`${environment.backend_url}/api/v1/dict/is_email_already_used/?email=${email}`)
+  }
+
   getUserInfo(): Observable<any> {
     return this.http.get<any>(`${environment.backend_url}/api/v1/dict/users/me/`)
   }
