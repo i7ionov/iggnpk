@@ -1,4 +1,4 @@
-from .models import User, House, Address, Organization, File
+from .models import User, House, Address, Organization, File, OrganizationType
 from rest_framework import serializers
 from tools.dynamic_fields_model_serializer import DynamicFieldsModelSerializer
 
@@ -19,9 +19,14 @@ class HouseSerializer(DynamicFieldsModelSerializer):
         model = House
         fields = '__all__'
 
+class OrganizationTypeSerializer(DynamicFieldsModelSerializer):
+
+    class Meta:
+        model = OrganizationType
+        fields = '__all__'
 
 class OrganizationSerializer(DynamicFieldsModelSerializer):
-
+    type = OrganizationTypeSerializer()
     class Meta:
         model = Organization
         fields = '__all__'

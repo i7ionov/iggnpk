@@ -39,6 +39,10 @@ export class AuthService {
     })
   }
 
+  createUser(user: User): Observable<User>{
+    return this.http.post<any>(`${environment.backend_url}/api/v1/dict/users/create/`, user)
+  }
+
   getUserInfo(): Observable<any> {
     return this.http.get<any>(`${environment.backend_url}/api/v1/dict/users/me/`)
   }
