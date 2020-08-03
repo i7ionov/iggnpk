@@ -7,6 +7,7 @@ export const navigation = [
   {
     text: 'Капитальный ремонт',
     icon: 'toolbox',
+    permissions: 'view_notify',
     items: [
       {
         text: 'Реестр взносов',

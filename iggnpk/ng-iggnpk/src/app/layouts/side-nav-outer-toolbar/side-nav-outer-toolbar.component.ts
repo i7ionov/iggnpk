@@ -1,6 +1,6 @@
 import { Component, OnInit, NgModule, Input, ViewChild } from '@angular/core';
 import {SideNavigationMenuModule, HeaderModule, FooterComponent} from '../../shared/components';
-import {AppInfoService, ScreenService} from '../../shared/services';
+import {AppInfoService, AuthService, ScreenService} from '../../shared/services';
 import { DxDrawerModule } from 'devextreme-angular/ui/drawer';
 import { DxScrollViewModule, DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 import { CommonModule } from '@angular/common';
@@ -15,7 +15,7 @@ import {Router, NavigationEnd, RouterModule} from '@angular/router';
 })
 export class SideNavOuterToolbarComponent implements OnInit {
   @ViewChild(DxScrollViewComponent, { static: true }) scrollView: DxScrollViewComponent;
-  menuItems = navigation;
+  menuItems;
   selectedRoute = '';
 
   menuOpened: boolean;
@@ -28,9 +28,17 @@ export class SideNavOuterToolbarComponent implements OnInit {
   minMenuSize = 0;
   shaderEnabled = false;
 
-  constructor(private screen: ScreenService, private router: Router, private appInfo: AppInfoService) { }
+  constructor(private screen: ScreenService, private router: Router, private appInfo: AppInfoService, private authService: AuthService) { }
 
   ngOnInit() {
+    this.menuItems = navigation.filter(i=>{
+      if (i.permissions) {
+        return this.authService.current_user.permissions.findIndex(p=> p.codename==i.permissions)>0
+      }
+      else {return true}
+    });
+
+
     this.menuOpened = this.screen.sizes['screen-large'];
     this.title = this.appInfo.title;
     this.router.events.subscribe(val => {

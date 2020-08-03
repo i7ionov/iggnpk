@@ -53,9 +53,8 @@ export class SideNavigationMenuComponent implements OnInit, AfterViewInit, OnDes
     }
   }
 
-  constructor(private elementRef: ElementRef, private auth: AuthService) {
-    this.curUser = this.auth.current_user;
-    console.log(this.curUser);
+  constructor(private elementRef: ElementRef) {
+
   }
 
   updateSelection(event) {
@@ -100,6 +99,7 @@ export class SideNavigationMenuComponent implements OnInit, AfterViewInit, OnDes
   ngOnInit(): void {
 
   }
+
 }
 
 @NgModule({

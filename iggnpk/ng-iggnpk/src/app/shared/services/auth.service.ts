@@ -1,9 +1,17 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, CanLoad, Route, Router} from '@angular/router';
-import {HttpClient, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest
+} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {environment} from "../../../environments/environment";
 import {User} from "../interfaces/user";
+import {tap} from "rxjs/operators";
 
 @Injectable()
 export class AuthService {
@@ -61,6 +69,7 @@ export class AuthGuardService implements CanActivate {
           }
           else {
             resolve(false);
+            return localStorage.removeItem('token');
             this.router.navigate(['auth/login-form']);
           }
         }, error1 => {
@@ -87,7 +96,17 @@ export class AuthInterceptor
       const cloned = req.clone({
         headers: req.headers.set('Authorization', "Token " + this.auth.token)
       });
-      return next.handle(cloned);
+      return next.handle(cloned).pipe(
+      tap(
+        event => {
+        },
+        err => {
+          if (err instanceof HttpErrorResponse) {
+            if (err.status == 401) localStorage.removeItem('token');
+          }
+        }
+      )
+    );
     } else {
       return next.handle(req);
     }
