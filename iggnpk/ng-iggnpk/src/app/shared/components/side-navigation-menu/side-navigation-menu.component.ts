@@ -1,15 +1,27 @@
-import { Component, NgModule, Output, Input, EventEmitter, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  NgModule,
+  Output,
+  Input,
+  EventEmitter,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
 import { DxTreeViewModule, DxTreeViewComponent } from 'devextreme-angular/ui/tree-view';
 
 import * as events from 'devextreme/events';
 import {CommonModule} from "@angular/common";
+import {AuthService, User} from "../../services";
 
 @Component({
   selector: 'app-side-navigation-menu',
   templateUrl: './side-navigation-menu.component.html',
   styleUrls: ['./side-navigation-menu.component.scss']
 })
-export class SideNavigationMenuComponent implements AfterViewInit, OnDestroy {
+export class SideNavigationMenuComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(DxTreeViewComponent, { static: true })
   menu: DxTreeViewComponent;
 
@@ -28,7 +40,7 @@ export class SideNavigationMenuComponent implements AfterViewInit, OnDestroy {
       this.menu.instance.selectItem(value);
     }
   }
-
+  private curUser: User;
   private _compactMode = false;
   @Input()
   get compactMode() {
@@ -41,7 +53,10 @@ export class SideNavigationMenuComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  constructor(private elementRef: ElementRef) { }
+  constructor(private elementRef: ElementRef, private auth: AuthService) {
+    this.curUser = this.auth.currentUser;
+    console.log(this.curUser);
+  }
 
   updateSelection(event) {
     const nodeClass = 'dx-treeview-node';
@@ -80,6 +95,10 @@ export class SideNavigationMenuComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     events.off(this.elementRef.nativeElement, 'dxclick');
+  }
+
+  ngOnInit(): void {
+
   }
 }
 

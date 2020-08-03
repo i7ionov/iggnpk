@@ -20,10 +20,10 @@ export class AppComponent implements OnInit{
         locale(navigator.language);
   }
   ngOnInit() {
-    this.authService.getUserInfo();
+     this.authService.getUserInfo();
   }
 
   isAutorized() {
-    return !!localStorage.getItem('token');
+      return !!localStorage.getItem('token');
   }
 }

@@ -1,5 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, NgModule, OnInit} from '@angular/core';
 import {AuthService} from "../../shared/services";
+import {DxTreeViewModule} from "devextreme-angular";
+import {CommonModule} from "@angular/common";
+import {SideNavigationMenuComponent} from "../../shared/components";
 
 
 @Component({
@@ -15,5 +18,12 @@ export class HomeComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    console.log('home')
   }
 }
+@NgModule({
+  imports: [ DxTreeViewModule,CommonModule ],
+  declarations: [ HomeComponent ],
+  exports: [ HomeComponent ]
+})
+export class HomeComponentModule { }

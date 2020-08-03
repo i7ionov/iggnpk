@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivate, Router} from '@angular/router';
+import {ActivatedRouteSnapshot, CanActivate, CanLoad, Route, Router} from '@angular/router';
 import {HttpClient, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {environment} from "../../../environments/environment";
@@ -14,12 +14,11 @@ export class AuthService {
   }
 
 
-  get currentUser(){
+  get currentUser() {
     if (this.current_user) {
       return this.current_user
-    }
-    else {
-      this.getUserInfo().subscribe(res =>{
+    } else {
+      this.getUserInfo().subscribe(res => {
         this.current_user = res;
         return res;
       }, error1 => {
@@ -28,6 +27,7 @@ export class AuthService {
     }
 
   }
+
   constructor(private router: Router, private http: HttpClient) {
   }
 
@@ -39,15 +39,15 @@ export class AuthService {
     })
   }
 
-  createUser(user: User): Observable<User>{
+  createUser(user: User): Observable<User> {
     return this.http.post<any>(`${environment.backend_url}/api/v1/dict/users/create/`, user)
   }
 
-  getOrgUserCount(inn):Observable<any>{
+  getOrgUserCount(inn): Observable<any> {
     return this.http.get<any>(`${environment.backend_url}/api/v1/dict/org_users_count/?inn=${inn}`)
   }
 
-  getEmailIsUsed(email):Observable<any>{
+  getEmailIsUsed(email): Observable<any> {
     return this.http.get<any>(`${environment.backend_url}/api/v1/dict/is_email_already_used/?email=${email}`)
   }
 
@@ -63,24 +63,32 @@ export class AuthGuardService implements CanActivate {
   }
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
-    const isLoggedIn = !!this.authService.token;
-    const isLoginForm = route.routeConfig.path === 'login-form';
-    if (isLoggedIn && isLoginForm) {
-      this.router.navigate(['/']);
-      return false;
-    }
+    return false;
+  }
 
-    if (!isLoggedIn && !isLoginForm) {
-      this.router.navigate(['/login-form']);
-    }
+}
 
-    return isLoggedIn || isLoginForm;
+@Injectable({providedIn: 'root'})
+export class AuthLazyGuardService implements CanLoad {
+  constructor(private router: Router, private authService: AuthService) {
+  }
+
+  canLoad(route: Route): boolean | Observable<boolean> | Promise<boolean> {
+    let promise: Promise<boolean> = new Promise((resolve, reject) => {
+
+      this.authService.getUserInfo().subscribe(user=>{
+        this.authService.current_user = user;
+        resolve(true);
+      })
+
+    });
+    return promise;
   }
 }
 
-
 @Injectable({providedIn: 'root'})
-export class AuthInterceptor implements HttpInterceptor {
+export class AuthInterceptor
+  implements HttpInterceptor {
   constructor(private auth: AuthService) {
   }
 
@@ -90,9 +98,7 @@ export class AuthInterceptor implements HttpInterceptor {
         headers: req.headers.set('Authorization', "Token " + this.auth.token)
       });
       return next.handle(cloned);
-    }
-    else
-    {
+    } else {
       return next.handle(req);
     }
 

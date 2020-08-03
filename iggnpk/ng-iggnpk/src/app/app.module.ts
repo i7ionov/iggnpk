@@ -10,6 +10,7 @@ import {DxButtonModule, DxSelectBoxModule} from "devextreme-angular";
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {FormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
+import {RouterModule} from "@angular/router";
 
 
 const INTERCEPTOR_PROVIDER: Provider = {
@@ -33,7 +34,8 @@ const INTERCEPTOR_PROVIDER: Provider = {
     FooterModule,
     LoginFormModule,
     AppRoutingModule,
-    DxButtonModule
+    DxButtonModule,
+    RouterModule
   ],
   providers: [AuthService, ScreenService, AppInfoService, INTERCEPTOR_PROVIDER],
   bootstrap: [AppComponent]
