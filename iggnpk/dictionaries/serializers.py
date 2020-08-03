@@ -1,9 +1,8 @@
+from django.contrib.auth.models import Permission
+
 from .models import User, House, Address, Organization, File, OrganizationType
 from rest_framework import serializers
 from tools.dynamic_fields_model_serializer import DynamicFieldsModelSerializer
-
-
-
 
 
 class AddressSerializer(DynamicFieldsModelSerializer):
@@ -19,11 +18,13 @@ class HouseSerializer(DynamicFieldsModelSerializer):
         model = House
         fields = '__all__'
 
+
 class OrganizationTypeSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = OrganizationType
         fields = '__all__'
+
 
 class OrganizationSerializer(DynamicFieldsModelSerializer):
     type = OrganizationTypeSerializer()
@@ -32,14 +33,23 @@ class OrganizationSerializer(DynamicFieldsModelSerializer):
         fields = '__all__'
 
 
+class PermissionSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = Permission
+        fields = ('id', 'codename')
+
+
 class UserSerializer(DynamicFieldsModelSerializer):
     """Сериализация пользователя"""
     groups = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     organization = OrganizationSerializer(read_only=True)
+    permissions = PermissionSerializer(many=True, read_only=True)
 
     class Meta:
         model = User
-        fields = ("id", "username", "email", "groups", "organization")
+        fields = ("id", "username", "email", "groups", "organization", "permissions")
+
+
 
 
 class FileSerializer(DynamicFieldsModelSerializer):

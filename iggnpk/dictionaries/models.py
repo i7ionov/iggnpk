@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Permission
 from django.contrib.auth.base_user import BaseUserManager
 
 
@@ -31,8 +31,10 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
+
 class OrganizationType(models.Model):
     text = models.CharField(max_length=30, blank=True)
+
 
 class Organization(models.Model):
     inn = models.CharField(max_length=30, blank=True)
@@ -48,6 +50,11 @@ class User(AbstractUser):
                                      blank=True)
     REQUIRED_FIELDS = ['email', 'name']
     objects = UserManager()
+
+    def permissions(self):
+        if self.is_superuser:
+            return Permission.objects.all()
+        return self.user_permissions.all() | Permission.objects.filter(group__user=self)
 
 
 class Address(models.Model):
