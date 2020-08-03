@@ -27,6 +27,7 @@ import {SideNavOuterToolbarComponent, SingleCardComponent} from "./layouts";
 import {RootLayoutComponent} from "./layouts/root-layout/root-layout.component";
 import {HomeComponent} from "./pages/home/home.component";
 import {CapitalRepairNotifiesComponent} from "./pages/capital-repair-notifies/capital-repair-notifies.component";
+import {UsersComponent} from "./pages/users/users.component";
 
 
 const routes: Routes = [
@@ -53,6 +54,12 @@ const routes: Routes = [
           {
             path: 'capital-repair-notify/:id',
             component: CapitalRepairNotifyComponent,
+            canActivate: [AuthGuardService]
+
+          },
+          {
+            path: 'users',
+            component: UsersComponent,
             canActivate: [AuthGuardService]
 
           },

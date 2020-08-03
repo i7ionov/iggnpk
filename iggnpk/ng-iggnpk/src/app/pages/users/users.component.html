@@ -1,0 +1,155 @@
+<h6 class="content-block">Пользователи</h6>
+<div class="dx-card content-block responsive-paddings">
+
+
+  <dx-data-grid id="gridContainer"
+                [dataSource]="dataSource"
+                (onToolbarPreparing)="onToolbarPreparing($event)"
+  >
+    <dxo-filter-row
+        [visible]="true"
+        [applyFilter]="currentFilter"></dxo-filter-row>
+    <dxo-header-filter
+        [visible]="true"></dxo-header-filter>
+    <dxi-column
+      dataField="id"
+      width="100"
+      dataType="number"
+      cellTemplate="idCellTemplate"
+    >
+    </dxi-column>
+    <dxi-column
+      width="200"
+      caption="Статус"
+      dataField="status.text"
+      dataType="string">
+    </dxi-column>
+    <dxi-column
+      caption="Дата"
+      width="100"
+      dataField="date"
+      dataType="date">
+    </dxi-column>
+    <dxi-column
+      width="200"
+      caption="Наименование муниципального района (городского округа)"
+      dataField="house.address.area"
+      dataType="string">
+    </dxi-column>
+    <dxi-column
+      width="200"
+      caption="Населенный пункт"
+      dataField="house.address.place"
+      dataType="string">
+    </dxi-column>
+    <dxi-column
+      width="200"
+      caption="Улица (переулок, проспект)"
+      dataField="house.address.street"
+      dataType="string">
+    </dxi-column>
+    <dxi-column
+      width="200"
+      caption="Дом / корпус"
+      dataField="house.number"
+      dataType="string">
+    </dxi-column>
+    <dxi-column caption="Владелец специального счета">
+      <dxi-column
+        width="200"
+        caption="Название организации"
+        dataField="organization.name"
+        dataType="string">
+      </dxi-column>
+      <dxi-column
+        width="200"
+        caption="ИНН организации"
+        dataField="organization.inn"
+        dataType="string">
+      </dxi-column>
+    </dxi-column>
+    <dxi-column caption="Кредитная организация, в которой открыт специальный счет">
+      <dxi-column
+        width="200"
+        caption="Наименование юридического лица"
+        dataField="credit_organization_branch.credit_organization.name"
+        dataType="string">
+      </dxi-column>
+      <dxi-column
+        width="200"
+        caption="Адрес филиала, операционного офиса на территории Пермского края"
+        dataField="credit_organization_branch.address"
+        dataType="string">
+      </dxi-column>
+      <dxi-column
+        width="200"
+        caption="ИНН"
+        dataField="credit_organization_branch.credit_organization.inn"
+        dataType="string">
+      </dxi-column>
+      <dxi-column
+        width="200"
+        caption="КПП"
+        dataField="credit_organization_branch.kpp"
+        dataType="string">
+      </dxi-column>
+      <dxi-column
+        width="200"
+        caption="БИК"
+        dataField="credit_organization_branch.credit_organization.bik"
+        dataType="string">
+      </dxi-column>
+      <dxi-column
+        width="200"
+        caption="корреспондентский счет"
+        dataField="credit_organization_branch.credit_organization.correspondent_account"
+        dataType="string">
+      </dxi-column>
+    </dxi-column>
+    <dxi-column caption="Специальный счет">
+      <dxi-column
+        width="200"
+        caption="Номер"
+        dataField="account_number"
+        dataType="string">
+      </dxi-column>
+
+      <dxi-column
+        width="200"
+        caption="Дата открытия"
+        dataField="account_opening_date"
+        dataType="string">
+      </dxi-column>
+    </dxi-column>
+
+    <dxi-column
+      width="200"
+      caption="Ежемесячный размер взноса на капитальный ремонт, руб/кв.м"
+      dataField="monthly_contribution_amount"
+      dataType="string">
+    </dxi-column>
+    <dxi-column
+      width="200"
+      caption="Реквизиты протокола общего собрания собственников помещений в многоквартирном доме"
+      dataField="protocol_details"
+      dataType="string">
+    </dxi-column>
+    <dxi-column
+      width="200"
+      caption="Комментарий"
+      dataField="comment"
+      dataType="string">
+    </dxi-column>
+    <div *dxTemplate="let cell of 'idCellTemplate'">
+      <a [routerLink]="['/pages/capital-repair-notify/', cell.text]">{{ cell.text }}</a>
+    </div>
+    <dxo-summary>
+      <dxi-total-item
+        column="id"
+        summaryType="count">
+      </dxi-total-item>
+    </dxo-summary>
+  </dx-data-grid>
+
+
+</div>

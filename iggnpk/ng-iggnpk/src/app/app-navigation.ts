@@ -19,4 +19,16 @@ export const navigation = [
       }
     ]
   }
+  ,
+  {
+    text: 'Администрирование',
+    icon: 'preferences',
+    permissions: 'view_notify',
+    items: [
+      {
+        text: 'Пользователи',
+        path: 'pages/users'
+      }
+    ]
+  }
 ];
