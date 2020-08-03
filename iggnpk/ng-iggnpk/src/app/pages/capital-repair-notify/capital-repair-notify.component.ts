@@ -1,15 +1,32 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Params, Router} from "@angular/router";
+import {Component, ElementRef, NgModule, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, Params, Router, RouterModule} from "@angular/router";
 import {CapitalRepairNotifyService, Notify} from "../../shared/services/capital-repair-notify.service";
-import {Location} from '@angular/common';
-import {DxFormComponent} from "devextreme-angular";
+import {CommonModule, Location} from '@angular/common';
+import {
+  DxButtonModule,
+  DxDataGridModule,
+  DxFileUploaderModule,
+  DxFormComponent, DxFormModule,
+  DxPopupModule,
+  DxTemplateModule
+} from "devextreme-angular";
 import {getDifference} from "../../shared/diff";
 import notify from 'devextreme/ui/notify';
 import {AuthService, UserGroup} from "../../shared/services";
-import {CreditOrganizationSelectComponent, OrganizationSelectComponent} from "../../shared/components";
-import {HouseInputComponent} from "../../shared/components/house-input/house-input.component";
+import {
+  CreditOrganizationSelectComponent,
+  CreditOrganizationSelectModule,
+  OrganizationSelectComponent, OrganizationSelectModule
+} from "../../shared/components";
+import {HouseInputComponent, HouseInputModule} from "../../shared/components/house-input/house-input.component";
 import {environment} from "../../../environments/environment";
 import {confirm} from 'devextreme/ui/dialog';
+import {DxValidationGroupModule} from "devextreme-angular/ui/validation-group";
+import {DxValidatorModule} from "devextreme-angular/ui/validator";
+import {DxCheckBoxModule} from "devextreme-angular/ui/check-box";
+import {CapitalRepairNotifiesComponent} from "../capital-repair-notifies/capital-repair-notifies.component";
+import {DxTextBoxModule} from "devextreme-angular/ui/text-box";
+import {FileSizePipe} from "../../shared/pipes/filesize.pipe";
 
 @Component({
   selector: 'app-capital-repair-notify',
@@ -216,4 +233,28 @@ enum SubmitType {
   Sending,
   Rejecting,
   Accepting
+}
+
+@NgModule({
+  imports: [
+    CommonModule,
+    RouterModule,
+    DxFileUploaderModule,
+    HouseInputModule,
+    OrganizationSelectModule,
+    CreditOrganizationSelectModule,
+    DxButtonModule,
+    DxCheckBoxModule,
+    DxTextBoxModule,
+    DxValidatorModule,
+    DxValidationGroupModule,
+    DxPopupModule,
+    DxTemplateModule,
+    DxDataGridModule,
+    DxFormModule
+  ],
+  declarations: [CapitalRepairNotifyComponent, FileSizePipe],
+  exports: [CapitalRepairNotifyComponent]
+})
+export class CapitalRepairNotifyModule {
 }

@@ -1,7 +1,7 @@
 export const navigation = [
   {
     text: 'Home',
-    path: '/home',
+    path: 'pages/home',
     icon: 'home'
   },
   {
@@ -10,7 +10,7 @@ export const navigation = [
     items: [
       {
         text: 'Реестр взносов',
-        path: '/profile'
+        path: 'pages/profile'
       },
       {
         text: 'Реестр уведомлений о выбранном собственниками помещений в многоквартирном доме способе формирования фонда капитального ремонта на специальном счете',

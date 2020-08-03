@@ -20,7 +20,7 @@ export class AppComponent implements OnInit{
         locale(navigator.language);
   }
   ngOnInit() {
-     this.authService.getUserInfo();
+
   }
 
   isAutorized() {

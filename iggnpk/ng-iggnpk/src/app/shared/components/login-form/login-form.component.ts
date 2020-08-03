@@ -29,7 +29,7 @@ export class LoginFormComponent implements OnInit{
 
     this.authService.getToken(this.login, this.password).subscribe(res => {
       localStorage.setItem('token', res.auth_token);
-      this.router.navigate(['/']);
+      this.router.navigate(['pages']);
 
     }, error => {
       this.errors = error;
@@ -41,12 +41,12 @@ export class LoginFormComponent implements OnInit{
 
   ngOnInit(): void {
     if (!!localStorage.getItem('token')){
-      this.router.navigate(['/']);
+      this.router.navigate(['pages']);
     }
   }
 
   onRegisterClick($event: any) {
-    this.router.navigate(['/register-form']);
+    this.router.navigate(['auth/register-form']);
   }
 }
 

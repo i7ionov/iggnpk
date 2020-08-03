@@ -54,7 +54,7 @@ export class SideNavigationMenuComponent implements OnInit, AfterViewInit, OnDes
   }
 
   constructor(private elementRef: ElementRef, private auth: AuthService) {
-    this.curUser = this.auth.currentUser;
+    this.curUser = this.auth.current_user;
     console.log(this.curUser);
   }
 

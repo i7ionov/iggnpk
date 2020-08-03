@@ -83,7 +83,7 @@ export class RegisterFormComponent implements OnInit {
         "Ожидайте активации учетной записи сотрудником Инспекции.<br>" +
         "Уведомление об активации вы получите на указанную электронную почту.</i>", "Регистрация завершена успешно");
       result.then((dialogResult) => {
-        this.router.navigate(['/login-page']);
+        this.router.navigate(['auth//login-page']);
       });
 
     }, error => {

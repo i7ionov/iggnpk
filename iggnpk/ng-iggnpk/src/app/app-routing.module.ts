@@ -1,10 +1,10 @@
 import {NgModule} from '@angular/core';
-import {Routes, RouterModule} from '@angular/router';
+import {Routes, RouterModule, PreloadAllModules} from '@angular/router';
 import {
   CreditOrganizationSelectModule,
   LoginFormComponent, OrganizationSelectModule,
 } from './shared/components';
-import {AuthGuardService, AuthLazyGuardService} from './shared/services';
+import {AuthGuardService} from './shared/services';
 
 import {ProfileComponent} from './pages/profile/profile.component';
 import {DisplayDataComponent} from './pages/display-data/display-data.component';
@@ -16,7 +16,6 @@ import {
   DxSelectBoxModule,
   DxValidatorModule
 } from 'devextreme-angular';
-import {CapitalRepairNotifiesComponent} from './pages/capital-repair-notifies/capital-repair-notifies.component';
 import {CapitalRepairNotifyComponent} from './pages/capital-repair-notify/capital-repair-notify.component';
 import {HouseInputModule} from "./shared/components/house-input/house-input.component";
 import {FormsModule} from "@angular/forms";
@@ -26,6 +25,8 @@ import {RegisterFormComponent} from "./shared/components/register-form/register-
 import {AppComponent} from "./app.component";
 import {SideNavOuterToolbarComponent, SingleCardComponent} from "./layouts";
 import {RootLayoutComponent} from "./layouts/root-layout/root-layout.component";
+import {HomeComponent} from "./pages/home/home.component";
+import {CapitalRepairNotifiesComponent} from "./pages/capital-repair-notifies/capital-repair-notifies.component";
 
 
 const routes: Routes = [
@@ -36,30 +37,67 @@ const routes: Routes = [
       {
         path: 'pages',
         component: SideNavOuterToolbarComponent,
-
         children: [
           {
             path: 'home',
-            loadChildren: './pages/home/home.component#HomeComponentModule',
-            canLoad: [AuthLazyGuardService]
-          },
+            component: HomeComponent,
+            canActivate: [AuthGuardService]
 
+          },
+          {
+            path: 'capital-repair-notifies',
+            component: CapitalRepairNotifiesComponent,
+            canActivate: [AuthGuardService]
+
+          },
+          {
+            path: 'capital-repair-notify/:id',
+            component: CapitalRepairNotifyComponent,
+            canActivate: [AuthGuardService]
+
+          },
+          {
+            path: '**',
+            redirectTo: 'home',
+            canActivate: [AuthGuardService]
+          }
         ]
       },
       {
         path: 'auth',
         component: SingleCardComponent,
+        children: [
+          {
+            path: 'login-form',
+            component: LoginFormComponent
+          },
+          {
+            path: 'register-form',
+            component: RegisterFormComponent
+          },
+          {
+            path: '**',
+            redirectTo: 'login-form',
+            canActivate: [AuthGuardService]
+          }
+        ]
       },
+
+      {
+        path: '**',
+        redirectTo: 'pages/home',
+        canActivate: [AuthGuardService]
+      }
     ]
   },
 
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes), DxDataGridModule, DxFormModule, DxButtonModule, DxValidatorModule, DxFileUploaderModule, HouseInputModule, FormsModule, CommonModule, OrganizationSelectModule, CreditOrganizationSelectModule],
+  imports: [RouterModule.forRoot(routes, {preloadingStrategy: PreloadAllModules}), DxDataGridModule, DxFormModule, DxButtonModule, DxValidatorModule, DxFileUploaderModule, HouseInputModule, FormsModule, CommonModule, OrganizationSelectModule, CreditOrganizationSelectModule],
   providers: [AuthGuardService],
   exports: [RouterModule],
-  declarations: [ProfileComponent, DisplayDataComponent, CapitalRepairNotifyComponent, FileSizePipe, RootLayoutComponent]
+  declarations: [ProfileComponent, DisplayDataComponent, RootLayoutComponent]
 })
 export class AppRoutingModule {
 }

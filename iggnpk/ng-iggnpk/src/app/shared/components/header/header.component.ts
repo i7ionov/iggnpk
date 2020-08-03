@@ -30,8 +30,8 @@ export class HeaderComponent {
     text: 'Выйти',
     icon: 'runner',
     onClick: () => {
-      localStorage.removeItem('token')
-      this.router.navigate(['/login-form']);
+      localStorage.removeItem('token');
+      this.router.navigate(['auth//login-form']);
     }
   }];
 

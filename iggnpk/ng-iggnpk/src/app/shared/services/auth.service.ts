@@ -14,20 +14,6 @@ export class AuthService {
   }
 
 
-  get currentUser() {
-    if (this.current_user) {
-      return this.current_user
-    } else {
-      this.getUserInfo().subscribe(res => {
-        this.current_user = res;
-        return res;
-      }, error1 => {
-        localStorage.remove('token')
-      })
-    }
-
-  }
-
   constructor(private router: Router, private http: HttpClient) {
   }
 
@@ -62,28 +48,32 @@ export class AuthGuardService implements CanActivate {
   constructor(private router: Router, private authService: AuthService) {
   }
 
-  canActivate(route: ActivatedRouteSnapshot): boolean {
-    return false;
-  }
-
-}
-
-@Injectable({providedIn: 'root'})
-export class AuthLazyGuardService implements CanLoad {
-  constructor(private router: Router, private authService: AuthService) {
-  }
-
-  canLoad(route: Route): boolean | Observable<boolean> | Promise<boolean> {
+  canActivate(route: ActivatedRouteSnapshot): boolean | Observable<boolean> | Promise<boolean> {
     let promise: Promise<boolean> = new Promise((resolve, reject) => {
-
-      this.authService.getUserInfo().subscribe(user=>{
-        this.authService.current_user = user;
+      if (this.authService.current_user) {
         resolve(true);
-      })
+      }
+      else {
+        this.authService.getUserInfo().subscribe(user => {
+          if (user.id) {
+            this.authService.current_user = user;
+            resolve(true);
+          }
+          else {
+            resolve(false);
+            this.router.navigate(['auth/login-form']);
+          }
+        }, error1 => {
+          resolve(false);
+          this.router.navigate(['auth/login-form']);
+        })
+      }
+
 
     });
     return promise;
   }
+
 }
 
 @Injectable({providedIn: 'root'})

@@ -3,7 +3,7 @@
         <div class="image-container">
             <div class="dx-icon dx-icon-user"></div>
         </div>
-        <div class="user-name" *ngIf="auth.currentUser">{{ this.auth.currentUser.username }}</div>
+        <div class="user-name" *ngIf="auth.current_user">{{ this.auth.current_user.username }}</div>
     </div>
     <dx-context-menu
         *ngIf="menuMode === 'context'"
