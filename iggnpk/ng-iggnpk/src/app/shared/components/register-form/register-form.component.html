@@ -4,6 +4,7 @@
 
   </div>
   <div class="dx-field">
+    <div class="dx-field-label">Логин</div>
     <dx-text-box [(value)]="user.username" placeholder="Логин" width="100%">
       <dx-validator>
         <dxi-validation-rule type="required" message="Введите логин"></dxi-validation-rule>
@@ -11,6 +12,7 @@
     </dx-text-box>
   </div>
   <div class="dx-field">
+    <div class="dx-field-label">Электронная почта</div>
     <dx-text-box [(value)]="user.email" placeholder="Электронная почта" width="100%">
       <dx-validator>
         <dxi-validation-rule type="required" message="Введите электронную почту"></dxi-validation-rule>
@@ -28,6 +30,7 @@
     </dx-text-box>
   </div>
   <div class="dx-field">
+    <div class="dx-field-label">Пароль</div>
     <dx-text-box mode="password" [(value)]="user.password" placeholder="Пароль" width="100%">
       <dx-validator>
         <dxi-validation-rule type="required" message="Введите пароль"></dxi-validation-rule>
@@ -35,6 +38,7 @@
     </dx-text-box>
   </div>
   <div class="dx-field">
+    <div class="dx-field-label">Подтверждение пароля</div>
     <dx-text-box mode="password" [(value)]="user.re_password" placeholder="Подтверждение пароля" width="100%">
       <dx-validator>
         <dxi-validation-rule type="required" message="Введите пароль"></dxi-validation-rule>
@@ -47,6 +51,7 @@
     </dx-text-box>
   </div>
   <div class="dx-field">
+    <div class="dx-field-label">Наименование организации</div>
     <dx-text-box [(value)]="user.organization.name" placeholder="Наименование организации" width="100%">
       <dx-validator>
         <dxi-validation-rule type="required" message="Введите наименование организации"></dxi-validation-rule>
@@ -54,6 +59,7 @@
     </dx-text-box>
   </div>
   <div class="dx-field">
+    <div class="dx-field-label">ИНН организации</div>
     <dx-text-box [(value)]="user.organization.inn" placeholder="ИНН организации" width="100%">
       <dx-validator>
         <dxi-validation-rule type="required" message="Введите ИНН организации"></dxi-validation-rule>
@@ -72,6 +78,7 @@
     </dx-text-box>
   </div>
   <div class="dx-field">
+    <div class="dx-field-label">ОГРН организации</div>
     <dx-text-box [(value)]="user.organization.ogrn" placeholder="ОГРН организации" width="100%">
       <dxi-validation-rule
         type="numeric"
@@ -85,6 +92,7 @@
     </dx-text-box>
   </div>
   <div class="dx-field">
+    <div class="dx-field-label">Тип организации</div>
     <dx-select-box [(value)]="user.organization.type" placeholder="тип организации" [items]="orgTypes"
                    displayExpr="text"
                    width="100%">
