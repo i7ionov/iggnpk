@@ -102,7 +102,7 @@ export class AuthInterceptor
         },
         err => {
           if (err instanceof HttpErrorResponse) {
-            if (err.status == 401) localStorage.removeItem('token');
+            if (err.status == 401 || err.status == 403) localStorage.removeItem('token');
           }
         }
       )
