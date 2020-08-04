@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from django.db.models import Q
 from rest_framework.exceptions import ParseError
 from rest_framework.parsers import FileUploadParser, MultiPartParser, FormParser
@@ -32,6 +33,27 @@ def is_email_already_used(request):
         except Organization.DoesNotExist:
             pass
     return Response({"result": False})
+
+
+@api_view(['POST'])
+def create_user(request):
+    item = UserSerializer(data=request.data)
+    item.is_valid(raise_exception=True)
+
+    if item.is_valid():
+        if request.data['password'] != request.data['re_password']:
+            return Response({'password': 'Пароли не совпадают'}, status=400)
+        org, created = Organization.objects.get_or_create(inn=request.data['organization']['inn'])
+        if created:
+            org.name = request.data['organization']['name']
+            org.ogrn = request.data['organization']['ogrn']
+            org.type = OrganizationType.objects.get(id=request.data['organization']['type']['id'])
+        User.objects.create_user(username=request.data['username'], organization=org,
+                                 password=request.data['password'], email=request.data['email'])\
+            .groups.add(Group.objects.get(name='Управляющие организации'))
+        return Response(status=200)
+    else:
+        return Response(item.errors, status=400)
 
 
 class HouseViewSet(viewsets.ModelViewSet):
@@ -157,28 +179,8 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(me)
         return Response(serializer.data)
 
-    def create(self, request, pk=None):
-        item = self.serializer_class(data=request.data)
-        item.is_valid(raise_exception=True)
-
-        if item.is_valid():
-            if request.data['password'] != request.data['re_password']:
-                return Response({'password': 'Пароли не совпадают'}, status=400)
-            org, created = Organization.objects.get_or_create(inn=request.data['organization']['inn'])
-            print(request.data)
-            if created:
-                org.name = request.data['organization']['name']
-                org.ogrn = request.data['organization']['ogrn']
-                org.type = OrganizationType.objects.get(id=request.data['organization']['type']['id'])
-            User.objects.create_user(username=request.data['username'], organization=org,
-                                     password=request.data['password'], email=request.data['email'])
-            return Response(status=200)
-        else:
-            return Response(item.errors, status=400)
-
     def update(self, request, pk=None):
         if (request.data['id'] != 1 and (request.user.has_perm('dictionaries.change_user') or request.user.id == request.data['id'])):
-            print(request.data['id'])
             data = request.data
             instance = self.get_object()
             serializer = self.serializer_class(instance=instance, data=data, partial=True)
