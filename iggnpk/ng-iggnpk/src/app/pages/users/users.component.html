@@ -5,12 +5,14 @@
   <dx-data-grid id="gridContainer"
     [dataSource]="dataSource"
     (onToolbarPreparing)="onToolbarPreparing($event)"
+    [filterValue]='["is_active", "=", false]'
   >
     <dxo-filter-row
       [visible]="true"
       [applyFilter]="currentFilter"></dxo-filter-row>
     <dxo-header-filter
       [visible]="true"></dxo-header-filter>
+    <dxo-filter-panel [visible]="true"></dxo-filter-panel>
     <dxi-column
       dataField="id"
       width="100"

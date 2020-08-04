@@ -1,4 +1,4 @@
-import {Component, NgModule, OnInit, ViewChild} from '@angular/core';
+import {AfterContentInit, AfterViewInit, Component, NgModule, OnInit, ViewChild} from '@angular/core';
 import {DxCheckBoxModule} from "devextreme-angular/ui/check-box";
 import {DxTextBoxModule} from "devextreme-angular/ui/text-box";
 import {Router, RouterModule} from "@angular/router";
@@ -93,6 +93,7 @@ export class UsersComponent implements OnInit {
   userActivityChange($event: boolean, cell: any) {
     this.userService.update(cell.key, {id:cell.key, is_active: $event}).subscribe();
   }
+
 }
 
 @NgModule({
