@@ -7,13 +7,11 @@ import {DxValidatorModule} from "devextreme-angular/ui/validator";
 import {DxValidationGroupModule} from "devextreme-angular/ui/validation-group";
 import {DxPopupModule, DxButtonModule, DxTemplateModule, DxDataGridComponent} from 'devextreme-angular';
 
-import {CapitalRepairNotifyService, Notifies, Notify} from "../../shared/services/capital-repair-notify.service";
-
 import {DxDataGridModule} from 'devextreme-angular';
 
 import CustomStore from 'devextreme/data/custom_store';
-import DevExpress from "devextreme";
-import add = DevExpress.viz.map.projection.add;
+
+import {UserService} from "../../shared/services/user.service";
 
 @Component({
   selector: 'app-users',
@@ -25,7 +23,7 @@ export class UsersComponent implements OnInit {
   dataSource: any = {};
   currentFilter: any;
 
-  constructor(private notifyService: CapitalRepairNotifyService, private router: Router) {
+  constructor(private userService: UserService, private router: Router) {
     function isNotEmpty(value) {
       return value !== undefined && value !== null && value !== "";
     }
@@ -57,7 +55,7 @@ export class UsersComponent implements OnInit {
             params += ' desc';
           }
         }
-        return notifyService.getNotifies(params).toPromise()
+        return userService.getUsers(params).toPromise()
           .then((data: any) => {
             return {
               data: data.items,
@@ -74,10 +72,6 @@ export class UsersComponent implements OnInit {
 
   ngOnInit() {
 
-  }
-
-  add() {
-    this.router.navigate(['/pages/capital-repair-notify/0']);
   }
 
   refreshDataGrid(){

@@ -47,7 +47,7 @@ class UserSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", "username", "email", "groups", "organization", "permissions")
+        fields = ("id", "username", "email", "groups", "organization", "permissions", "is_active")
 
 
 

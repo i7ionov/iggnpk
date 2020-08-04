@@ -88,6 +88,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
             return Response(data)
         else:
             return Response()
+
     def types(self, request):
         data = OrganizationTypeSerializer(OrganizationType.objects.all(), many=True)
 
@@ -121,18 +122,35 @@ class AddressViewSet(viewsets.ModelViewSet):
             keywords = [x for x in searchValue if x]
             queryset = Address.objects.all()
             for keyword in keywords:
-                queryset = queryset.filter(Q(area__icontains=keyword) | Q(city__icontains=keyword) | Q(street__icontains=keyword))
+                queryset = queryset.filter(
+                    Q(area__icontains=keyword) | Q(city__icontains=keyword) | Q(street__icontains=keyword))
             queryset = queryset[:10]
-            serializer = AddressSerializer(queryset, many=True)
+            serializer = self.serializer_class(queryset, many=True)
             data = {'items': serializer.data}
             return Response(data)
-        else: return Response()
+        else:
+            return Response()
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    permission_classes = []
+    permission_classes = [permissions.IsAuthenticated, ]
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    def list(self, request):
+        if 'group' in request.GET:
+            d, total_count = dev_extreme.populate_group_category(request, User)
+            data = {"totalCount": total_count, "items": d}
+        else:
+            queryset, total_count = dev_extreme.filtered_query(request, User)
+            serializer = self.serializer_class(queryset, many=True)
+            data = {'items': serializer.data, 'totalCount': total_count}
+        return Response(data)
+
+    def retrieve(self, request, pk=None):
+        item = get_object_or_404(self.queryset, pk=pk)
+        serializer = self.serializer_class(item)
+        return Response(serializer.data)
 
     def me(self, request, pk=None):
         me = request.user
@@ -152,7 +170,8 @@ class UserViewSet(viewsets.ModelViewSet):
                 org.name = request.data['organization']['name']
                 org.ogrn = request.data['organization']['ogrn']
                 org.type = OrganizationType.objects.get(id=request.data['organization']['type']['id'])
-            User.objects.create_user(username=request.data['username'], organization=org, password=request.data['password'], email=request.data['email'])
+            User.objects.create_user(username=request.data['username'], organization=org,
+                                     password=request.data['password'], email=request.data['email'])
             return Response(status=200)
         else:
             return Response(item.errors, status=400)
@@ -173,6 +192,3 @@ class FileViewSet(viewsets.ModelViewSet):
         file.owner = self.request.user
         file.datafile.save(f.name, f, save=True)
         return Response(self.serializer_class(file).data, status=status.HTTP_201_CREATED)
-
-
-

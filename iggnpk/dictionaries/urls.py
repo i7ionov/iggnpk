@@ -16,7 +16,6 @@ Including another URLconf
 from . import views
 from django.urls import include, path
 
-
 urlpatterns = [
     path('organizations/', views.OrganizationViewSet.as_view({'get': 'list'})),
     path('organizations/<int:pk>/', views.OrganizationViewSet.as_view({'get': 'retrieve'})),
@@ -29,8 +28,10 @@ urlpatterns = [
     path('addresses/', views.AddressViewSet.as_view({'get': 'list'})),
     path('addresses/<int:pk>/', views.AddressViewSet.as_view({'get': 'retrieve'})),
     path('addresses/search/', views.AddressViewSet.as_view({'get': 'search'})),
+    path('users/', views.UserViewSet.as_view({'get': 'list'})),
     path('users/me/', views.UserViewSet.as_view({'get': 'me'})),
     path('users/create/', views.UserViewSet.as_view({'post': 'create'})),
+    path('users/<int:pk>/', views.UserViewSet.as_view({'get': 'retrieve'})),
     path('files/create/', views.FileViewSet.as_view({'post': 'upload'})),
 
 ]
