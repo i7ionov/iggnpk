@@ -87,7 +87,9 @@
       <dxi-item dataField="comment" editorType="dxTextArea" [editorOptions]="{ height: 90 }">
         <dxo-label text="Комментарий"></dxo-label>
       </dxi-item>
-
+      <dxi-item dataField="comment2" editorType="dxTextArea" [editorOptions]="{ height: 90 }" *ngIf="comment_visibility">
+        <dxo-label text="Комментарий(виден только сотрудникам)"></dxo-label>
+      </dxi-item>
 
     </dx-form>
     <div>

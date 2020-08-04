@@ -47,6 +47,9 @@ export class CapitalRepairNotifyComponent implements OnInit {
   get uploadUrl() {
     return `${environment.file_url}create/`
   }
+  get comment_visibility() {
+    return this.auth.current_user.permissions.findIndex(p=> p.codename=='view_comment2')>0
+  }
 
   id = '';
   notify: Notify = new Notify();

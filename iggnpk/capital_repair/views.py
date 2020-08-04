@@ -109,7 +109,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
 
         queryset = Notify.objects.all()
         item = get_object_or_404(queryset, pk=pk)
-        serializer = NotifySerializer(item)
+        serializer = NotifySerializer(item, exclude=exclude_fields)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):

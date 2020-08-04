@@ -10,10 +10,11 @@ import {DxPopupModule, DxButtonModule, DxTemplateModule, DxDataGridComponent} fr
 import {CapitalRepairNotifyService, Notifies, Notify} from "../../shared/services/capital-repair-notify.service";
 
 import {DxDataGridModule} from 'devextreme-angular';
-import { exportDataGrid } from 'devextreme/excel_exporter';
+import {exportDataGrid} from 'devextreme/excel_exporter';
 import CustomStore from 'devextreme/data/custom_store';
 import ExcelJS from 'exceljs';
 import saveAs from 'file-saver';
+import {AuthService} from "../../shared/services";
 
 @Component({
   selector: 'app-capital-repair-notifies',
@@ -25,7 +26,12 @@ export class CapitalRepairNotifiesComponent implements OnInit {
   dataSource: any = {};
   currentFilter: any;
 
-  constructor(private notifyService: CapitalRepairNotifyService, private router: Router) {
+  get comment_visibility() {
+    return this.authService.current_user.permissions.findIndex(p=> p.codename=='view_comment2')>0
+  }
+
+  constructor(private notifyService: CapitalRepairNotifyService, private router: Router, private authService: AuthService) {
+
     function isNotEmpty(value) {
       return value !== undefined && value !== null && value !== "";
     }

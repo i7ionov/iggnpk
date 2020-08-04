@@ -58,4 +58,4 @@ class Notify(models.Model):
         return f'{self.date}, № {self.id}'
 
     class Meta:
-        verbose_name = "Уведомление о выбранном собственниками помещений в многоквартирном доме способе формирования фонда капитального ремонта на специальном счете"
+        permissions = (("view_comment2", 'view comment2'),)
