@@ -49,6 +49,7 @@ class Notify(models.Model):
     monthly_contribution_amount = models.FloatField(verbose_name='Ежемесячный размер взноса')
     protocol_details = models.CharField(max_length=100, verbose_name='Реквизиты протокола')
     comment = models.TextField(verbose_name='Комментарий', null=True, blank=True)
+    comment2 = models.TextField(verbose_name='Комментарий', null=True, blank=True)
     status = models.ForeignKey(NotifyStatus, on_delete=models.SET_NULL, null=True, verbose_name='Статус',
                                      blank=True, default=None)
     files = models.ManyToManyField(File)

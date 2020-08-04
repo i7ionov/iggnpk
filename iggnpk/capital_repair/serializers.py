@@ -4,6 +4,7 @@ from dictionaries.models import File
 from .models import CreditOrganization, Branch, Notify, NotifyStatus
 from tools.dynamic_fields_model_serializer import DynamicFieldsModelSerializer
 from dictionaries.serializers import OrganizationSerializer, HouseSerializer, FileSerializer
+from rest_framework import serializers
 
 
 class CreditOrganisationSerializer(DynamicFieldsModelSerializer):
@@ -37,3 +38,13 @@ class NotifySerializer(DynamicFieldsModelSerializer):
         model = Notify
         fields = '__all__'
 
+    def __init__(self, *args, **kwargs):
+        # Don't pass the 'fields' arg up to the superclass
+        exclude = kwargs.pop('exclude', None)
+
+        # Instantiate the superclass normally
+        super(DynamicFieldsModelSerializer, self).__init__(*args, **kwargs)
+
+        if exclude is not None:
+            for field in exclude:
+                self.fields.pop(field)

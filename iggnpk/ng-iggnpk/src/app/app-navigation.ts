@@ -23,7 +23,7 @@ export const navigation = [
   {
     text: 'Администрирование',
     icon: 'preferences',
-    permissions: 'view_notify',
+    permissions: 'view_user',
     items: [
       {
         text: 'Пользователи',

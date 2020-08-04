@@ -89,23 +89,34 @@ class NotifiesViewSet(viewsets.ModelViewSet):
     serializer_class = NotifySerializer
 
     def list(self, request):
+        exclude_fields = []
+        if not request.user.is_staff:
+            exclude_fields.append('comment2')
+
         if 'group' in request.GET:
             d, total_count = dev_extreme.populate_group_category(request, Notify)
             data = {"totalCount": total_count, "items": d}
         else:
             queryset, total_count = dev_extreme.filtered_query(request, Notify)
-            serializer = NotifySerializer(queryset, many=True)
+            serializer = NotifySerializer(queryset, many=True, exclude=exclude_fields)
             data = {'items': serializer.data, 'totalCount': total_count}
         return Response(data)
 
     def retrieve(self, request, pk=None):
+        exclude_fields = []
+        if not request.user.is_staff:
+            exclude_fields.append('comment2')
+
         queryset = Notify.objects.all()
         item = get_object_or_404(queryset, pk=pk)
         serializer = NotifySerializer(item)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        item = NotifySerializer(data=request.data)
+        exclude_fields = []
+        if not request.user.is_staff:
+            exclude_fields.append('comment2')
+        item = NotifySerializer(data=request.data, exclude=exclude_fields)
         item.is_valid()
         if item.is_valid():
             status = NotifyStatus.objects.get(id=1)
@@ -123,9 +134,12 @@ class NotifiesViewSet(viewsets.ModelViewSet):
             return Response(status=400)
 
     def update(self, request, *args, **kwargs):
+        exclude_fields = []
+        if not request.user.is_staff:
+            exclude_fields.append('comment2')
         data = request.data
         instance = self.get_object()
-        serializer = self.serializer_class(instance=instance, data=data, partial=True)
+        serializer = self.serializer_class(instance=instance, data=data, partial=True, exclude=exclude_fields)
         serializer.is_valid(raise_exception=True)
         if request.user.is_staff:
             org = upd_foreign_key('organization', data, instance, Organization)

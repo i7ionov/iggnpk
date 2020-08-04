@@ -50,8 +50,6 @@ class UserSerializer(DynamicFieldsModelSerializer):
         fields = ("id", "username", "email", "groups", "organization", "permissions", "is_active")
 
 
-
-
 class FileSerializer(DynamicFieldsModelSerializer):
     owner = serializers.SlugRelatedField(
         read_only=True,
