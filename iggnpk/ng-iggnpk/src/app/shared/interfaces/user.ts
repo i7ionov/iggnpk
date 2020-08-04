@@ -5,11 +5,13 @@ export interface Permission {
   codename: string,
 }
 export interface User {
-  username: string,
-  email: string,
-  password: string,
-  re_password: string;
+  id?: number
+  is_active?: boolean
+  username?: string,
+  email?: string,
+  password?: string,
+  re_password?: string;
   organization?: Organization
-  groups: number[],
+  groups?: number[],
   permissions?: Permission[]
 }

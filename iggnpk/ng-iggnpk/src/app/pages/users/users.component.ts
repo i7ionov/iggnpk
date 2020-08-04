@@ -12,6 +12,7 @@ import {DxDataGridModule} from 'devextreme-angular';
 import CustomStore from 'devextreme/data/custom_store';
 
 import {UserService} from "../../shared/services/user.service";
+import {User} from 'src/app/shared/interfaces/user';
 
 @Component({
   selector: 'app-users',
@@ -87,6 +88,10 @@ export class UsersComponent implements OnInit {
         onClick: this.refreshDataGrid.bind(this)
       }
     });
+  }
+
+  userActivityChange($event: boolean, cell: any) {
+    this.userService.update(cell.key, {id:cell.key, is_active: $event}).subscribe();
   }
 }
 

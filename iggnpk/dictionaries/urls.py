@@ -32,6 +32,7 @@ urlpatterns = [
     path('users/me/', views.UserViewSet.as_view({'get': 'me'})),
     path('users/create/', views.UserViewSet.as_view({'post': 'create'})),
     path('users/<int:pk>/', views.UserViewSet.as_view({'get': 'retrieve'})),
+    path('users/save/<int:pk>/', views.UserViewSet.as_view({'post': 'update'})),
     path('files/create/', views.FileViewSet.as_view({'post': 'upload'})),
 
 ]

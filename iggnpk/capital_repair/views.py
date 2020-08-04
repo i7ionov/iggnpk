@@ -134,7 +134,6 @@ class NotifiesViewSet(viewsets.ModelViewSet):
         branch = upd_foreign_key('credit_organization_branch', data, instance, Branch)
         house = House.objects.get_or_create_new('house', data, instance)
         status = upd_foreign_key('status', data, instance, NotifyStatus)
-        print(data)
         if 'files' in data:
             files = []
             if data['files'] != 'empty':

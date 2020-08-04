@@ -176,6 +176,17 @@ class UserViewSet(viewsets.ModelViewSet):
         else:
             return Response(item.errors, status=400)
 
+    def update(self, request, pk=None):
+        if (request.data['id'] != 1 and (request.user.has_perm('dictionaries.change_user') or request.user.id == request.data['id'])):
+            print(request.data['id'])
+            data = request.data
+            instance = self.get_object()
+            serializer = self.serializer_class(instance=instance, data=data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+        return Response({'response': "У вас нет соответствующих прав"}, status=400)
+
 
 class FileViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, ]

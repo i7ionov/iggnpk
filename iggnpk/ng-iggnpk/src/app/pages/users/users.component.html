@@ -22,10 +22,11 @@
       dataField="is_active"
       width="200"
       dataType="boolean"
+      cellTemplate="isActiveCellTemplate"
     >
     </dxi-column>
     <dxi-column
-      caption="логин"
+      caption="Логин"
       dataField="username"
       width="200"
       dataType="string"
@@ -65,8 +66,8 @@
         dataType="string"
       ></dxi-column>
     </dxi-column>
-    <div *dxTemplate="let cell of 'idCellTemplate'">
-      <a [routerLink]="['/pages/user/', cell.text]">{{ cell.text }}</a>
+    <div *dxTemplate="let cell of 'isActiveCellTemplate'">
+      <dx-check-box [value]="cell.value" (valueChange)="userActivityChange($event, cell)"></dx-check-box>
     </div>
     <dxo-summary>
       <dxi-total-item
