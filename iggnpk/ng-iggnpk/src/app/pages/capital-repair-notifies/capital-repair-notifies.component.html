@@ -6,6 +6,7 @@
   <dx-data-grid id="gridContainer"
                 [dataSource]="dataSource"
                 (onToolbarPreparing)="onToolbarPreparing($event)"
+                (onExporting)="onExporting($event)"
   >
     <dxo-filter-row
         [visible]="true"
@@ -150,6 +151,7 @@
         summaryType="count">
       </dxi-total-item>
     </dxo-summary>
+    <dxo-export [enabled]="true"></dxo-export>
   </dx-data-grid>
 
 

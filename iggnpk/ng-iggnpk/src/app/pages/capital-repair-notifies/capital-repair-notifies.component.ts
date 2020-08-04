@@ -10,10 +10,10 @@ import {DxPopupModule, DxButtonModule, DxTemplateModule, DxDataGridComponent} fr
 import {CapitalRepairNotifyService, Notifies, Notify} from "../../shared/services/capital-repair-notify.service";
 
 import {DxDataGridModule} from 'devextreme-angular';
-
+import { exportDataGrid } from 'devextreme/excel_exporter';
 import CustomStore from 'devextreme/data/custom_store';
-import DevExpress from "devextreme";
-import add = DevExpress.viz.map.projection.add;
+import ExcelJS from 'exceljs';
+import saveAs from 'file-saver';
 
 @Component({
   selector: 'app-capital-repair-notifies',
@@ -21,7 +21,7 @@ import add = DevExpress.viz.map.projection.add;
   styleUrls: ['./capital-repair-notifies.component.scss']
 })
 export class CapitalRepairNotifiesComponent implements OnInit {
-  @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+  @ViewChild(DxDataGridComponent, {static: false}) dataGrid: DxDataGridComponent;
   dataSource: any = {};
   currentFilter: any;
 
@@ -80,7 +80,7 @@ export class CapitalRepairNotifiesComponent implements OnInit {
     this.router.navigate(['/pages/capital-repair-notify/0']);
   }
 
-  refreshDataGrid(){
+  refreshDataGrid() {
     this.dataGrid.instance.refresh();
   }
 
@@ -102,6 +102,24 @@ export class CapitalRepairNotifiesComponent implements OnInit {
       }
     });
   }
+
+  onExporting(e) {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Employees');
+
+    exportDataGrid({
+      component: e.component,
+      worksheet: worksheet,
+      autoFilterEnabled: true
+    }).then(function () {
+      // https://github.com/exceljs/exceljs#writing-xlsx
+      workbook.xlsx.writeBuffer().then(function (buffer) {
+        saveAs(new Blob([buffer], {type: 'application/octet-stream'}), 'notifies.xlsx');
+      });
+    });
+    e.cancel = true;
+  }
+
 }
 
 @NgModule({
