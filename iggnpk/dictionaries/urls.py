@@ -35,4 +35,6 @@ urlpatterns = [
     path('users/save/<int:pk>/', views.UserViewSet.as_view({'post': 'update'})),
     path('files/create/', views.FileViewSet.as_view({'post': 'upload'})),
 
+    path('send_message/', views.send_message),
+
 ]

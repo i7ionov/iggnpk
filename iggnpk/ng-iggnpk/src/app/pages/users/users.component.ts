@@ -13,6 +13,7 @@ import CustomStore from 'devextreme/data/custom_store';
 
 import {UserService} from "../../shared/services/user.service";
 import {User} from 'src/app/shared/interfaces/user';
+import { confirm } from 'devextreme/ui/dialog';
 
 @Component({
   selector: 'app-users',
@@ -91,7 +92,12 @@ export class UsersComponent implements OnInit {
   }
 
   userActivityChange($event: boolean, cell: any) {
-    this.userService.update(cell.key, {id:cell.key, is_active: $event}).subscribe();
+    let result = confirm("<i>Отправить электронное письмо об активации/деактивации учетной записи?</i>", "Уведомление");
+        result.then((dialogResult) => {
+
+            this.userService.update(cell.key, {id:cell.key, is_active: $event}, dialogResult).subscribe();
+        });
+
   }
 
 }

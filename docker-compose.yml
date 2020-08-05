@@ -50,5 +50,13 @@ services:
       - VIRTUAL_HOST=iggnpk.ru
       - LETSENCRYPT_HOST=iggnpk.ru
       - LETSENCRYPT_EMAIL=i7ionov@gmail.com
+
+ mail:
+  restart: always
+  container_name: iggnpk_mail
+  image: bytemark/smtp
+  ports:
+    - "25:25"
+
 volumes:
   sock:

@@ -29,8 +29,8 @@ export class UserService {
     return this.http.get<User>(`${environment.backend_url}${this.url}/${id}/`)
   }
 
-  update(id, user: any): Observable<User> {
-    return this.http.post<User>(`${environment.backend_url}${this.url}/save/${id}/`, user)
+  update(id, user: any, sendmail = false): Observable<User> {
+    return this.http.post<User>(`${environment.backend_url}${this.url}/save/${id}/?sendmail=${sendmail}`, user)
   }
 
 

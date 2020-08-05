@@ -12,6 +12,7 @@ from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from tools import dev_extreme
+from django.core.mail import send_mail
 
 
 @api_view()
@@ -186,6 +187,19 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer = self.serializer_class(instance=instance, data=data, partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
+            if 'sendmail' in request.GET and request.GET['sendmail'] == 'true':
+                print(request.GET['sendmail'])
+                if serializer.data['is_active']:
+                    message = 'активировна'
+                else:
+                    message = 'отключена'
+                send_mail(
+                    f'Учетная запись на портале iggnpk.ru {message}',
+                    f'Учетная запись на портале iggnpk.ru {message}',
+                    'noreply@iggnpk.ru',
+                    [serializer.data['email']],
+                    fail_silently=False,
+                )
             return Response(serializer.data)
         return Response({'response': "У вас нет соответствующих прав"}, status=400)
 
@@ -205,3 +219,15 @@ class FileViewSet(viewsets.ModelViewSet):
         file.owner = self.request.user
         file.datafile.save(f.name, f, save=True)
         return Response(self.serializer_class(file).data, status=status.HTTP_201_CREATED)
+
+
+@api_view()
+def send_message(request):
+    send_mail(
+        'Subject here',
+        'Here is the message.',
+        'noreply@iggnpk.com',
+        ['i7ionov@gmail.com'],
+        fail_silently=False,
+    )
+    return Response(status=200)
