@@ -57,6 +57,7 @@ services:
   image: bytemark/smtp
   ports:
     - "25:25"
-
+  environment:
+  - MAILNAME=iggnpk.ru
 volumes:
   sock:
