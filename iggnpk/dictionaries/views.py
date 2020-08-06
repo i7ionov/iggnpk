@@ -65,10 +65,10 @@ class HouseViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         if 'group' in request.GET:
-            d, total_count = dev_extreme.populate_group_category(request, House)
+            d, total_count = dev_extreme.populate_group_category(request, self.queryset)
             data = {"totalCount": total_count, "items": d}
         else:
-            queryset, total_count = dev_extreme.filtered_query(request, House)
+            queryset, total_count = dev_extreme.filtered_query(request, self.queryset)
             serializer = HouseSerializer(queryset, many=True)
             data = {'items': serializer.data, 'totalCount': total_count}
         return Response(data)
@@ -87,10 +87,10 @@ class OrganizationViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         if 'group' in request.GET:
-            d, total_count = dev_extreme.populate_group_category(request, User)
+            d, total_count = dev_extreme.populate_group_category(request, self.queryset)
             data = {"totalCount": total_count, "items": d}
         else:
-            queryset, total_count = dev_extreme.filtered_query(request, User)
+            queryset, total_count = dev_extreme.filtered_query(request, self.queryset)
             serializer = self.serializer_class(queryset, many=True, fields=['id', 'name', 'inn'])
             data = {'items': serializer.data, 'totalCount': total_count}
         return Response(data)
@@ -126,10 +126,10 @@ class AddressViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         if 'group' in request.GET:
-            d, total_count = dev_extreme.populate_group_category(request, Address)
+            d, total_count = dev_extreme.populate_group_category(request, self.queryset)
             data = {"totalCount": total_count, "items": d}
         else:
-            queryset, total_count = dev_extreme.filtered_query(request, Address)
+            queryset, total_count = dev_extreme.filtered_query(request, self.queryset)
             serializer = AddressSerializer(queryset, many=True)
             data = {'items': serializer.data, 'totalCount': total_count}
         return Response(data)
@@ -163,10 +163,10 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         if 'group' in request.GET:
-            d, total_count = dev_extreme.populate_group_category(request, User)
+            d, total_count = dev_extreme.populate_group_category(request, self.queryset)
             data = {"totalCount": total_count, "items": d}
         else:
-            queryset, total_count = dev_extreme.filtered_query(request, User)
+            queryset, total_count = dev_extreme.filtered_query(request, self.queryset)
             serializer = self.serializer_class(queryset, many=True)
             data = {'items': serializer.data, 'totalCount': total_count}
         return Response(data)
