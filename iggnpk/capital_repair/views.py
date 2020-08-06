@@ -92,12 +92,17 @@ class NotifiesViewSet(viewsets.ModelViewSet):
         exclude_fields = []
         if not request.user.is_staff:
             exclude_fields.append('comment2')
-
+        # пользователь видит уведомления только своей организации
+        if not request.user.is_staff:
+            queryset = self.queryset.filter(organization_id=request.user.organization.id)
+        else:
+            queryset = self.queryset
         if 'group' in request.GET:
-            d, total_count = dev_extreme.populate_group_category(request, Notify)
+            d, total_count = dev_extreme.populate_group_category(request, queryset)
             data = {"totalCount": total_count, "items": d}
         else:
-            queryset, total_count = dev_extreme.filtered_query(request, Notify)
+
+            queryset, total_count = dev_extreme.filtered_query(request, queryset)
             serializer = NotifySerializer(queryset, many=True, exclude=exclude_fields)
             data = {'items': serializer.data, 'totalCount': total_count}
         return Response(data)
@@ -106,8 +111,11 @@ class NotifiesViewSet(viewsets.ModelViewSet):
         exclude_fields = []
         if not request.user.is_staff:
             exclude_fields.append('comment2')
-
-        queryset = Notify.objects.all()
+        # пользователь видит уведомления только своей организации
+        if not request.user.is_staff:
+            queryset = self.queryset.filter(organization_id=request.user.organization.id)
+        else:
+            queryset = self.queryset
         item = get_object_or_404(queryset, pk=pk)
         serializer = NotifySerializer(item, exclude=exclude_fields)
         return Response(serializer.data)

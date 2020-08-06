@@ -49,6 +49,7 @@ def create_user(request):
             org.name = request.data['organization']['name']
             org.ogrn = request.data['organization']['ogrn']
             org.type = OrganizationType.objects.get(id=request.data['organization']['type']['id'])
+            org.save()
         User.objects.create_user(username=request.data['username'], organization=org,
                                  password=request.data['password'], email=request.data['email'])\
             .groups.add(Group.objects.get(name='Управляющие организации'))

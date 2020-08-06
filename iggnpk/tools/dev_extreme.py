@@ -3,8 +3,8 @@ from datetime import datetime
 from django.db.models import Q
 
 
-def filtered_query(request, model, distinct_field=None):
-    query = model.objects.all()
+def filtered_query(request, query, distinct_field=None):
+
     if 'skip' in request.GET:
         start = int(request.GET['skip'])
     else:
@@ -106,7 +106,7 @@ def build_q_object(filter_request):
     return result
 
 
-def populate_group_category(request, model):
+def populate_group_category(request, queryset):
     """
 
     :param groups: [{'selector': 'doc_date', 'groupInterval': 'year', 'isExpanded': True},
@@ -126,7 +126,7 @@ def populate_group_category(request, model):
     selector = groups[0]['selector']
     selector = selector.replace('.', '__')
     print(selector)
-    items, count = filtered_query(request, model, selector)
+    items, count = filtered_query(request, queryset, selector)
     if 'groupInterval' in groups[0]:
         if groups[0]['groupInterval'] == 'year':
             for item in items:
