@@ -55,7 +55,7 @@ export class CapitalRepairNotifyService {
   }
 
   getNotifies(params): Observable<Notifies> {
-    return this.http.get<Notifies>(`${environment.backend_url}${this.url}/${params}/`)
+    return this.http.get<Notifies>(`${environment.backend_url}${this.url}/${params}`)
   }
 
   retrieve(id): Observable<Notify> {

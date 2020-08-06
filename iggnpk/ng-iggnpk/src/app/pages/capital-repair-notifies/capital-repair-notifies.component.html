@@ -160,12 +160,6 @@
     <div *dxTemplate="let cell of 'idCellTemplate'">
       <a [routerLink]="['/pages/capital-repair-notify/', cell.text]">{{ cell.text }}</a>
     </div>
-    <dxo-summary>
-      <dxi-total-item
-        column="id"
-        summaryType="count">
-      </dxi-total-item>
-    </dxo-summary>
     <dxo-export [enabled]="true"></dxo-export>
   </dx-data-grid>
 
