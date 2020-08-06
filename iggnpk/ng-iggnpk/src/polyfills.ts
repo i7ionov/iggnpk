@@ -55,6 +55,7 @@
 /***************************************************************************************************
  * Zone JS is required by default for Angular itself.
  */
+import 'exceljs/dist/exceljs.min.js';
 import 'zone.js/dist/zone';  // Included with Angular CLI.
 
 
