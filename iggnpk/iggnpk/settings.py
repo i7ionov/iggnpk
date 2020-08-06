@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     'corsheaders',
     'djoser',
-
+    'simple_history',
     'tools',
     'dictionaries',
     'capital_repair'
@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
 ]
 
 ROOT_URLCONF = 'iggnpk.urls'

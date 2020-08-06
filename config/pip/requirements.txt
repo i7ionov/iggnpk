@@ -4,3 +4,4 @@ djangorestframework==3.11.0
 djoser==2.0.3
 simplejson==3.17.0
 psycopg2==2.8.5
+django-simple-history==2.11.0

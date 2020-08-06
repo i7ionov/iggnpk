@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Permission
 from django.contrib.auth.base_user import BaseUserManager
+from simple_history.models import HistoricalRecords
 
 
 class UserManager(BaseUserManager):
@@ -41,6 +42,7 @@ class Organization(models.Model):
     ogrn = models.CharField(max_length=30, blank=True)
     name = models.CharField(max_length=100, blank=True)
     type = models.ForeignKey(OrganizationType, on_delete=models.SET_NULL, null=True, blank=True)
+    history = HistoricalRecords()
     REQUIRED_FIELDS = ['name', 'inn', 'ogrn', 'type']
 
 
@@ -48,6 +50,7 @@ class User(AbstractUser):
     name = models.CharField(max_length=100, blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True, verbose_name='Организация',
                                      blank=True)
+    history = HistoricalRecords()
     REQUIRED_FIELDS = ['email', 'name']
     objects = UserManager()
 
@@ -110,6 +113,7 @@ class House(models.Model):
                                                          null=True, blank=True)
     date_of_inclusion = models.DateField(
         verbose_name='Дата включения МКД в Региональную программу капитального ремонта', null=True, blank=True)
+    history = HistoricalRecords()
     objects = HouseManager()
 
     class Meta:

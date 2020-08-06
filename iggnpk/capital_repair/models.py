@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 from dictionaries.models import House, Organization, File
+from simple_history.models import HistoricalRecords
 
 
 class CreditOrganization(models.Model):
@@ -11,6 +12,7 @@ class CreditOrganization(models.Model):
     inn = models.CharField(max_length=100, blank=True, verbose_name='ИНН')
     bik = models.CharField(max_length=100, blank=True, verbose_name='БИК')
     correspondent_account = models.CharField(max_length=30, blank=True, verbose_name='Корреспондентский счет')
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name
@@ -21,6 +23,7 @@ class Branch(models.Model):
                                             blank=True)
     address = models.CharField(max_length=100, verbose_name='Адрес')
     kpp = models.CharField(max_length=100, blank=True, verbose_name='КПП')
+    history = HistoricalRecords()
 
     def __str__(self):
         return f'{self.credit_organization.name} {self.address}'
@@ -53,6 +56,7 @@ class Notify(models.Model):
     status = models.ForeignKey(NotifyStatus, on_delete=models.SET_NULL, null=True, verbose_name='Статус',
                                      blank=True, default=None)
     files = models.ManyToManyField(File)
+    history = HistoricalRecords()
 
     def __str__(self):
         return f'{self.date}, № {self.id}'
