@@ -20,7 +20,7 @@
         ></app-organization-select>
       </div>
 
-      <dxi-item dataField="date" editorType="dxDateBox"
+      <dxi-item dataField="date" editorType="dxDateBox" [disabled]="organizationSelectIsReadOnly"
                 [editorOptions]="{width: 200, dateSerializationFormat: 'yyyy-MM-dd'}">
         <dxi-validation-rule
           type="required"
