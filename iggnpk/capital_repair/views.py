@@ -127,7 +127,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
         item = NotifySerializer(data=request.data, exclude=exclude_fields)
         item.is_valid()
         if item.is_valid():
-            status = NotifyStatus.objects.get(id=1)
+            status = NotifyStatus.objects.get(id=request.data['status']['id'])
             branch = Branch.objects.get(id=request.data['credit_organization_branch']['id'])
             house, created = House.objects.get_or_create(address_id=request.data['house']['address']['id'], number=request.data['house']['number'])
 
@@ -135,8 +135,14 @@ class NotifiesViewSet(viewsets.ModelViewSet):
                 org = Organization.objects.get(id=request.data['organization']['id'])
             else:
                 org = request.user.organization
+            files = []
+            if 'files' in request.data:
+                if request.data['files'] != 'empty':
+                    for file in request.data['files']:
+                        files.append(File.objects.get(id=file['id']))
+
             item.save(organization=org, date=datetime.today().date(), status=status,
-                      credit_organization_branch=branch, house=house)
+                      credit_organization_branch=branch, files=files, house=house)
             return Response(item.data)
         else:
             return Response(status=400)
