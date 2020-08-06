@@ -46,7 +46,6 @@ export class CapitalRepairNotifiesComponent implements OnInit {
         [
           "skip",
           "take",
-
           "sort",
           "filter",
           "totalSummary",

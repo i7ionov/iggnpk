@@ -78,7 +78,6 @@ WSGI_APPLICATION = 'iggnpk.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 
-
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
@@ -123,6 +122,8 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+
+
 ]
 
 REST_FRAMEWORK = {
@@ -133,4 +134,3 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication'
     )
 }
-

@@ -101,7 +101,6 @@ class NotifiesViewSet(viewsets.ModelViewSet):
             d, total_count = dev_extreme.populate_group_category(request, queryset)
             data = {"totalCount": total_count, "items": d}
         else:
-
             queryset, total_count = dev_extreme.filtered_query(request, queryset)
             serializer = NotifySerializer(queryset, many=True, exclude=exclude_fields)
             data = {'items': serializer.data, 'totalCount': total_count}
