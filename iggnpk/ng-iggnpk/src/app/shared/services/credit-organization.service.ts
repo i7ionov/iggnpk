@@ -9,8 +9,6 @@ export class CreditOrganization {
   id: number;
   name?: string;
   inn?: string;
-  bik?: string;
-  correspondent_account?: string;
 
   constructor() {
     this.id = 0;
@@ -26,6 +24,8 @@ export class Branch {
   id: number;
   credit_organization?: CreditOrganization;
   address?: string;
+  bik?: string;
+  correspondent_account?: string;
   kpp?: string;
 
   constructor() {

@@ -1,8 +1,16 @@
 from datetime import datetime
 
 import xlrd
-from dictionaries.models import Organization, Address, House
+from dictionaries.models import Organization, Address, House, OrganizationType
 from capital_repair import models
+
+
+def cut_value(val, comment):
+    if '(' in str(val):
+        return val[:val.find('(')].strip(), comment + ": " + val[val.find('('):].strip() + ". "
+    else:
+        return val, ''
+
 
 
 def notifies():
@@ -10,16 +18,13 @@ def notifies():
     sheet = rb.sheet_by_index(0)
     for rownum in range(5, sheet.nrows):
 
-
+        print(sheet.cell(rownum, 0).value)
         notify = models.Notify()
+        notify.comment2 = ''
         try:
             notify.date = datetime.strptime(sheet.cell(rownum, 1).value, '%d.%m.%Y')
         except TypeError: pass
         street = sheet.cell(rownum, 4).value.strip()
-        print(sheet.cell(rownum, 0).value)
-        print(sheet.cell(rownum, 2).value)
-        print(sheet.cell(rownum, 3).value)
-        print(street)
 
         if str(street).__contains__('Бульвар'):
             street = street.replace('Бульвар', 'б-р')
@@ -86,7 +91,6 @@ def notifies():
             replace('г.Пермь', 'Пермский'). \
             replace('Пермский край', '')
 
-        print(street)
         city = sheet.cell(rownum, 3).value.replace('Ё', 'Е')\
             .replace('пос. Железнодорожный', 'п. Железнодорожный') \
             .replace('д. Усть-Сыны', 'с. Усть-Сыны') \
@@ -100,15 +104,47 @@ def notifies():
             .replace('пгт.Павловский', 'п. Павловский') \
             .replace('ст. ', 'ст.п ') \
             .strip()
-        print(city)
+
         if city == 'п. Полазна':
             area = 'Добрянский'
         addr = Address.objects.filter(area__contains=area, city=city, street=street).first()
+        notify.house, created = House.objects.get_or_create(address_id=addr.id, number=sheet.cell(rownum, 5).value)
+        temp, com = cut_value(sheet.cell(rownum, 14).value, 'Дата включения в программу КР')
+        notify.comment2 += com
 
+        try:
+            notify.house.date_of_inclusion = datetime.strptime(temp, '%d.%m.%Y')
+        except ValueError:
+            pass
 
+        temp, com = cut_value(sheet.cell(rownum, 13).value, 'Включен в программу КР')
+        notify.comment2 += com
+        notify.house.included_in_the_regional_program = temp == 'Включен'
+        notify.house.save()
 
+        org, created = Organization.objects.get_or_create(inn=str(sheet.cell(rownum, 10).value).strip())
+        if created:
+            org.name = sheet.cell(rownum, 9).value.strip()
+            org.ogrn = 'нет'
+            org.type = OrganizationType.objects.get(text=sheet.cell(rownum, 8).value.strip())
+        org.save()
+        notify.comment2 = notify.comment2 + " " + sheet.cell(rownum, 11).value
 
-        print(addr.street)
+        name, com = cut_value(sheet.cell(rownum, 15).value, 'Банк')
+        notify.comment2 += com
+
+        inn, com = cut_value(sheet.cell(rownum, 17).value, 'ИНН')
+        notify.comment2 += com
+
+        bik, com = cut_value(sheet.cell(rownum, 19).value, 'БИК')
+        notify.comment2 += com
+
+        bank, created = models.CreditOrganization.objects.get_or_create(name=name,
+                                                                        inn=inn,
+                                                                        bik=bik)
+        branch, created = models.Branch.objects.get_or_create(address=sheet.cell(rownum, 16).value,
+                                                              kpp=sheet.cell(rownum, 18).value)
+        notify.credit_organization_branch = branch
 
 """     
             notify.house, created = House.objects.get_or_create(address_id=addr.id, number=sheet.cell(rownum, 5).value)

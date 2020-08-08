@@ -10,8 +10,7 @@ from simple_history.models import HistoricalRecords
 class CreditOrganization(models.Model):
     name = models.CharField(max_length=100, verbose_name='Наименование кредитной организации')
     inn = models.CharField(max_length=100, blank=True, verbose_name='ИНН')
-    bik = models.CharField(max_length=100, blank=True, verbose_name='БИК')
-    correspondent_account = models.CharField(max_length=30, blank=True, verbose_name='Корреспондентский счет')
+
     history = HistoricalRecords()
 
     def __str__(self):
@@ -23,6 +22,8 @@ class Branch(models.Model):
                                             blank=True)
     address = models.CharField(max_length=100, verbose_name='Адрес')
     kpp = models.CharField(max_length=100, blank=True, verbose_name='КПП')
+    bik = models.CharField(max_length=100, blank=True, verbose_name='БИК')
+    correspondent_account = models.CharField(max_length=30, blank=True, verbose_name='Корреспондентский счет')
     history = HistoricalRecords()
 
     def __str__(self):

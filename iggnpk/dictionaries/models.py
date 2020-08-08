@@ -83,10 +83,6 @@ class File(models.Model):
         verbose_name = "Файл"
 
 
-class InclusionInTheRegionalProgram(models.Model):
-    text = models.CharField(max_length=100, verbose_name='Район')
-
-
 class HouseManager(models.Manager):
     def get_or_create_new(self, field, data, instance):
         if field in data:
@@ -109,8 +105,7 @@ class House(models.Model):
     address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, verbose_name='Адрес')
     organization = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True, verbose_name='Организация',
                                      blank=True)
-    included_in_the_regional_program = models.ForeignKey(InclusionInTheRegionalProgram, on_delete=models.PROTECT,
-                                                         null=True, blank=True)
+    included_in_the_regional_program = models.BooleanField(null=True, blank=True)
     date_of_inclusion = models.DateField(
         verbose_name='Дата включения МКД в Региональную программу капитального ремонта', null=True, blank=True)
     history = HistoricalRecords()
