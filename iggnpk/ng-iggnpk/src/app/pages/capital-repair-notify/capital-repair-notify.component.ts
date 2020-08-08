@@ -28,6 +28,8 @@ import {CapitalRepairNotifiesComponent} from "../capital-repair-notifies/capital
 import {DxTextBoxModule} from "devextreme-angular/ui/text-box";
 import {FileSizePipe} from "../../shared/pipes/filesize.pipe";
 
+
+
 @Component({
   selector: 'app-capital-repair-notify',
   templateUrl: './capital-repair-notify.component.html',
@@ -119,7 +121,10 @@ export class CapitalRepairNotifyComponent implements OnInit {
         )
       }
       else {
-
+        let a = new Date();
+        console.log(a.getDate());
+        a.getFullYear();
+        this.notify.date = `${a.getFullYear()}-${a.getMonth()+1}-${a.getDate()}`;
         this.sendForApprovalButtonVisibility = true;
         this.saveButtonVisibility = true;
       }

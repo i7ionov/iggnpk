@@ -144,7 +144,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
                       credit_organization_branch=branch, files=files, house=house)
             return Response(item.data)
         else:
-            return Response(status=400)
+            return Response(item.errors, status=400)
 
     def update(self, request, *args, **kwargs):
         exclude_fields = []

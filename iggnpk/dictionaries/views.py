@@ -69,6 +69,7 @@ class HouseViewSet(viewsets.ModelViewSet):
             data = {"totalCount": total_count, "items": d}
         else:
             queryset, total_count = dev_extreme.filtered_query(request, self.queryset)
+            queryset = queryset[:10]
             serializer = HouseSerializer(queryset, many=True)
             data = {'items': serializer.data, 'totalCount': total_count}
         return Response(data)
@@ -107,6 +108,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
             queryset = self.queryset
             for keyword in keywords:
                 queryset = queryset.filter(Q(inn__icontains=keyword) | Q(name__icontains=keyword))
+            queryset = queryset[:10]
             serializer = self.serializer_class(queryset, many=True)
             data = {'items': serializer.data}
             return Response(data)
