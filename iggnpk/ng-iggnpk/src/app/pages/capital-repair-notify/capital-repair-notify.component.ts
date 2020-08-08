@@ -8,7 +8,7 @@ import {
   DxFileUploaderModule,
   DxFormComponent, DxFormModule,
   DxPopupModule,
-  DxTemplateModule
+  DxTemplateModule, DxTextAreaModule
 } from "devextreme-angular";
 import {getDifference} from "../../shared/diff";
 import notify from 'devextreme/ui/notify';
@@ -249,6 +249,7 @@ enum SubmitType {
     DxButtonModule,
     DxCheckBoxModule,
     DxTextBoxModule,
+    DxTextAreaModule,
     DxValidatorModule,
     DxValidationGroupModule,
     DxPopupModule,
