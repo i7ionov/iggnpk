@@ -1,7 +1,7 @@
 import {Component, NgModule, OnInit, ViewChild} from '@angular/core';
 import {DxCheckBoxModule} from "devextreme-angular/ui/check-box";
 import {DxTextBoxModule} from "devextreme-angular/ui/text-box";
-import {Router, RouterModule} from "@angular/router";
+import {Router, RouterModule, Routes} from "@angular/router";
 import {CommonModule} from "@angular/common";
 import {DxValidatorModule} from "devextreme-angular/ui/validator";
 import {DxValidationGroupModule} from "devextreme-angular/ui/validation-group";
@@ -126,11 +126,13 @@ export class CapitalRepairNotifiesComponent implements OnInit {
   }
 
 }
-
+const routes: Routes = [
+  { path: '', component: CapitalRepairNotifiesComponent}
+];
 @NgModule({
   imports: [
     CommonModule,
-    RouterModule,
+    RouterModule.forChild(routes),
     DxButtonModule,
     DxCheckBoxModule,
     DxTextBoxModule,

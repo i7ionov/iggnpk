@@ -1,7 +1,7 @@
 import {AfterContentInit, AfterViewInit, Component, NgModule, OnInit, ViewChild} from '@angular/core';
 import {DxCheckBoxModule} from "devextreme-angular/ui/check-box";
 import {DxTextBoxModule} from "devextreme-angular/ui/text-box";
-import {Router, RouterModule} from "@angular/router";
+import {Router, RouterModule, Routes} from "@angular/router";
 import {CommonModule} from "@angular/common";
 import {DxValidatorModule} from "devextreme-angular/ui/validator";
 import {DxValidationGroupModule} from "devextreme-angular/ui/validation-group";
@@ -14,6 +14,7 @@ import CustomStore from 'devextreme/data/custom_store';
 import {UserService} from "../../shared/services/user.service";
 import {User} from 'src/app/shared/interfaces/user';
 import { confirm } from 'devextreme/ui/dialog';
+import {CapitalRepairNotifyComponent} from "../capital-repair-notify/capital-repair-notify.component";
 
 @Component({
   selector: 'app-users',
@@ -101,11 +102,13 @@ export class UsersComponent implements OnInit {
   }
 
 }
-
+const routes: Routes = [
+  { path: '', component: UsersComponent}
+];
 @NgModule({
   imports: [
     CommonModule,
-    RouterModule,
+    RouterModule.forChild(routes),
     DxButtonModule,
     DxCheckBoxModule,
     DxTextBoxModule,

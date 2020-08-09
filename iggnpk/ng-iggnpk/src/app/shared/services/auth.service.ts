@@ -52,7 +52,7 @@ export class AuthService {
 }
 
 @Injectable({providedIn: 'root'})
-export class AuthGuardService implements CanActivate {
+export class AuthGuardService implements CanActivate, CanLoad {
   constructor(private router: Router, private authService: AuthService) {
   }
 
@@ -83,6 +83,32 @@ export class AuthGuardService implements CanActivate {
     return promise;
   }
 
+  canLoad(route: Route): boolean | Observable<boolean> | Promise<boolean> {
+    let promise: Promise<boolean> = new Promise((resolve, reject) => {
+      if (this.authService.current_user) {
+        resolve(true);
+      }
+      else {
+        this.authService.getUserInfo().subscribe(user => {
+          if (user.id) {
+            this.authService.current_user = user;
+            resolve(true);
+          }
+          else {
+            resolve(false);
+            return localStorage.removeItem('token');
+            this.router.navigate(['auth/login-form']);
+          }
+        }, error1 => {
+          resolve(false);
+          this.router.navigate(['auth/login-form']);
+        })
+      }
+
+
+    });
+    return promise;
+  }
 }
 
 @Injectable({providedIn: 'root'})

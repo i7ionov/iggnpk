@@ -1,5 +1,5 @@
 import {Component, ElementRef, NgModule, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Params, Router, RouterModule} from "@angular/router";
+import {ActivatedRoute, Params, Router, RouterModule, Routes} from "@angular/router";
 import {CapitalRepairNotifyService, Notify} from "../../shared/services/capital-repair-notify.service";
 import {CommonModule, Location} from '@angular/common';
 import {
@@ -243,10 +243,14 @@ enum SubmitType {
   Accepting
 }
 
+const routes: Routes = [
+  { path: '', component: CapitalRepairNotifyComponent}
+];
+
 @NgModule({
   imports: [
     CommonModule,
-    RouterModule,
+    RouterModule.forChild(routes),
     DxFileUploaderModule,
     HouseInputModule,
     OrganizationSelectModule,

@@ -16,7 +16,6 @@ import {
   DxSelectBoxModule,
   DxValidatorModule
 } from 'devextreme-angular';
-import {CapitalRepairNotifyComponent} from './pages/capital-repair-notify/capital-repair-notify.component';
 import {HouseInputModule} from "./shared/components/house-input/house-input.component";
 import {FormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
@@ -26,7 +25,7 @@ import {AppComponent} from "./app.component";
 import {SideNavOuterToolbarComponent, SingleCardComponent} from "./layouts";
 import {RootLayoutComponent} from "./layouts/root-layout/root-layout.component";
 import {HomeComponent} from "./pages/home/home.component";
-import {CapitalRepairNotifiesComponent} from "./pages/capital-repair-notifies/capital-repair-notifies.component";
+
 import {UsersComponent} from "./pages/users/users.component";
 
 
@@ -47,20 +46,20 @@ const routes: Routes = [
           },
           {
             path: 'capital-repair-notifies',
-            component: CapitalRepairNotifiesComponent,
-            canActivate: [AuthGuardService]
+            loadChildren: () => import('./pages/capital-repair-notifies/capital-repair-notifies.component').then(m => m.CapitalRepairNotifiesModule),
+            canLoad: [AuthGuardService]
 
           },
           {
             path: 'capital-repair-notify/:id',
-            component: CapitalRepairNotifyComponent,
-            canActivate: [AuthGuardService]
+            loadChildren: () => import('./pages/capital-repair-notify/capital-repair-notify.component').then(m => m.CapitalRepairNotifyModule),
+            canLoad: [AuthGuardService]
 
           },
           {
             path: 'users',
-            component: UsersComponent,
-            canActivate: [AuthGuardService]
+            loadChildren: () => import('./pages/users/users.component').then(m => m.UsersModule),
+            canLoad: [AuthGuardService]
 
           },
           {
