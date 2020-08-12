@@ -32,7 +32,9 @@ def filtered_query(request, query, distinct_field=None):
     if distinct_field:
         distinct_field = distinct_field.replace('.', '__')
         query = query.distinct(distinct_field)
-    return query.order_by(order_by)[start:end], query, query.count()
+    else:
+        query = query.order_by(order_by)
+    return query[start:end], query, query.count()
 
 
 def build_q_object(filter_request):
@@ -96,6 +98,8 @@ def build_q_object(filter_request):
                     a = a + '__gt'
                 elif operator == '>=':
                     a = a + '__gte'
+                elif operator == '<>':
+                    a = a + '__ne'
                 return Q(**{a: temp})
             else:
                 if operator == 'and':

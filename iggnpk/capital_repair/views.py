@@ -130,6 +130,8 @@ class NotifiesViewSet(viewsets.ModelViewSet):
         item = NotifySerializer(data=request.data, exclude=exclude_fields)
         item.is_valid()
         if item.is_valid():
+            if request.data['status']['id']  > 2:
+                return Response('Неправильный статус', status=400)
             status = NotifyStatus.objects.get(id=request.data['status']['id'])
             branch = Branch.objects.get(id=request.data['credit_organization_branch']['id'])
             house, created = House.objects.get_or_create(address_id=request.data['house']['address']['id'], number=request.data['house']['number'])
@@ -173,6 +175,9 @@ class NotifiesViewSet(viewsets.ModelViewSet):
                 status = instance.status
             else:
                 status = NotifyStatus.objects.get(id=data['status']['id'])
+                # присваиваем всем другим записям с этим домом статус Исключено
+                if status.text == 'Согласовано':
+                    Notify.objects.filter(house_id=house.id).update(status_id=4)
         else:
             status = instance.status
 
