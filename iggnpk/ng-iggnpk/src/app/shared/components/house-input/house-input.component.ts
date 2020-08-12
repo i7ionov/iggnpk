@@ -6,7 +6,7 @@ import {
   Input,
   NgModule,
   OnInit,
-  Output, ViewChild
+  Output, QueryList, ViewChild, ViewChildren
 } from '@angular/core';
 import {
   DxAutocompleteComponent,
@@ -25,6 +25,8 @@ import DevExpress from "devextreme";
 import add = DevExpress.viz.map.projection.add;
 import {CustomStoreService} from "../../services/custom-store.service";
 import {Organization} from "../../interfaces/organization";
+import {DxValidatorModule} from 'devextreme-angular/ui/validator';
+import DataSource from "devextreme/data/data_source";
 
 @Component({
   selector: 'app-house-input',
@@ -42,7 +44,7 @@ import {Organization} from "../../interfaces/organization";
 export class HouseInputComponent implements OnInit {
   @ViewChild('houseAutocomplete', {static: false}) houseAutocomplete: DxAutocompleteComponent;
   @ViewChild("form", {static: false}) form: DxFormComponent;
-  ds: any = {};
+  ds: any;
 
 
   _value: House = new House();
@@ -62,7 +64,6 @@ export class HouseInputComponent implements OnInit {
       setTimeout(() => {
         this._value = new House();
         this.valueChange.emit(this._value);
-        console.log(this.value);
       });
 
     }
@@ -80,10 +81,11 @@ export class HouseInputComponent implements OnInit {
   constructor(private houseService: HousesService, private addressService: AddressService, private customStoreService: CustomStoreService) {
 
 
-    this.addresses = customStoreService.getSearchCustomStore(addressService)
+    this.addresses = customStoreService.getSearchCustomStore(addressService);
 
-    this.houses = customStoreService.getSearchCustomStore(houseService)
-
+    this.houses = new DataSource({
+      store: customStoreService.getSearchCustomStore(houseService)
+    });
 
   }
 
@@ -91,15 +93,13 @@ export class HouseInputComponent implements OnInit {
   }
 
 
-
   addressChange(addr) {
     let temp = this.value;
     temp.address = addr;
     this.value = temp;
-    if (this.houseAutocomplete) {
-      let ds = this.houseAutocomplete.instance.getDataSource();
-      ds.filter(['address_id', '=', addr.id])
-    }
+    this.houses.filter(['address_id', '=', addr.id]);
+    this.houses.load();
+
 
   }
 
@@ -113,8 +113,7 @@ export class HouseInputComponent implements OnInit {
     return (this.form.instance.validate());
   }
 
-  isNotNull(e){
-    console.log(e);
+  isNotNull(e) {
     return e.value && e.value.id > 0;
   }
 }
@@ -122,7 +121,7 @@ export class HouseInputComponent implements OnInit {
 @NgModule({
   declarations: [HouseInputComponent],
   exports: [HouseInputComponent],
-  imports: [DxSelectBoxModule, DxFormModule, DxAutocompleteModule, CommonModule]
+  imports: [DxSelectBoxModule, DxFormModule, DxAutocompleteModule, CommonModule, DxValidatorModule]
 })
 export class HouseInputModule {
 }

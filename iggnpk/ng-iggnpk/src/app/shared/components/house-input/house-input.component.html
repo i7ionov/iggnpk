@@ -16,9 +16,11 @@
                    searchEnabled="true" [value]="value.address" (valueChange)="addressChange($event)"></dx-select-box>
   </div>
 
-  <dxi-item
+  <dxi-item #houseAutocomplete
     dataField="number"
-    [template]="'numberTemplate'">
+    editorType="dxAutocomplete"
+  [editorOptions]="{dataSource:houses, value:value.number, valueChange:houseChange,
+                     searchExpr: 'number', valueExpr: 'number'}">
     <dxo-label text="Номер дома">
     </dxo-label>
     <dxi-validation-rule
@@ -26,14 +28,6 @@
       message="Номер дома обязателен для заполнения">
     </dxi-validation-rule>
   </dxi-item>
-  <div *dxTemplate="let data of 'numberTemplate'">
-    <dx-autocomplete #houseAutocomplete [dataSource]="houses" [value]="value.number" (valueChange)="houseChange($event)"
-                     searchExpr="number" valueExpr="number"></dx-autocomplete>
-  </div>
 
 </dx-form>
-
-
-
-
 
