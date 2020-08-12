@@ -68,7 +68,7 @@ class HouseViewSet(viewsets.ModelViewSet):
             d, total_count = dev_extreme.populate_group_category(request, self.queryset)
             data = {"totalCount": total_count, "items": d}
         else:
-            queryset, total_count = dev_extreme.filtered_query(request, self.queryset)
+            queryset, total_queryset, total_count = dev_extreme.filtered_query(request, self.queryset)
             queryset = queryset[:10]
             serializer = HouseSerializer(queryset, many=True)
             data = {'items': serializer.data, 'totalCount': total_count}
@@ -91,7 +91,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
             d, total_count = dev_extreme.populate_group_category(request, self.queryset)
             data = {"totalCount": total_count, "items": d}
         else:
-            queryset, total_count = dev_extreme.filtered_query(request, self.queryset)
+            queryset, total_queryset, total_count = dev_extreme.filtered_query(request, self.queryset)
             serializer = self.serializer_class(queryset, many=True, fields=['id', 'name', 'inn'])
             data = {'items': serializer.data, 'totalCount': total_count}
         return Response(data)
@@ -131,7 +131,7 @@ class AddressViewSet(viewsets.ModelViewSet):
             d, total_count = dev_extreme.populate_group_category(request, self.queryset)
             data = {"totalCount": total_count, "items": d}
         else:
-            queryset, total_count = dev_extreme.filtered_query(request, self.queryset)
+            queryset, total_queryset, total_count = dev_extreme.filtered_query(request, self.queryset)
             serializer = AddressSerializer(queryset, many=True)
             data = {'items': serializer.data, 'totalCount': total_count}
         return Response(data)
@@ -168,7 +168,7 @@ class UserViewSet(viewsets.ModelViewSet):
             d, total_count = dev_extreme.populate_group_category(request, self.queryset)
             data = {"totalCount": total_count, "items": d}
         else:
-            queryset, total_count = dev_extreme.filtered_query(request, self.queryset)
+            queryset, total_queryset, total_count = dev_extreme.filtered_query(request, self.queryset)
             serializer = self.serializer_class(queryset, many=True)
             data = {'items': serializer.data, 'totalCount': total_count}
         return Response(data)

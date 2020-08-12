@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from django.db.models import Avg, Sum
 from django.db.models import Q
 from rest_framework.parsers import FileUploadParser
 from rest_framework.views import APIView
@@ -26,7 +26,7 @@ class CreditOrganisationsViewSet(viewsets.ModelViewSet):
             d, total_count = dev_extreme.populate_group_category(request, CreditOrganization)
             data = {"totalCount": total_count, "items": d}
         else:
-            queryset, total_count = dev_extreme.filtered_query(request, CreditOrganization)
+            queryset, total_queryset, total_count = dev_extreme.filtered_query(request, CreditOrganization)
             serializer = self.serializer_class(queryset, many=True)
             data = {'items': serializer.data, 'totalCount': total_count}
         return Response(data)
@@ -59,7 +59,7 @@ class BranchViewSet(viewsets.ModelViewSet):
             d, total_count = dev_extreme.populate_group_category(request, Branch)
             data = {"totalCount": total_count, "items": d}
         else:
-            queryset, total_count = dev_extreme.filtered_query(request, Branch)
+            queryset, total_queryset, total_count = dev_extreme.filtered_query(request, Branch)
             serializer = BranchSerializer(queryset, many=True)
             data = {'items': serializer.data, 'totalCount': total_count}
         return Response(data)
@@ -101,9 +101,13 @@ class NotifiesViewSet(viewsets.ModelViewSet):
             d, total_count = dev_extreme.populate_group_category(request, queryset)
             data = {"totalCount": total_count, "items": d}
         else:
-            queryset, total_count = dev_extreme.filtered_query(request, queryset)
+            queryset, total_queryset, total_count = dev_extreme.filtered_query(request, queryset)
             serializer = NotifySerializer(queryset, many=True, exclude=exclude_fields)
-            data = {'items': serializer.data, 'totalCount': total_count}
+            data = {'items': serializer.data,
+                    'totalCount': total_count,
+                    'summary': [total_count,
+                                total_queryset.aggregate(Avg('monthly_contribution_amount'))['monthly_contribution_amount__avg'],
+                                total_queryset.aggregate(Sum('monthly_contribution_amount'))['monthly_contribution_amount__sum']]}
         return Response(data)
 
     def retrieve(self, request, pk=None):

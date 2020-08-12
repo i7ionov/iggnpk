@@ -32,7 +32,7 @@ def filtered_query(request, query, distinct_field=None):
     if distinct_field:
         distinct_field = distinct_field.replace('.', '__')
         query = query.distinct(distinct_field)
-    return query[start:end], query.count()
+    return query[start:end], query, query.count()
 
 
 def build_q_object(filter_request):

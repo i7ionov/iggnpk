@@ -66,7 +66,8 @@ export class CapitalRepairNotifiesComponent implements OnInit {
           .then((data: any) => {
             return {
               data: data.items,
-              totalCount: data.totalCount
+              totalCount: data.totalCount,
+              summary: data.summary
             };
           })
           .catch(error => {
