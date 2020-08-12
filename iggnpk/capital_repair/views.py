@@ -152,10 +152,14 @@ class NotifiesViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         exclude_fields = []
-        if not request.user.is_staff:
-            exclude_fields.append('comment2')
         data = request.data
         instance = self.get_object()
+
+        if not request.user.is_staff:
+            if instance.status.id > 2:
+                return Response('Вы не можете редактировать эту запись', status=400)
+            exclude_fields.append('comment2')
+
         serializer = self.serializer_class(instance=instance, data=data, partial=True, exclude=exclude_fields)
         serializer.is_valid(raise_exception=True)
         if request.user.is_staff:
@@ -164,7 +168,14 @@ class NotifiesViewSet(viewsets.ModelViewSet):
             org = instance.organization
         branch = upd_foreign_key('credit_organization_branch', data, instance, Branch)
         house = House.objects.get_or_create_new('house', data, instance)
-        status = upd_foreign_key('status', data, instance, NotifyStatus)
+        if 'status' in data:
+            if instance.status is not None and data['status']['id'] == instance.status.id:
+                status = instance.status
+            else:
+                status = NotifyStatus.objects.get(id=data['status']['id'])
+        else:
+            status = instance.status
+
         if 'files' in data:
             files = []
             if data['files'] != 'empty':
