@@ -32,7 +32,7 @@ def filtered_query(request, query, distinct_field=None):
     if distinct_field:
         distinct_field = distinct_field.replace('.', '__')
         query = query.distinct(distinct_field)
-    return query[start:end], query, query.count()
+    return query.order_by(order_by)[start:end], query, query.count()
 
 
 def build_q_object(filter_request):
@@ -125,8 +125,7 @@ def populate_group_category(request, queryset):
     result = []
     selector = groups[0]['selector']
     selector = selector.replace('.', '__')
-    print(selector)
-    items, count = filtered_query(request, queryset, selector)
+    items, totalItems, count = filtered_query(request, queryset, selector)
     if 'groupInterval' in groups[0]:
         if groups[0]['groupInterval'] == 'year':
             for item in items:

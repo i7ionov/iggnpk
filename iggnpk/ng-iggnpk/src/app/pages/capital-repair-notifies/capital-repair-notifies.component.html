@@ -7,7 +7,12 @@
                 [dataSource]="dataSource"
                 (onToolbarPreparing)="onToolbarPreparing($event)"
                 (onExporting)="onExporting($event)"
+                [allowColumnResizing]="true"
+                [allowColumnReordering]="true"
+                [showBorders]="true"
+                [showColumnLines]="true"
   >
+    <dxo-state-storing [enabled]="true" type="localStorage" storageKey="notifies-table-state"></dxo-state-storing>
     <dxo-paging [pageSize]="5"></dxo-paging>
     <dxo-remote-operations
       [groupPaging]="true">
@@ -129,7 +134,7 @@
         width="200"
         caption="Дата открытия"
         dataField="account_opening_date"
-        dataType="string">
+        dataType="date">
       </dxi-column>
     </dxi-column>
 
@@ -175,6 +180,7 @@
         summaryType="sum">
       </dxi-total-item>
     </dxo-summary>
+
     <dxo-export [enabled]="true"></dxo-export>
   </dx-data-grid>
 
