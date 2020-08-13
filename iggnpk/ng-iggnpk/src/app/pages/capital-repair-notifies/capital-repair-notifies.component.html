@@ -5,6 +5,7 @@
 
   <dx-data-grid id="gridContainer"
                 [dataSource]="dataSource"
+
                 (onToolbarPreparing)="onToolbarPreparing($event)"
                 (onExporting)="onExporting($event)"
                 [allowColumnResizing]="true"
@@ -13,6 +14,9 @@
                 [showColumnLines]="true"
   >
     <dxo-state-storing [enabled]="true" type="localStorage" storageKey="notifies-table-state"></dxo-state-storing>
+    <dxo-scrolling showScrollbar="always">
+
+    </dxo-scrolling>
     <dxo-paging [pageSize]="5"></dxo-paging>
     <dxo-remote-operations
       [groupPaging]="true">
