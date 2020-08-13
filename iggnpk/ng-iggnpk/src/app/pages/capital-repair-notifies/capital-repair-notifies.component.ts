@@ -25,7 +25,9 @@ export class CapitalRepairNotifiesComponent implements OnInit {
   @ViewChild(DxDataGridComponent, {static: false}) dataGrid: DxDataGridComponent;
   dataSource: any = {};
   currentFilter: any;
-
+  get height() {
+    return window.innerHeight / 1.35;
+}
   get comment_visibility() {
     return this.authService.current_user.permissions.findIndex(p=> p.codename=='view_comment2')>0
   }
