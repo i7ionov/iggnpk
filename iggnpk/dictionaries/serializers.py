@@ -65,7 +65,13 @@ class FileSerializer(DynamicFieldsModelSerializer):
         read_only_fields = ('created', 'datafile', 'owner', 'size', 'name')
 
     def get_size(self, obj):
-        return obj.datafile.size
+        try:
+            return obj.datafile.size
+        except FileNotFoundError:
+            return None
 
     def get_name(self, obj):
-        return obj.datafile.name
+        try:
+            return obj.datafile.name
+        except FileNotFoundError:
+            return None
