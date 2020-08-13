@@ -70,9 +70,9 @@
       <dxi-item dataField="monthly_contribution_amount" editorType="dxNumberBox" [editorOptions]="{}">
         <dxo-label text="Размер ежемесячного взноса"></dxo-label>
         <dxi-validation-rule
-            type="range"
-            [min]="0.01"
-            message="Размер ежемесячного взноса обязателен для заполнения">
+          type="range"
+          [min]="9.36"
+          message="Размер ежемесячного взноса должен быть не менее 9.36р.">
         </dxi-validation-rule>
         <dxi-validation-rule
           type="required"
@@ -92,61 +92,66 @@
       <dxi-item dataField="comment" editorType="dxTextArea" [editorOptions]="{ height: 90 }">
         <dxo-label text="Комментарий"></dxo-label>
       </dxi-item>
-      <dxi-item dataField="comment2" editorType="dxTextArea" [editorOptions]="{ height: 90 }" *ngIf="comment_visibility">
+
+      <dxi-item dataField="comment2" editorType="dxTextArea" [editorOptions]="{ height: 90 }"
+                *ngIf="comment_visibility">
         <dxo-label text="Комментарий(виден только сотрудникам)"></dxo-label>
       </dxi-item>
-
-      <dxi-item dataField="date_of_exclusion" editorType="dxDateBox"
-                [editorOptions]="{width: 200, dateSerializationFormat: 'yyyy-MM-dd' }">
-        <dxo-label text="Дата исключения"></dxo-label>
-      </dxi-item>
-      <dxi-item dataField="account_closing_date" editorType="dxDateBox"
-                [editorOptions]="{width: 200, dateSerializationFormat: 'yyyy-MM-dd' }">
-        <dxo-label text="Дата закрытия счета"></dxo-label>
-      </dxi-item>
-      <dxi-item dataField="ground_for_exclusion" [editorOptions]="{}">
-        <dxo-label
-          text="Основание для исключения"></dxo-label>
-      </dxi-item>
-      <dxi-item dataField="source_of_information" [editorOptions]="{}">
-        <dxo-label
-          text="Источник информации"></dxo-label>
+      <dxi-item itemType="group" caption="Информация об исключении" *ngIf="comment_visibility">
+        <dxi-item dataField="date_of_exclusion" editorType="dxDateBox"
+                  [editorOptions]="{width: 200, dateSerializationFormat: 'yyyy-MM-dd' }">
+          <dxo-label text="Дата исключения"></dxo-label>
+        </dxi-item>
+        <dxi-item dataField="account_closing_date" editorType="dxDateBox"
+                  [editorOptions]="{width: 200, dateSerializationFormat: 'yyyy-MM-dd' }">
+          <dxo-label text="Дата закрытия счета"></dxo-label>
+        </dxi-item>
+        <dxi-item dataField="ground_for_exclusion" [editorOptions]="{}">
+          <dxo-label
+            text="Основание для исключения"></dxo-label>
+        </dxi-item>
+        <dxi-item dataField="source_of_information" [editorOptions]="{}">
+          <dxo-label
+            text="Источник информации"></dxo-label>
+        </dxi-item>
       </dxi-item>
     </dx-form>
 
 
     <div>
 
-          <div class="dx-fileuploader-files-container">
-            <div *ngFor="let f of notify.files" class="dx-fileuploader-file-container">
-              <div class="dx-fileuploader-button-container">
-                <div
-                  class="dx-fileuploader-button dx-fileuploader-cancel-button dx-button dx-button-normal dx-button-mode-contained dx-widget dx-button-has-icon"
-                  role="button" aria-label="close" tabindex="0" (click)="fileDelete(f)">
-                  <div class="dx-button-content"><i class="dx-icon dx-icon-close"></i></div>
-                </div>
-              </div>
-              <div class="dx-fileuploader-button-container">
-                <div
-                  class="dx-fileuploader-button dx-fileuploader-upload-button dx-button dx-button-normal dx-button-mode-contained dx-widget dx-button-has-icon"
-                  role="button" aria-label="upload" tabindex="0">
-                  <div class="dx-button-content"><a href="{{ f.datafile }}"><i class="dx-icon dx-icon-download"></i></a> </div>
-                </div>
-              </div>
-              <div class="dx-fileuploader-file">
-                <div class="dx-fileuploader-file-info">
-                  <div class="dx-fileuploader-file-name" style="max-width: 876.719px;">{{ f.name }}
-                  </div>
-                  <!--<div class="dx-fileuploader-file-size">{{ f.size | filesize }}</div>-->
-                </div>
-                <div class="dx-fileuploader-file-status-message">{{ f.size | filesize }}</div>
+      <div class="dx-fileuploader-files-container">
+        <div *ngFor="let f of notify.files" class="dx-fileuploader-file-container">
+          <div class="dx-fileuploader-button-container">
+            <div
+              class="dx-fileuploader-button dx-fileuploader-cancel-button dx-button dx-button-normal dx-button-mode-contained dx-widget dx-button-has-icon"
+              role="button" aria-label="close" tabindex="0" (click)="fileDelete(f)">
+              <div class="dx-button-content"><i class="dx-icon dx-icon-close"></i></div>
+            </div>
+          </div>
+          <div class="dx-fileuploader-button-container">
+            <div
+              class="dx-fileuploader-button dx-fileuploader-upload-button dx-button dx-button-normal dx-button-mode-contained dx-widget dx-button-has-icon"
+              role="button" aria-label="upload" tabindex="0">
+              <div class="dx-button-content"><a href="{{ f.datafile }}"><i class="dx-icon dx-icon-download"></i></a>
               </div>
             </div>
           </div>
+          <div class="dx-fileuploader-file">
+            <div class="dx-fileuploader-file-info">
+              <div class="dx-fileuploader-file-name" style="max-width: 876.719px;">{{ f.name }}
+              </div>
+              <!--<div class="dx-fileuploader-file-size">{{ f.size | filesize }}</div>-->
+            </div>
+            <div class="dx-fileuploader-file-status-message">{{ f.size | filesize }}</div>
+          </div>
+        </div>
+      </div>
 
 
     </div>
-    <dx-file-uploader *ngIf="saveButtonVisibility" name="file" [uploadUrl]="uploadUrl" [uploadHeaders]="{'Authorization': uploadAuthorization}"
+    <dx-file-uploader *ngIf="saveButtonVisibility" name="file" [uploadUrl]="uploadUrl"
+                      [uploadHeaders]="{'Authorization': uploadAuthorization}"
 
                       (onUploaded)="onUploaded($event)" [showFileList]="true" [maxFileSize]="100*1024*1024"
                       [multiple]="true" [allowedFileExtensions]="['.doc', '.docx', '.pdf']">
@@ -161,6 +166,8 @@
                  (onClick)="onFormSubmit(SubmitType.Accepting)"></dx-button>
       <dx-button *ngIf="rejectButtonVisibility" type="danger" text="Вернуть" [width]="150"
                  (onClick)="onFormSubmit(SubmitType.Rejecting)"></dx-button>
+      <dx-button *ngIf="excludeButtonVisibility" type="danger" text="Исключить" [width]="150"
+                 (onClick)="onFormSubmit(SubmitType.Exclusion)"></dx-button>
 
 
     </div>

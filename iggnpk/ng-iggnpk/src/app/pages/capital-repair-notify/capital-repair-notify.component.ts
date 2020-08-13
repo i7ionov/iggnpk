@@ -29,7 +29,6 @@ import {DxTextBoxModule} from "devextreme-angular/ui/text-box";
 import {FileSizePipe} from "../../shared/pipes/filesize.pipe";
 
 
-
 @Component({
   selector: 'app-capital-repair-notify',
   templateUrl: './capital-repair-notify.component.html',
@@ -49,9 +48,8 @@ export class CapitalRepairNotifyComponent implements OnInit {
   get uploadUrl() {
     return `${environment.file_url}create/`
   }
-  get comment_visibility() {
-    return this.auth.current_user.permissions.findIndex(p=> p.codename=='view_comment2')>0
-  }
+
+  excludeButtonVisibility = false;
 
   id = '';
   notify: Notify = new Notify();
@@ -61,13 +59,16 @@ export class CapitalRepairNotifyComponent implements OnInit {
   rejectButtonVisibility = false;
   sendForApprovalButtonVisibility = false;
   saveButtonVisibility = false;
-  get organizationSelectIsReadOnly(){
-    if (this.auth.current_user)
-    {
+
+  get comment_visibility() {
+    return this.auth.current_user.permissions.findIndex(p => p.codename == 'view_comment2') > 0
+  }
+
+  get organizationSelectIsReadOnly() {
+    if (this.auth.current_user) {
       return this.auth.current_user.groups.indexOf(UserGroup.Admin) == -1
     }
-    else
-    {
+    else {
       return false
     }
   };
@@ -88,6 +89,7 @@ export class CapitalRepairNotifyComponent implements OnInit {
         this.sendForApprovalButtonVisibility = false;
         this.saveButtonVisibility = false;
         this.rejectButtonVisibility = true;
+        this.excludeButtonVisibility = false;
         if (user.groups.indexOf(UserGroup.Admin) != -1) {
           this.acceptButtonVisibility = true;
         }
@@ -97,12 +99,26 @@ export class CapitalRepairNotifyComponent implements OnInit {
         this.sendForApprovalButtonVisibility = true;
         this.rejectButtonVisibility = false;
         this.acceptButtonVisibility = false;
+        this.excludeButtonVisibility = false;
+      }
+      else if (this.notify.status.id == NotifyStatus.Approved) {
+        this.saveButtonVisibility = false;
+        this.sendForApprovalButtonVisibility = false;
+        this.rejectButtonVisibility = false;
+        this.acceptButtonVisibility = false;
+        this.excludeButtonVisibility = false;
+        if (user.groups.indexOf(UserGroup.Admin) != -1) {
+
+          this.excludeButtonVisibility = true;
+          this.saveButtonVisibility = true;
+        }
       }
       else {
         this.sendForApprovalButtonVisibility = false;
         this.rejectButtonVisibility = false;
         this.acceptButtonVisibility = false;
         this.saveButtonVisibility = false;
+        this.excludeButtonVisibility = false;
       }
     }
   }
@@ -124,7 +140,7 @@ export class CapitalRepairNotifyComponent implements OnInit {
         let a = new Date();
         console.log(a.getDate());
         a.getFullYear();
-        this.notify.date = `${a.getFullYear()}-${a.getMonth()+1}-${a.getDate()}`;
+        this.notify.date = `${a.getFullYear()}-${a.getMonth() + 1}-${a.getDate()}`;
         this.sendForApprovalButtonVisibility = true;
         this.saveButtonVisibility = true;
       }
@@ -144,9 +160,15 @@ export class CapitalRepairNotifyComponent implements OnInit {
   }
 
   onFormSubmit(e) {
-    const is_form_valid = this.form.instance.validate().isValid;
-    const is_credit_org_valid = this.credit_organization_select.validate().isValid;
-    const is_house_valid = this.house_input.validate().isValid;
+    let is_form_valid = true;
+    let is_credit_org_valid = true;
+    let is_house_valid = true;
+    if (e != SubmitType.Exclusion) {
+      is_form_valid = this.form.instance.validate().isValid;
+      is_credit_org_valid = this.credit_organization_select.validate().isValid;
+      is_house_valid = this.house_input.validate().isValid;
+    }
+
     if (is_form_valid &&
       is_credit_org_valid &&
       is_house_valid) {
@@ -164,14 +186,17 @@ export class CapitalRepairNotifyComponent implements OnInit {
           break;
         }
         case SubmitType.Saving: {
-          this.notify.status.id = NotifyStatus.Editing;
+          break;
+        }
+        case SubmitType.Exclusion: {
+          this.notify.status.id = NotifyStatus.Excluded;
           break;
         }
       }
       if (this.id != '0') {
         let n = getDifference(this.notify, this.clean_notify);
         if (n) {
-          if (this.notify.files.length==0){
+          if (this.notify.files.length == 0) {
             n[0].files = 'empty'
           }
           else {
@@ -233,18 +258,20 @@ export class CapitalRepairNotifyComponent implements OnInit {
 enum NotifyStatus {
   Editing = 1,
   Approving,
-  Approved
+  Approved,
+  Excluded
 }
 
 enum SubmitType {
   Saving = 1,
   Sending,
   Rejecting,
-  Accepting
+  Accepting,
+  Exclusion
 }
 
 const routes: Routes = [
-  { path: '', component: CapitalRepairNotifyComponent}
+  {path: '', component: CapitalRepairNotifyComponent}
 ];
 
 @NgModule({
