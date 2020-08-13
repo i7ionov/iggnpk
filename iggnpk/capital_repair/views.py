@@ -91,7 +91,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
     def list(self, request):
         exclude_fields = []
         if not request.user.is_staff:
-            exclude_fields.append('comment2')
+            exclude_fields.append('comment2').append('date_of_exclusion').append('account_closing_date').append('ground_for_exclusion').append('source_of_information')
         # пользователь видит уведомления только своей организации
         if not request.user.is_staff:
             queryset = self.queryset.filter(organization_id=request.user.organization.id)
@@ -113,7 +113,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk=None):
         exclude_fields = []
         if not request.user.is_staff:
-            exclude_fields.append('comment2')
+            exclude_fields.append('comment2').append('date_of_exclusion').append('account_closing_date').append('ground_for_exclusion').append('source_of_information')
         # пользователь видит уведомления только своей организации
         if not request.user.is_staff:
             queryset = self.queryset.filter(organization_id=request.user.organization.id)
@@ -126,7 +126,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         exclude_fields = []
         if not request.user.is_staff:
-            exclude_fields.append('comment2')
+            exclude_fields.append('comment2').append('date_of_exclusion').append('account_closing_date').append('ground_for_exclusion').append('source_of_information')
         item = NotifySerializer(data=request.data, exclude=exclude_fields)
         item.is_valid()
         if item.is_valid():
@@ -160,7 +160,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
         if not request.user.is_staff:
             if instance.status.id > 2:
                 return Response('Вы не можете редактировать эту запись', status=400)
-            exclude_fields.append('comment2')
+            exclude_fields.append('comment2').append('date_of_exclusion').append('account_closing_date').append('ground_for_exclusion').append('source_of_information')
 
         serializer = self.serializer_class(instance=instance, data=data, partial=True, exclude=exclude_fields)
         serializer.is_valid(raise_exception=True)
