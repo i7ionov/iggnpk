@@ -88,6 +88,12 @@
         dataField="organization.inn"
         dataType="string">
       </dxi-column>
+      <dxi-column
+        width="200"
+        caption="Тип организации"
+        dataField="organization.type.text"
+        dataType="string">
+      </dxi-column>
     </dxi-column>
     <dxi-column caption="Кредитная организация, в которой открыт специальный счет">
       <dxi-column
@@ -166,6 +172,33 @@
                 caption="Комментарий2"
                 dataField="comment2"
                 dataType="string">
+    </dxi-column>
+    <dxi-column *ngIf="comment_visibility"
+                caption="Исключение">
+      <dxi-column
+        width="100"
+        caption="Дата исключения"
+        dataField="date_of_exclusion"
+        dataType="date">
+      </dxi-column>
+      <dxi-column
+        width="100"
+        caption="Дата закрытия счета"
+        dataField="account_closing_date"
+        dataType="date">
+      </dxi-column>
+      <dxi-column
+        width="200"
+        caption="Основание для исключения"
+        dataField="ground_for_exclusion"
+        dataType="string">
+      </dxi-column>
+      <dxi-column
+        width="200"
+        caption="Источник информации"
+        dataField="source_of_information"
+        dataType="string">
+      </dxi-column>
     </dxi-column>
     <div *dxTemplate="let cell of 'idCellTemplate'">
       <a [routerLink]="['/pages/capital-repair-notify/', cell.text]">{{ cell.text }}</a>

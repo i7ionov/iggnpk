@@ -177,7 +177,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
                 status = NotifyStatus.objects.get(id=data['status']['id'])
                 # присваиваем всем другим записям с этим домом статус Исключено
                 if status.text == 'Согласовано':
-                    Notify.objects.filter(house_id=house.id).update(status_id=4)
+                    Notify.objects.filter(house_id=house.id, status_id=3).update(status_id=4, date_of_exclusion=datetime.now())
         else:
             status = instance.status
 

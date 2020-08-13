@@ -56,6 +56,11 @@ class Notify(models.Model):
     comment2 = models.TextField(verbose_name='Комментарий', null=True, blank=True)
     status = models.ForeignKey(NotifyStatus, on_delete=models.SET_NULL, null=True, verbose_name='Статус',
                                      blank=True, default=None)
+    date_of_exclusion = models.DateField(verbose_name='Дата исключения', null=True, blank=True)
+    account_closing_date = models.DateField(verbose_name='Дата закрытия счета', null=True, blank=True)
+    ground_for_exclusion = models.CharField(max_length=300, verbose_name='Основание для исключения', null=True, blank=True)
+    source_of_information = models.CharField(max_length=300, verbose_name='Источник получения информации', null=True, blank=True)
+
     files = models.ManyToManyField(File)
     history = HistoricalRecords()
 

@@ -96,7 +96,25 @@
         <dxo-label text="Комментарий(виден только сотрудникам)"></dxo-label>
       </dxi-item>
 
+      <dxi-item dataField="date_of_exclusion" editorType="dxDateBox"
+                [editorOptions]="{width: 200, dateSerializationFormat: 'yyyy-MM-dd' }">
+        <dxo-label text="Дата исключения"></dxo-label>
+      </dxi-item>
+      <dxi-item dataField="account_closing_date" editorType="dxDateBox"
+                [editorOptions]="{width: 200, dateSerializationFormat: 'yyyy-MM-dd' }">
+        <dxo-label text="Дата закрытия счета"></dxo-label>
+      </dxi-item>
+      <dxi-item dataField="ground_for_exclusion" [editorOptions]="{}">
+        <dxo-label
+          text="Основание для исключения"></dxo-label>
+      </dxi-item>
+      <dxi-item dataField="source_of_information" [editorOptions]="{}">
+        <dxo-label
+          text="Источник информации"></dxo-label>
+      </dxi-item>
     </dx-form>
+
+
     <div>
 
           <div class="dx-fileuploader-files-container">
