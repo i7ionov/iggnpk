@@ -11,7 +11,24 @@ def cut_value(val, comment):
     else:
         return val, ''
 
-
+def houses():
+    rb = xlrd.open_workbook('C:\\Users\\ivsemionov\\Desktop\\reestr_licensing.xlsx')
+    sheet = rb.sheet_by_index(1)
+    for rownum in range(5, sheet.nrows):
+        print(sheet.cell(rownum, 0).value)
+        # адрес дома
+        number = sheet.cell(rownum, 6).value.strip()
+        street = sheet.cell(rownum, 5).value.strip()
+        city = sheet.cell(rownum, 4).value.strip()
+        area = sheet.cell(rownum, 3).value.strip()
+        addr = Address.objects.filter(area__contains=area, city=city, street=street).first()
+        house, created = House.objects.get_or_create(address_id=addr.id, number=number)
+        # организация
+        inn = sheet.cell(rownum, 1).value.strip()
+        name = sheet.cell(rownum, 2).value.strip()
+        org, created = Organization.objects.get_or_create(inn=inn)
+        house.organization = org
+        house.save()
 
 def notifies():
     rb = xlrd.open_workbook('C:\\Users\\User\\Desktop\\Code\\iggnpk\\iggnpk\\notify.xlsx')
