@@ -63,6 +63,12 @@ const routes: Routes = [
 
           },
           {
+            path: 'houses',
+            loadChildren: () => import('./pages/houses/houses.component').then(m => m.HousesModule),
+            canLoad: [AuthGuardService]
+
+          },
+          {
             path: '**',
             redirectTo: 'home',
             canActivate: [AuthGuardService]

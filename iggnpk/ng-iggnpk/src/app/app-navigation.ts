@@ -28,6 +28,10 @@ export const navigation = [
       {
         text: 'Пользователи',
         path: 'pages/users'
+      },
+      {
+        text: 'Дома',
+        path: 'pages/houses'
       }
     ]
   }
