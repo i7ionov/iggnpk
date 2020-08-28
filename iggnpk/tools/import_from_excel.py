@@ -14,19 +14,23 @@ def cut_value(val, comment):
 def houses():
     rb = xlrd.open_workbook('C:\\Users\\ivsemionov\\Desktop\\reestr_licensing.xlsx')
     sheet = rb.sheet_by_index(1)
-    for rownum in range(5, sheet.nrows):
+    for rownum in range(6, sheet.nrows):
         print(sheet.cell(rownum, 0).value)
         # адрес дома
-        number = sheet.cell(rownum, 6).value.strip()
-        street = sheet.cell(rownum, 5).value.strip()
+        number = str(sheet.cell(rownum, 6).value).strip()
+        street = sheet.cell(rownum, 5).value.strip().replace('.0')
         city = sheet.cell(rownum, 4).value.strip()
         area = sheet.cell(rownum, 3).value.strip()
+        print(f'{area} {city} {street} {number}')
         addr = Address.objects.filter(area__contains=area, city=city, street=street).first()
         house, created = House.objects.get_or_create(address_id=addr.id, number=number)
         # организация
-        inn = sheet.cell(rownum, 1).value.strip()
+        inn = str(sheet.cell(rownum, 1).value).strip()
         name = sheet.cell(rownum, 2).value.strip()
         org, created = Organization.objects.get_or_create(inn=inn)
+        if created:
+            org.name = name
+            org.save()
         house.organization = org
         house.save()
 
@@ -41,7 +45,7 @@ def notifies():
         try:
             notify.date = datetime.strptime(sheet.cell(rownum, 1).value, '%d.%m.%Y')
         except TypeError: pass
-        street = sheet.cell(rownum, 4).value.strip()
+        street = sheet.cell(rownum, 6).value.strip()
 
         if str(street).__contains__('Бульвар'):
             street = street.replace('Бульвар', 'б-р')
@@ -108,7 +112,7 @@ def notifies():
             replace('г.Пермь', 'Пермский'). \
             replace('Пермский край', '')
 
-        city = sheet.cell(rownum, 3).value.replace('Ё', 'Е')\
+        city = sheet.cell(rownum, 4).value.replace('Ё', 'Е')\
             .replace('пос. Железнодорожный', 'п. Железнодорожный') \
             .replace('д. Усть-Сыны', 'с. Усть-Сыны') \
             .replace('п. Звездный', 'пгт. Звездный') \
@@ -125,8 +129,8 @@ def notifies():
         if city == 'п. Полазна':
             area = 'Добрянский'
         addr = Address.objects.filter(area__contains=area, city=city, street=street).first()
-        notify.house, created = House.objects.get_or_create(address_id=addr.id, number=sheet.cell(rownum, 5).value)
-        temp, com = cut_value(sheet.cell(rownum, 14).value, 'Дата включения в программу КР')
+        notify.house, created = House.objects.get_or_create(address_id=addr.id, number=sheet.cell(rownum, 7).value)
+        temp, com = cut_value(sheet.cell(rownum, 16).value, 'Дата включения в программу КР')
         notify.comment2 += com
 
         try:
@@ -134,34 +138,30 @@ def notifies():
         except ValueError:
             pass
 
-        temp, com = cut_value(sheet.cell(rownum, 13).value, 'Включен в программу КР')
+        temp, com = cut_value(sheet.cell(rownum, 15).value, 'Включен в программу КР')
         notify.comment2 += com
         notify.house.included_in_the_regional_program = temp == 'Включен'
         notify.house.save()
 
-        org, created = Organization.objects.get_or_create(inn=str(sheet.cell(rownum, 10).value).strip())
+        org, created = Organization.objects.get_or_create(inn=str(sheet.cell(rownum, 12).value).strip())
         if created:
-            org.name = sheet.cell(rownum, 9).value.strip()
+            org.name = sheet.cell(rownum, 11).value.strip()
             org.ogrn = 'нет'
-            org.type = OrganizationType.objects.get(text=sheet.cell(rownum, 8).value.strip())
+            org.type = OrganizationType.objects.get(text=sheet.cell(rownum, 10).value.strip())
         org.save()
-        notify.comment2 = notify.comment2 + " " + sheet.cell(rownum, 11).value
+        notify.comment2 = notify.comment2 + " " + sheet.cell(rownum, 13).value
 
-        name, com = cut_value(sheet.cell(rownum, 15).value, 'Банк')
+        name, com = cut_value(sheet.cell(rownum, 17).value, 'Банк')
         notify.comment2 += com
 
-        inn, com = cut_value(sheet.cell(rownum, 17).value, 'ИНН')
+        inn, com = cut_value(sheet.cell(rownum, 19).value, 'ИНН')
         notify.comment2 += com
 
-        bik, com = cut_value(sheet.cell(rownum, 19).value, 'БИК')
+        bik, com = cut_value(sheet.cell(rownum, 21).value, 'БИК')
         notify.comment2 += com
 
-        bank, created = models.CreditOrganization.objects.get_or_create(name=name,
-                                                                        inn=inn,
-                                                                        bik=bik)
-        branch, created = models.Branch.objects.get_or_create(address=sheet.cell(rownum, 16).value,
-                                                              kpp=sheet.cell(rownum, 18).value)
-        notify.credit_organization_branch = branch
+        bank = models.CreditOrganization.objects.get(inn=inn)
+        notify.bank = bank
 
 """     
             notify.house, created = House.objects.get_or_create(address_id=addr.id, number=sheet.cell(rownum, 5).value)
