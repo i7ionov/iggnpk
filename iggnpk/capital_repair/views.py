@@ -133,7 +133,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
             if request.data['status']['id']  > 2:
                 return Response('Неправильный статус', status=400)
             status = NotifyStatus.objects.get(id=request.data['status']['id'])
-            branch = Branch.objects.get(id=request.data['credit_organization_branch']['id'])
+            bank = CreditOrganization.objects.get(id=request.data['bank']['id'])
             house, created = House.objects.get_or_create(address_id=request.data['house']['address']['id'], number=request.data['house']['number'])
 
             if request.user.is_staff:
@@ -147,7 +147,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
                         files.append(File.objects.get(id=file['id']))
 
             item.save(organization=org, date=datetime.today().date(), status=status,
-                      credit_organization_branch=branch, files=files, house=house)
+                      bank=bank, files=files, house=house)
             return Response(item.data)
         else:
             return Response(item.errors, status=400)
@@ -168,7 +168,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
             org = upd_foreign_key('organization', data, instance, Organization)
         else:
             org = instance.organization
-        branch = upd_foreign_key('credit_organization_branch', data, instance, Branch)
+        bank = upd_foreign_key('bank', data, instance, CreditOrganization)
         house = House.objects.get_or_create_new('house', data, instance)
         if 'status' in data:
             if instance.status is not None and data['status']['id'] == instance.status.id:
@@ -189,5 +189,5 @@ class NotifiesViewSet(viewsets.ModelViewSet):
         else:
             files = instance.files.all()
 
-        serializer.save(organization=org, credit_organization_branch=branch, house=house, files=files, status=status)
+        serializer.save(organization=org, bank=bank, house=house, files=files, status=status)
         return Response(serializer.data)

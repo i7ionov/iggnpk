@@ -11,8 +11,8 @@ import {
 import {DxFormComponent, DxFormModule, DxSelectBoxModule, DxValidatorModule} from "devextreme-angular";
 import {CommonModule} from "@angular/common";
 import {
-  Branch,
-  BranchService
+  CreditOrganization,
+  CreditOrganizationService
 } from "../../services/credit-organization.service";
 import {CustomStoreService} from "../../services/custom-store.service";
 import DevExpress from "devextreme";
@@ -29,20 +29,20 @@ import dxValidator = DevExpress.ui.dxValidator;
 
 export class CreditOrganizationSelectComponent implements OnInit {
   @ViewChild("form", {static: false}) form: DxFormComponent;
-  @Input() value: Branch = new Branch();
-  @Output() valueChange = new EventEmitter<Branch>();
-  branches: any = {};
+  @Input() value: CreditOrganization = new CreditOrganization();
+  @Output() valueChange = new EventEmitter<CreditOrganization>();
+  creditOrganizations: any = {};
   @Input() required: boolean = true;
 
 
-  branchDisplayExpr(item) {
+  creditOrganizationDisplayExpr(item) {
     // "item" can be null
-    return item && `${item.credit_organization.name} ИНН: ${item.credit_organization.inn} КПП: ${item.kpp} Адрес:${item.address}`;
+    return item && `${item.name} ИНН: ${item.inn}`;
   }
 
-  constructor(private branchService: BranchService, private customStoreService: CustomStoreService) {
+  constructor(private creditOrganizationService: CreditOrganizationService, private customStoreService: CustomStoreService) {
 
-    this.branches = customStoreService.getSearchCustomStore(branchService);
+    this.creditOrganizations = customStoreService.getSearchCustomStore(creditOrganizationService);
 
   }
 
@@ -50,7 +50,7 @@ export class CreditOrganizationSelectComponent implements OnInit {
   }
 
 
-  branchChange(val: any) {
+  creditOrganizationChange(val: any) {
     this.valueChange.emit(val)
   }
 

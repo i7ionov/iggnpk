@@ -41,12 +41,12 @@
 
 
       <dxi-item
-        dataField="credit_organization"
+        dataField="bank"
         [template]="'credOrgTemplate'">
         <dxo-label [visible]="false"></dxo-label>
       </dxi-item>
       <div *dxTemplate="let data of 'credOrgTemplate'">
-        <app-credit-organization-select #credit_organization_select [(value)]="notify.credit_organization_branch">
+        <app-credit-organization-select #credit_organization_select [(value)]="notify.bank">
         </app-credit-organization-select>
       </div>
 

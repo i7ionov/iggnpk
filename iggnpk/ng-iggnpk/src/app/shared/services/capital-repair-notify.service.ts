@@ -5,7 +5,7 @@ import {Router} from "@angular/router";
 import {HttpClient} from "@angular/common/http";
 import {House} from "./house.service";
 import {Organization} from "../interfaces/organization";
-import {Branch} from "./credit-organization.service";
+import {CreditOrganization} from "./credit-organization.service";
 
 export class NotifyStatus {
   id: number;
@@ -21,7 +21,7 @@ export class Notify {
   date?: string;
   house?: House;
   organization?: Organization;
-  credit_organization_branch?: Branch;
+  bank?: CreditOrganization;
   account_number?: string;
   account_opening_date?: string;
   monthly_contribution_amount?: number;
@@ -33,7 +33,7 @@ export class Notify {
     this.id = 0;
     this.house = new House();
     this.organization = new Organization();
-    this.credit_organization_branch = new Branch();
+    this.bank = new CreditOrganization();
     this.files = [];
     this.status = new NotifyStatus();
   }

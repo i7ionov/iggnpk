@@ -29,7 +29,7 @@ class NotifyStatusSerializer(DynamicFieldsModelSerializer):
 
 class NotifySerializer(DynamicFieldsModelSerializer):
     organization = OrganizationSerializer(required=False, read_only=True)
-    credit_organization_branch = BranchSerializer(required=False, read_only=True)
+    bank = CreditOrganisationSerializer(required=False, read_only=True)
     house = HouseSerializer(required=False, read_only=True)
     files = FileSerializer(required=False, read_only=True, many=True)
     status = NotifyStatusSerializer(required=False, read_only=True)

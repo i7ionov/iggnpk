@@ -186,6 +186,9 @@ export class CapitalRepairNotifyComponent implements OnInit {
           break;
         }
         case SubmitType.Saving: {
+          if (this.notify.status.id==0){
+            this.notify.status.id = NotifyStatus.Editing;
+          }
           break;
         }
         case SubmitType.Exclusion: {

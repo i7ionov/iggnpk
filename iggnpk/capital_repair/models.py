@@ -48,6 +48,9 @@ class Notify(models.Model):
     credit_organization_branch = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True,
                                             verbose_name='Кредитная организация',
                                             blank=True)
+    bank = models.ForeignKey(CreditOrganization, on_delete=models.SET_NULL, null=True,
+                                                   verbose_name='Кредитная организация',
+                                                   blank=True)
     account_number = models.CharField(max_length=300, blank=True, verbose_name='Номер счета')
     account_opening_date = models.DateField(verbose_name='Дата открытия счета')
     monthly_contribution_amount = models.FloatField(verbose_name='Ежемесячный размер взноса')

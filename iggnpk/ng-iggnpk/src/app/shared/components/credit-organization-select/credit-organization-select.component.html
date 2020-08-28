@@ -1,19 +1,19 @@
 <dx-form #form>
   <dxi-item
-    dataField="branch"
-    [template]="'branchTemplate'">
-    <dxo-label text="Филиал кредитной организации">
+    dataField="creditOrganization"
+    [template]="'creditOrganizationTemplate'">
+    <dxo-label text="Кредитная организация">
 
     </dxo-label>
 <dxi-validation-rule
         type="custom"
         [validationCallback]="isNotNull"
-        message="Филиал кредитной организации обязателен для заполнения123">
+        message="Кредитная организации обязателна для заполнения">
       </dxi-validation-rule>
   </dxi-item>
-  <div *dxTemplate="let data of 'branchTemplate'">
-    <dx-select-box [dataSource]="branches" [displayExpr]="branchDisplayExpr" class="dx-invalid"
-                   searchEnabled="true" [value]="value" (valueChange)="branchChange($event)">
+  <div *dxTemplate="let data of 'creditOrganizationTemplate'">
+    <dx-select-box [dataSource]="creditOrganizations" [displayExpr]="creditOrganizationDisplayExpr" class="dx-invalid"
+                   searchEnabled="true" [value]="value" (valueChange)="creditOrganizationChange($event)">
       <dx-validator>
 
       </dx-validator>
