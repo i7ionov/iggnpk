@@ -1,6 +1,8 @@
 from datetime import datetime
 
 import xlrd
+
+from capital_repair.models import NotifyStatus
 from dictionaries.models import Organization, Address, House, OrganizationType
 from capital_repair import models
 
@@ -163,22 +165,20 @@ def notifies():
         bank = models.CreditOrganization.objects.get(inn=inn)
         notify.bank = bank
 
-"""     
-            notify.house, created = House.objects.get_or_create(address_id=addr.id, number=sheet.cell(rownum, 5).value)
-        except:
-            pass
+        notify.account_number = sheet.cell(rownum, 23).value
 
-        org, created = Organization.objects.get_or_create(inn=sheet.cell(rownum, 10).value)
-        if created:
-            org.name = sheet.cell(rownum, 9).value
-            org.ogrn = 'нет'
+        opening_date, com = cut_value(sheet.cell(rownum, 24).value, 'Дата открытия')
+        notify.comment2 += com
+        notify.account_opening_date = opening_date
 
-        bank, created = models.CreditOrganization.objects.get_or_create(name=sheet.cell(rownum, 15).value,
-                                                                        inn=sheet.cell(rownum, 17).value,
-                                                                        bik=sheet.cell(rownum, 19).value)
-        branch, created = models.Branch.objects.get_or_create(address=sheet.cell(rownum, 16).value, 
-                                                              kpp=sheet.cell(rownum, 18).value)
-        notify.credit_organization_branch = branch
+        monthly_contribution_amount = sheet.cell(rownum, 26).value.split(' ')[0] + '.' + sheet.cell(rownum, 26).value.split(' ')[3]
+        notify.monthly_contribution_amount = float(monthly_contribution_amount)
 
-        
-"""
+        notify.protocol_details = sheet.cell(rownum, 27).value
+
+        if sheet.cell(rownum, 28).value == 'Исключен':
+            notify.status = NotifyStatus.objects.get(id=4)
+        else:
+            notify.status = NotifyStatus.objects.get(id=3)
+
+
