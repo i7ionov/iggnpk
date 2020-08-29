@@ -51,29 +51,45 @@
       dataField="date"
       dataType="date">
     </dxi-column>
-    <dxi-column
-      width="200"
-      caption="Наименование муниципального района (городского округа)"
-      dataField="house.address.area"
-      dataType="string">
-    </dxi-column>
-    <dxi-column
-      width="200"
-      caption="Населенный пункт"
-      dataField="house.address.place"
-      dataType="string">
-    </dxi-column>
-    <dxi-column
-      width="200"
-      caption="Улица (переулок, проспект)"
-      dataField="house.address.street"
-      dataType="string">
-    </dxi-column>
-    <dxi-column
-      width="200"
-      caption="Дом / корпус"
-      dataField="house.number"
-      dataType="string">
+    <dxi-column caption="Владелец специального счета">
+      <dxi-column
+        width="200"
+        caption="Наименование муниципального района (городского округа)"
+        dataField="house.address.area"
+        dataType="string">
+      </dxi-column>
+      <dxi-column
+        width="200"
+        caption="Населенный пункт"
+        dataField="house.address.city"
+        dataType="string">
+      </dxi-column>
+      <dxi-column
+        width="200"
+        caption="Улица (переулок, проспект)"
+        dataField="house.address.street"
+        dataType="string">
+      </dxi-column>
+      <dxi-column
+        width="200"
+        caption="Дом / корпус"
+        dataField="house.number"
+        dataType="string">
+      </dxi-column>
+      <dxi-column caption="Информация из реестра лицензий">
+        <dxi-column
+          width="200"
+          caption="Название организации"
+          dataField="house.organization.name"
+          dataType="string">
+        </dxi-column>
+        <dxi-column
+          width="200"
+          caption="ИНН организации"
+          dataField="house.organization.inn"
+          dataType="string">
+        </dxi-column>
+      </dxi-column>
     </dxi-column>
     <dxi-column caption="Владелец специального счета">
       <dxi-column
@@ -106,12 +122,6 @@
         width="200"
         caption="ИНН"
         dataField="bank.inn"
-        dataType="string">
-      </dxi-column>
-      <dxi-column
-        width="200"
-        caption="корреспондентский счет"
-        dataField="credit_organization_branch.credit_organization.correspondent_account"
         dataType="string">
       </dxi-column>
     </dxi-column>

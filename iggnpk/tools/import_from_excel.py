@@ -11,23 +11,31 @@ def cut_value(val, comment):
     if '(' in str(val):
         return val[:val.find('(')].strip(), comment + ": " + val[val.find('('):].strip() + ". "
     else:
-        return val, ''
+        return val.strip(), ''
 
 def houses():
-    rb = xlrd.open_workbook('C:\\Users\\ivsemionov\\Desktop\\reestr_licensing.xlsx')
+    rb = xlrd.open_workbook('C:\\Users\\User\\Desktop\\Code\\iggnpk\\iggnpk\\reestr_licensing.xlsx')
     sheet = rb.sheet_by_index(1)
     for rownum in range(6, sheet.nrows):
+        if sheet.cell(rownum, 0).value == '':
+            continue
         print(sheet.cell(rownum, 0).value)
         # адрес дома
-        number = str(sheet.cell(rownum, 6).value).strip()
-        street = sheet.cell(rownum, 5).value.strip().replace('.0')
+        number = str(sheet.cell(rownum, 6).value).strip().replace('.0', '')
+        street, comm = cut_value(sheet.cell(rownum, 5).value, '')
+        if 'Блочная' in street:
+            street = 'ул. Блочная'
         city = sheet.cell(rownum, 4).value.strip()
+        if street == 'ул. К.Заслонова' and city == 'пгт. Широковский':
+            street = 'ул. К. Заслонова'
+        if street == '' and city == 'г. Пермь':
+            continue
         area = sheet.cell(rownum, 3).value.strip()
         print(f'{area} {city} {street} {number}')
         addr = Address.objects.filter(area__contains=area, city=city, street=street).first()
         house, created = House.objects.get_or_create(address_id=addr.id, number=number)
         # организация
-        inn = str(sheet.cell(rownum, 1).value).strip()
+        inn = str(sheet.cell(rownum, 1).value).strip().replace('.0', '')
         name = sheet.cell(rownum, 2).value.strip()
         org, created = Organization.objects.get_or_create(inn=inn)
         if created:
@@ -45,47 +53,13 @@ def notifies():
         notify = models.Notify()
         notify.comment2 = ''
         try:
-            notify.date = datetime.strptime(sheet.cell(rownum, 1).value, '%d.%m.%Y')
+            notify.date = get_datetime(sheet.cell(rownum, 1).value)
         except TypeError: pass
         street = sheet.cell(rownum, 6).value.strip()
 
-        if str(street).__contains__('Бульвар'):
-            street = street.replace('Бульвар', 'б-р')
-        elif str(street).__contains__('бульвар'):
-            street = street.replace(' бульвар', '')
-            street = 'б-р ' + street
-        elif str(street).__contains__('Шоссе') and str(street) != 'Шоссейная':
-            street = street.replace('Шоссе', 'ш.')
-        elif str(street).__contains__('Проспект'):
-            street = street.replace('Проспект', 'пр-кт')
-        elif str(street).__contains__('пр-т'):
-            street = street.replace('пр-т', 'пр-кт')
-        elif str(street).__contains__(' проспект'):
-            street = street.replace(' проспект', '')
-            street = 'пр-кт ' + street
-        elif str(street).__contains__('проспект'):
-            street = street.replace('проспект', 'пр-кт')
-        elif str(street).__contains__('пр.'):
-            street = street.replace('пр.', 'пр-кт')
-        elif str(street).__contains__('проезд'):
-            street = street.replace(' проезд', '')
-            street = 'проезд ' + street
-        elif str(street).__contains__(' переулок'):
-            street = street.replace(' переулок', '')
-            street = 'пер. ' + street
-        elif str(street).__contains__('переулок'):
-            street = street.replace('переулок', 'пер.')
-        elif str(street).__contains__('Пер.'):
-            street = street.replace('Пер.', 'пер.')
-        elif str(street).__contains__(' Набережная') or str(street).__contains__('пер.') \
-                or str(street).__contains__(' тракт') or str(street) == '':
-            pass
-        else:
-            street = 'ул. ' + street
         street = street.replace('ул. Садовое кольцо', 'ул. Садовое Кольцо').replace('1-я Колхозная', 'Колхозная 1-я').\
             replace('Братьев Вагановых', 'Вагановых'). \
             replace('Павлика Морозова', 'П. Морозова'). \
-            replace('-я', '-ая'). \
             replace('января', 'Января'). \
             replace('КИМ', 'Ким'). \
             replace('Войкого', 'Войкова'). \
@@ -102,7 +76,6 @@ def notifies():
             street = street[:street.find('/')].strip()
         area = str(sheet.cell(rownum, 2).value).replace('г. Соликамск', 'Соликамский').\
             replace('г. Березники', 'Березниковский'). \
-            replace('ЗАТО Звездный', 'Городской округ ЗАТО Звездный'). \
             replace('г. Лысьва', 'Лысьвенский'). \
             replace('г. Кунгур', 'Кунгурский'). \
             replace('г. Чайковский', 'Чайковский'). \
@@ -126,19 +99,18 @@ def notifies():
             .replace('г.Краснокамск', 'г. Краснокамск') \
             .replace('пгт.Павловский', 'п. Павловский') \
             .replace('ст. ', 'ст.п ') \
+            .replace('"Город Губаха"', 'Городской округ «Город Губаха»') \
             .strip()
 
         if city == 'п. Полазна':
             area = 'Добрянский'
+        print(f'{area} {city} {street}')
         addr = Address.objects.filter(area__contains=area, city=city, street=street).first()
         notify.house, created = House.objects.get_or_create(address_id=addr.id, number=sheet.cell(rownum, 7).value)
         temp, com = cut_value(sheet.cell(rownum, 16).value, 'Дата включения в программу КР')
         notify.comment2 += com
+        notify.house.date_of_inclusion = get_datetime(temp)
 
-        try:
-            notify.house.date_of_inclusion = datetime.strptime(temp, '%d.%m.%Y')
-        except ValueError:
-            pass
 
         temp, com = cut_value(sheet.cell(rownum, 15).value, 'Включен в программу КР')
         notify.comment2 += com
@@ -151,6 +123,7 @@ def notifies():
             org.ogrn = 'нет'
             org.type = OrganizationType.objects.get(text=sheet.cell(rownum, 10).value.strip())
         org.save()
+        notify.organization = org
         notify.comment2 = notify.comment2 + " " + sheet.cell(rownum, 13).value
 
         name, com = cut_value(sheet.cell(rownum, 17).value, 'Банк')
@@ -161,19 +134,19 @@ def notifies():
 
         bik, com = cut_value(sheet.cell(rownum, 21).value, 'БИК')
         notify.comment2 += com
-
-        bank = models.CreditOrganization.objects.get(inn=inn)
+        bank = models.CreditOrganization.objects.get(inn=str(inn).replace('.0', ''))
         notify.bank = bank
 
         notify.account_number = sheet.cell(rownum, 23).value
 
-        opening_date, com = cut_value(sheet.cell(rownum, 24).value, 'Дата открытия')
+        temp, com = cut_value(sheet.cell(rownum, 24).value, 'Дата открытия')
         notify.comment2 += com
-        notify.account_opening_date = opening_date
-
-        monthly_contribution_amount = sheet.cell(rownum, 26).value.split(' ')[0] + '.' + sheet.cell(rownum, 26).value.split(' ')[3]
-        notify.monthly_contribution_amount = float(monthly_contribution_amount)
-
+        notify.account_opening_date = get_datetime(temp)
+        try:
+            monthly_contribution_amount = sheet.cell(rownum, 26).value.strip().split(' ')[0] + '.' + sheet.cell(rownum, 26).value.strip().split(' ')[2]
+            notify.monthly_contribution_amount = float(monthly_contribution_amount)
+        except IndexError:
+            notify.monthly_contribution_amount = 0
         notify.protocol_details = sheet.cell(rownum, 27).value
 
         if sheet.cell(rownum, 28).value == 'Исключен':
@@ -181,4 +154,21 @@ def notifies():
         else:
             notify.status = NotifyStatus.objects.get(id=3)
 
+        notify.date_of_exclusion = get_datetime(sheet.cell(rownum, 29).value)
+        notify.account_closing_date = get_datetime(sheet.cell(rownum, 30).value)
+        notify.ground_for_exclusion = sheet.cell(rownum, 31).value
+        notify.source_of_information = sheet.cell(rownum, 32).value
+        notify.save()
 
+
+def get_datetime(temp):
+    try:
+        if type(temp) == float:
+            return datetime.utcfromtimestamp((temp - 25569) * 86400.0)
+        elif '.' in temp:
+            return datetime.strptime(temp, '%d.%m.%Y')
+        else:
+            return datetime.strptime(temp, '%d %m %Y')
+    except ValueError:
+        pass
+    return None

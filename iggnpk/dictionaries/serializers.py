@@ -5,20 +5,6 @@ from rest_framework import serializers
 from tools.dynamic_fields_model_serializer import DynamicFieldsModelSerializer
 
 
-class AddressSerializer(DynamicFieldsModelSerializer):
-    class Meta:
-        model = Address
-        fields = '__all__'
-
-
-class HouseSerializer(DynamicFieldsModelSerializer):
-    address = AddressSerializer()
-
-    class Meta:
-        model = House
-        fields = '__all__'
-
-
 class OrganizationTypeSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
@@ -30,6 +16,21 @@ class OrganizationSerializer(DynamicFieldsModelSerializer):
     type = OrganizationTypeSerializer()
     class Meta:
         model = Organization
+        fields = '__all__'
+
+
+class AddressSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = Address
+        fields = '__all__'
+
+
+class HouseSerializer(DynamicFieldsModelSerializer):
+    address = AddressSerializer()
+    organization = OrganizationSerializer()
+
+    class Meta:
+        model = House
         fields = '__all__'
 
 

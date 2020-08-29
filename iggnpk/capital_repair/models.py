@@ -10,7 +10,7 @@ from simple_history.models import HistoricalRecords
 class CreditOrganization(models.Model):
     name = models.CharField(max_length=100, verbose_name='Наименование кредитной организации')
     inn = models.CharField(max_length=100, blank=True, verbose_name='ИНН')
-
+    allow_to_select = models.BooleanField(blank=True, default=True)
     history = HistoricalRecords()
 
     def __str__(self):
@@ -40,7 +40,7 @@ class Notify(models.Model):
         ('2', 'Approving'),
         ('3', 'Approved'),
     )
-    date = models.DateField(verbose_name='Дата внесения записи', null=True,blank=True, default=None)
+    date = models.DateField(verbose_name='Дата внесения записи', null=True, blank=True, default=None)
     organization = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True, verbose_name='Организация',
                                      blank=True, default=None)
     house = models.ForeignKey(House, on_delete=models.SET_NULL, null=True, verbose_name='Дом',
@@ -52,17 +52,17 @@ class Notify(models.Model):
                                                    verbose_name='Кредитная организация',
                                                    blank=True)
     account_number = models.CharField(max_length=300, blank=True, verbose_name='Номер счета')
-    account_opening_date = models.DateField(verbose_name='Дата открытия счета')
+    account_opening_date = models.DateField(verbose_name='Дата открытия счета', blank=True, null=True)
     monthly_contribution_amount = models.FloatField(verbose_name='Ежемесячный размер взноса')
-    protocol_details = models.CharField(max_length=100, verbose_name='Реквизиты протокола')
+    protocol_details = models.CharField(max_length=1000, verbose_name='Реквизиты протокола')
     comment = models.TextField(verbose_name='Комментарий', null=True, blank=True)
     comment2 = models.TextField(verbose_name='Комментарий', null=True, blank=True)
     status = models.ForeignKey(NotifyStatus, on_delete=models.SET_NULL, null=True, verbose_name='Статус',
                                      blank=True, default=None)
     date_of_exclusion = models.DateField(verbose_name='Дата исключения', null=True, blank=True)
     account_closing_date = models.DateField(verbose_name='Дата закрытия счета', null=True, blank=True)
-    ground_for_exclusion = models.CharField(max_length=300, verbose_name='Основание для исключения', null=True, blank=True)
-    source_of_information = models.CharField(max_length=300, verbose_name='Источник получения информации', null=True, blank=True)
+    ground_for_exclusion = models.CharField(max_length=1000, verbose_name='Основание для исключения', null=True, blank=True)
+    source_of_information = models.CharField(max_length=1000, verbose_name='Источник получения информации', null=True, blank=True)
 
     files = models.ManyToManyField(File)
     history = HistoricalRecords()
