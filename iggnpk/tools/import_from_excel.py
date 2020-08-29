@@ -38,9 +38,8 @@ def houses():
         inn = str(sheet.cell(rownum, 1).value).strip().replace('.0', '')
         name = sheet.cell(rownum, 2).value.strip()
         org, created = Organization.objects.get_or_create(inn=inn)
-        if created:
-            org.name = name
-            org.save()
+        org.name = name
+        org.save()
         house.organization = org
         house.save()
 

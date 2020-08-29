@@ -80,6 +80,15 @@ class HouseViewSet(viewsets.ModelViewSet):
         serializer = HouseSerializer(item)
         return Response(serializer.data)
 
+    def find(self, request):
+        if 'address_id' in request.GET and 'number' in request.GET:
+            queryset = House.objects.all()
+            item = get_object_or_404(queryset, address__id=request.GET['address_id'], number=request.GET['number'])
+            serializer = HouseSerializer(item)
+            return Response(serializer.data)
+        else:
+            Response({'message': 'Не предоставлены поля address_id и number'}, status=400)
+
 
 class OrganizationViewSet(viewsets.ModelViewSet):
     permission_classes = []

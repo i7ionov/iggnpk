@@ -48,7 +48,6 @@ export class HouseInputComponent implements OnInit {
 
 
   _value: House = new House();
-
   get value() {
     return this._value;
   }
@@ -107,6 +106,9 @@ export class HouseInputComponent implements OnInit {
     let temp = this.value;
     temp.number = house;
     this.value = temp;
+    this.houseService.find(this.value.address.id, house).subscribe(res=>{
+      this.value.organization=res.organization
+    })
   }
 
   public validate() {
