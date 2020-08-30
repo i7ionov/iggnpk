@@ -49,7 +49,7 @@ services:
    context: .
    dockerfile: dockerfiles/docker_django.conf
   container_name: iggnpk_celery_beat
-  command: celery -A iggnpk beat -l info
+  command: celery -A iggnpk beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
   volumes:
    - ./iggnpk:/iggnpk
   depends_on:
