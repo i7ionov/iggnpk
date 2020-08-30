@@ -94,7 +94,7 @@ class HouseManager(models.Manager):
                 number = data[field]['number']
             else:
                 number = instance.__getattribute__(field).number
-            result, created = House.objects.get_or_create(address_id=addr_id, number=number)
+            result, created = House.objects.get_or_create(address_id=addr_id, number=str(number).strip().lower())
             return result
         else:
             return instance.__getattribute__(field)

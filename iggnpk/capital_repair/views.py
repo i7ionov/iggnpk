@@ -134,7 +134,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
                 return Response('Неправильный статус', status=400)
             status = NotifyStatus.objects.get(id=request.data['status']['id'])
             bank = CreditOrganization.objects.get(id=request.data['bank']['id'])
-            house, created = House.objects.get_or_create(address_id=request.data['house']['address']['id'], number=request.data['house']['number'])
+            house, created = House.objects.get_or_create(address_id=request.data['house']['address']['id'], number=str(request.data['house']['number']).strip().lower())
 
             if request.user.is_staff:
                 org = Organization.objects.get(id=request.data['organization']['id'])

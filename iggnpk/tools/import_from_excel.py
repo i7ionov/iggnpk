@@ -11,7 +11,9 @@ def cut_value(val, comment):
     if '(' in str(val):
         return val[:val.find('(')].strip(), comment + ": " + val[val.find('('):].strip() + ". "
     else:
-        return val.strip(), ''
+        if type(val) == str:
+            val = val.strip()
+        return val, ''
 
 def houses():
     rb = xlrd.open_workbook('C:\\Users\\User\\Desktop\\Code\\iggnpk\\iggnpk\\reestr_licensing.xlsx')
@@ -21,7 +23,7 @@ def houses():
             continue
         print(sheet.cell(rownum, 0).value)
         # адрес дома
-        number = str(sheet.cell(rownum, 6).value).strip().replace('.0', '')
+        number = str(sheet.cell(rownum, 6).value).strip().lower().replace('.0', '')
         street, comm = cut_value(sheet.cell(rownum, 5).value, '')
         if 'Блочная' in street:
             street = 'ул. Блочная'
@@ -43,6 +45,7 @@ def houses():
         house.organization = org
         house.save()
 
+
 def notifies():
     rb = xlrd.open_workbook('C:\\Users\\User\\Desktop\\Code\\iggnpk\\iggnpk\\notify.xlsx')
     sheet = rb.sheet_by_index(0)
@@ -58,16 +61,12 @@ def notifies():
 
         street = street.replace('ул. Садовое кольцо', 'ул. Садовое Кольцо').replace('1-я Колхозная', 'Колхозная 1-я').\
             replace('Братьев Вагановых', 'Вагановых'). \
-            replace('Павлика Морозова', 'П. Морозова'). \
             replace('января', 'Января'). \
-            replace('КИМ', 'Ким'). \
             replace('Войкого', 'Войкова'). \
-            replace('пр-кт Свердлова', 'ул. Свердлова'). \
             replace('Ириловская - Набережная', 'Ириловская Набережная'). \
             replace('ул. Парковый', 'пр-кт Парковый'). \
             replace('ул. Б.Хмельницкого', 'ул. Богдана Хмельницкого'). \
             replace('ул. Н.Быстрых', 'ул. Николая Быстрых'). \
-            replace('ул. Веры Засулич', 'ул. В. Засулич'). \
             replace('ул. Сведлова', 'ул. Свердлова'). \
             replace("""
 (Луначарского)""", '').replace('ё', 'е')
@@ -105,7 +104,7 @@ def notifies():
             area = 'Добрянский'
         print(f'{area} {city} {street}')
         addr = Address.objects.filter(area__contains=area, city=city, street=street).first()
-        notify.house, created = House.objects.get_or_create(address_id=addr.id, number=sheet.cell(rownum, 7).value)
+        notify.house, created = House.objects.get_or_create(address_id=addr.id, number=str(sheet.cell(rownum, 7).value).strip().lower().replace('.0', ''))
         temp, com = cut_value(sheet.cell(rownum, 16).value, 'Дата включения в программу КР')
         notify.comment2 += com
         notify.house.date_of_inclusion = get_datetime(temp)
