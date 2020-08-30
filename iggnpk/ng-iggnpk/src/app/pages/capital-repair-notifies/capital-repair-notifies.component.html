@@ -18,10 +18,10 @@
     <dxo-scrolling showScrollbar="always">
 
     </dxo-scrolling>
-    <dxo-paging [pageSize]="5"></dxo-paging>
+    <dxo-paging [pageSize]="20"></dxo-paging>
     <dxo-pager
       [showPageSizeSelector]="true"
-      [allowedPageSizes]="[5, 10, 20]"
+      [allowedPageSizes]="[5, 10, 20, 50]"
       [showInfo]="true">
     </dxo-pager>
     <dxo-remote-operations
@@ -52,7 +52,7 @@
       dataField="date"
       dataType="date">
     </dxi-column>
-    <dxi-column caption="Владелец специального счета">
+    <dxi-column caption="Многоквартирный дом">
       <dxi-column
         width="200"
         caption="Наименование муниципального района (городского округа)"
@@ -205,10 +205,6 @@
       <dxi-total-item
         column="monthly_contribution_amount"
         summaryType="avg">
-      </dxi-total-item>
-      <dxi-total-item
-        column="monthly_contribution_amount"
-        summaryType="sum">
       </dxi-total-item>
     </dxo-summary>
 
