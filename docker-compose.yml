@@ -14,6 +14,9 @@ services:
   - "5432:5432"
   volumes:
       - ./dbdata:/var/lib/postgresql/data
+ redis:
+  container_name: iggnpk_redis
+  image: "redis:alpine"
  django:
   restart: always
   container_name: iggnpk_django
@@ -25,11 +28,44 @@ services:
    dockerfile: dockerfiles/docker_django.conf
   depends_on:
    - postgres
+   - redis
   command: uwsgi --ini /etc/uwsgi.ini
   #command: bash -c "python /iggnpk/manage.py collectstatic --noinput && python /iggnpk/manage.py migrate && python /iggnpk/manage.py runserver 0.0.0.0:8000"
   ports:
    - "8000:8000"
-
+ celery:
+  build:
+   context: .
+   dockerfile: dockerfiles/docker_django.conf
+  container_name: iggnpk_celery
+  command: celery -A iggnpk worker -l info
+  volumes:
+   - ./iggnpk:/iggnpk
+  depends_on:
+   - postgres
+   - redis
+ celery-beat:
+  build:
+   context: .
+   dockerfile: dockerfiles/docker_django.conf
+  container_name: iggnpk_celery_beat
+  command: celery -A iggnpk beat -l info
+  volumes:
+   - ./iggnpk:/iggnpk
+  depends_on:
+   - postgres
+   - redis
+ flower:
+  container_name: iggnpk_flower
+  image: mher/flower
+  environment:
+   - CELERY_BROKER_URL=redis://redis:6379/0
+   - FLOWER_PORT=8888
+  depends_on:
+   - celery
+   - celery-beat
+  ports:
+   - 8888:8888
  nginx:
   restart: always
   container_name: iggnpk_nginx

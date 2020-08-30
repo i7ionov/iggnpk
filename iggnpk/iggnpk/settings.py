@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'djoser',
     'simple_history',
+    'django_celery_beat',
     'tools',
     'dictionaries',
     'capital_repair'
