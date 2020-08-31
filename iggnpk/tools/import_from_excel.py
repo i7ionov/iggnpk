@@ -115,7 +115,7 @@ def notifies():
         notify.house.included_in_the_regional_program = temp == 'Включен'
         notify.house.save()
 
-        org, created = Organization.objects.get_or_create(inn=str(sheet.cell(rownum, 12).value).strip())
+        org, created = Organization.objects.get_or_create(inn=str(sheet.cell(rownum, 12).value).strip().replace('.0', ''))
         if created:
             org.name = sheet.cell(rownum, 11).value.strip()
             org.ogrn = 'нет'
