@@ -74,11 +74,14 @@ class Address(models.Model):
         verbose_name = "Адрес"
 
 
+def upload_path_handler(instance, filename):
+    return "{inn}/{file}".format(inn=instance.owner.organization.inn, file=filename)
+
 class File(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(User, to_field='id', on_delete=models.SET_NULL, null=True, blank=True)
-    datafile = models.FileField()
-
+    datafile = models.FileField(upload_to=upload_path_handler)
+    name = models.CharField(max_length=100, verbose_name='Название файла')
     class Meta:
         verbose_name = "Файл"
 

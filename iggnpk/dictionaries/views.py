@@ -229,6 +229,7 @@ class FileViewSet(viewsets.ModelViewSet):
         f = request.data['file']
         file = File()
         file.owner = self.request.user
+        file.name = f.name
         file.datafile.save(f.name, f, save=True)
         return Response(self.serializer_class(file).data, status=status.HTTP_201_CREATED)
 

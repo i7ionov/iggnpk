@@ -58,7 +58,6 @@ class FileSerializer(DynamicFieldsModelSerializer):
     )
     datafile = serializers.FileField()
     size = serializers.SerializerMethodField()
-    name = serializers.SerializerMethodField()
 
     class Meta:
         model = File
@@ -71,8 +70,3 @@ class FileSerializer(DynamicFieldsModelSerializer):
         except FileNotFoundError:
             return None
 
-    def get_name(self, obj):
-        try:
-            return obj.datafile.name
-        except FileNotFoundError:
-            return None
