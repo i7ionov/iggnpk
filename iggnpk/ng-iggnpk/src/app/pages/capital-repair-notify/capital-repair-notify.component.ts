@@ -217,6 +217,15 @@ export class CapitalRepairNotifyComponent implements OnInit {
               }, "success", 3000);
               this.setPermissions(this.auth.current_user);
               this.clean_notify = JSON.parse(JSON.stringify(res));
+            }, error1 => {
+            console.log(error1);
+             notify({
+                message: "Форма не сохранена. " + error1.statusText,
+                position: {
+                  my: "center top",
+                  at: "center top"
+                }
+              }, "error", 3000);
             }
           );
         }
@@ -227,6 +236,15 @@ export class CapitalRepairNotifyComponent implements OnInit {
           }
         );
       }
+    }
+    else {
+      notify({
+                message: "Форма не сохранена.",
+                position: {
+                  my: "center top",
+                  at: "center top"
+                }
+              }, "error", 3000);
     }
 
 
