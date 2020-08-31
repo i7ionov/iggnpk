@@ -13,12 +13,14 @@
                 columnResizingMode="widget"
                 [showBorders]="true"
                 [showColumnLines]="true"
+                [wordWrapEnabled]="true"
   >
     <dxo-state-storing [enabled]="true" type="localStorage" storageKey="notifies-table-state"></dxo-state-storing>
     <dxo-scrolling showScrollbar="always">
 
     </dxo-scrolling>
     <dxo-paging [pageSize]="20"></dxo-paging>
+    <dxo-column-chooser [enabled]="true" mode="dragAndDrop"></dxo-column-chooser>
     <dxo-pager
       [showPageSizeSelector]="true"
       [allowedPageSizes]="[5, 10, 20, 50]"
@@ -27,21 +29,23 @@
     <dxo-remote-operations
       [groupPaging]="true">
     </dxo-remote-operations>
-
+    <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
     <dxo-filter-row
       [visible]="true"
       [applyFilter]="currentFilter"></dxo-filter-row>
     <dxo-header-filter
-      [visible]="true"></dxo-header-filter>
+      [visible]="true" [allowSearch]="true"></dxo-header-filter>
     <dxi-column
       dataField="id"
-      width="100"
+      [allowHiding]="false"
+      width="80"
       dataType="number"
       cellTemplate="idCellTemplate"
+      [fixed]="true"
     >
     </dxi-column>
     <dxi-column
-      width="200"
+      width="170"
       caption="Статус"
       dataField="status.text"
       dataType="string">
@@ -54,7 +58,7 @@
     </dxi-column>
     <dxi-column caption="Многоквартирный дом">
       <dxi-column
-        width="200"
+        width="210"
         caption="Наименование муниципального района (городского округа)"
         dataField="house.address.area"
         dataType="string">
@@ -72,7 +76,7 @@
         dataType="string">
       </dxi-column>
       <dxi-column
-        width="200"
+        width="100"
         caption="Дом / корпус"
         dataField="house.number"
         dataType="string">
@@ -85,7 +89,7 @@
           dataType="string">
         </dxi-column>
         <dxi-column
-          width="200"
+          width="130"
           caption="ИНН организации"
           dataField="house.organization.inn"
           dataType="string">
@@ -100,13 +104,13 @@
         dataType="string">
       </dxi-column>
       <dxi-column
-        width="200"
+        width="130"
         caption="ИНН организации"
         dataField="organization.inn"
         dataType="string">
       </dxi-column>
       <dxi-column
-        width="200"
+        width="120"
         caption="Тип организации"
         dataField="organization.type.text"
         dataType="string">
@@ -120,7 +124,7 @@
         dataType="string">
       </dxi-column>
       <dxi-column
-        width="200"
+        width="130"
         caption="ИНН"
         dataField="bank.inn"
         dataType="string">
@@ -143,7 +147,7 @@
     </dxi-column>
 
     <dxi-column
-      width="200"
+      width="150"
       caption="Ежемесячный размер взноса на капитальный ремонт, руб/кв.м"
       dataField="monthly_contribution_amount"
       dataType="string">
