@@ -63,7 +63,9 @@ export class CapitalRepairNotifyComponent implements OnInit {
   get comment_visibility() {
     return this.auth.current_user.permissions.findIndex(p => p.codename == 'view_comment2') > 0
   }
-
+  get skip_verification() {
+    return this.auth.current_user.permissions.findIndex(p => p.codename == 'view_comment2') > 0
+  }
   get organizationSelectIsReadOnly() {
     if (this.auth.current_user) {
       return this.auth.current_user.groups.indexOf(UserGroup.Admin) == -1
@@ -163,7 +165,7 @@ export class CapitalRepairNotifyComponent implements OnInit {
     let is_form_valid = true;
     let is_credit_org_valid = true;
     let is_house_valid = true;
-    if (e != SubmitType.Exclusion) {
+    if (e != SubmitType.Exclusion && !this.skip_verification) {
       is_form_valid = this.form.instance.validate().isValid;
       is_credit_org_valid = this.credit_organization_select.validate().isValid;
       is_house_valid = this.house_input.validate().isValid;
