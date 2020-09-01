@@ -86,7 +86,7 @@ export class ContributionsInformationTableComponent implements OnInit {
   }
 
   add() {
-    this.router.navigate(['/pages/contib-info/0']);
+    this.router.navigate(['/pages/contrib-info/0']);
   }
 
   refreshDataGrid() {
