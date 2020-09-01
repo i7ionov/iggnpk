@@ -72,3 +72,19 @@ class Notify(models.Model):
 
     class Meta:
         permissions = (("view_comment2", 'view comment2'),)
+
+
+class ContributionsInformation(models.Model):
+    notify = models.ForeignKey(Notify, on_delete=models.SET_NULL, null=True, verbose_name='Уведомление',
+                                     blank=True, default=None)
+    assessed_contributions_total = models.DecimalField(null=True, blank=True, verbose_name='Начислено взносов, всего', max_digits=15, decimal_places=2)
+    assessed_contributions_current = models.DecimalField(null=True, blank=True, verbose_name='Начислено взносов, за текущий период', max_digits=15, decimal_places=2)
+    received_contributions_total = models.DecimalField(null=True, blank=True, verbose_name='Поступило взносов, всего', max_digits=15, decimal_places=2)
+    received_contributions_current = models.DecimalField(null=True, blank=True, verbose_name='Поступило взносов, за текущий период', max_digits=15, decimal_places=2)
+    delta_total = models.DecimalField(null=True, blank=True, verbose_name='Задолженность (+), переплата (-), всего', max_digits=15, decimal_places=2)
+    funds_spent = models.DecimalField(null=True, blank=True, verbose_name='Израсходовано средств', max_digits=15, decimal_places=2)
+    credit = models.DecimalField(null=True, blank=True, verbose_name='Сведения о заключении договора займа ', max_digits=15, decimal_places=2)
+    funds_on_special_deposit = models.DecimalField(null=True, blank=True, verbose_name='Сведения о размере средств, находящихся на специальном депозите ', max_digits=15, decimal_places=2)
+    fund_balance = models.DecimalField(null=True, blank=True, verbose_name='Остаток средств', max_digits=15, decimal_places=2)
+    status = models.ForeignKey(NotifyStatus, on_delete=models.SET_NULL, null=True, verbose_name='Статус',
+                               blank=True, default=None)
