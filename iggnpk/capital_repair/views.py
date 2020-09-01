@@ -7,9 +7,10 @@ from rest_framework.response import Response
 from rest_framework import permissions
 
 from tools.serializer_tools import upd_foreign_key
-from .models import CreditOrganization, Branch, Notify, Status
+from .models import CreditOrganization, Branch, Notify, Status, ContributionsInformation
 from dictionaries.models import Organization, House, File
-from .serializers import CreditOrganisationSerializer, BranchSerializer, NotifySerializer
+from .serializers import CreditOrganisationSerializer, BranchSerializer, NotifySerializer, \
+    ContributionsInformationSerializer
 from rest_framework.decorators import api_view
 from rest_framework import viewsets
 from tools import dev_extreme
@@ -206,4 +207,96 @@ class NotifiesViewSet(viewsets.ModelViewSet):
             files = instance.files.all()
 
         serializer.save(organization=org, bank=bank, house=house, files=files, status=status)
+        return Response(serializer.data)
+
+
+class ContributionsInformationViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated, ]
+    queryset = ContributionsInformation.objects.all()
+    serializer_class = ContributionsInformationSerializer
+
+    def list(self, request):
+        exclude_fields = []
+        if not request.user.is_staff:
+            exclude_fields.append('comment2')
+        # пользователь видит уведомления только своей организации
+        if not request.user.is_staff:
+            queryset = self.queryset.filter(notify__organization_id=request.user.organization.id)
+        else:
+            queryset = self.queryset
+        if 'group' in request.GET:
+            d, total_count = dev_extreme.populate_group_category(request, queryset)
+            data = {"totalCount": total_count, "items": d}
+        else:
+            queryset, total_queryset, total_count = dev_extreme.filtered_query(request, queryset)
+            serializer = self.serializer_class(queryset, many=True, exclude=exclude_fields)
+            data = {'items': serializer.data,
+                    'totalCount': total_count,
+                    'summary': [total_count]}
+
+        return Response(data)
+
+    def retrieve(self, request, pk=None):
+        exclude_fields = []
+        if not request.user.is_staff:
+            exclude_fields.append('comment2')
+        # пользователь видит уведомления только своей организации
+        if not request.user.is_staff:
+            queryset = self.queryset.filter(notify__organization_id=request.user.organization.id)
+        else:
+            queryset = self.queryset
+        item = get_object_or_404(queryset, pk=pk)
+        serializer = self.serializer_class(item, exclude=exclude_fields)
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        exclude_fields = []
+        if not request.user.is_staff:
+            exclude_fields.append('comment2')
+        item = self.serializer_class(data=request.data, exclude=exclude_fields)
+        item.is_valid()
+        if item.is_valid():
+            if request.data['status']['id']  > 2:
+                return Response('Неправильный статус', status=400)
+            status = Status.objects.get(id=request.data['status']['id'])
+            files = []
+            if 'files' in request.data:
+                if request.data['files'] != 'empty':
+                    for file in request.data['files']:
+                        files.append(File.objects.get(id=file['id']))
+
+            item.save(date=datetime.today().date(), status=status, files=files)
+            return Response(item.data)
+        else:
+            return Response(item.errors, status=400)
+
+    def update(self, request, *args, **kwargs):
+        exclude_fields = []
+        data = request.data
+        instance = self.get_object()
+
+        if not request.user.is_staff:
+            if instance.status.id > 2:
+                return Response('Вы не можете редактировать эту запись', status=400)
+            exclude_fields.append('comment2')
+
+        serializer = self.serializer_class(instance=instance, data=data, partial=True, exclude=exclude_fields)
+        serializer.is_valid(raise_exception=True)
+        if 'status' in data and instance.status is not None and data['status']['id'] == instance.status.id:
+            if instance.status is not None and data['status']['id'] == instance.status.id:
+                status = instance.status
+            else:
+                status = Status.objects.get(id=data['status']['id'])
+        else:
+            status = instance.status
+
+        if 'files' in data:
+            files = []
+            if data['files'] != 'empty':
+                for file in data['files']:
+                    files.append(File.objects.get(id=file['id']))
+        else:
+            files = instance.files.all()
+
+        serializer.save(files=files, status=status)
         return Response(serializer.data)

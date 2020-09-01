@@ -53,6 +53,7 @@ class NotifySerializer(DynamicFieldsModelSerializer):
 class ContributionsInformationSerializer(DynamicFieldsModelSerializer):
     notify = NotifySerializer()
     status = StatusSerializer(required=False, read_only=True)
+    files = FileSerializer(required=False, read_only=True, many=True)
 
     class Meta:
         model = ContributionsInformation

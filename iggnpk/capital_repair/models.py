@@ -75,6 +75,7 @@ class Notify(models.Model):
 
 
 class ContributionsInformation(models.Model):
+    date = models.DateField(verbose_name='Дата внесения записи', null=True, blank=True, default=None)
     notify = models.ForeignKey(Notify, on_delete=models.SET_NULL, null=True, verbose_name='Уведомление',
                                      blank=True, default=None)
     assessed_contributions_total = models.DecimalField(null=True, blank=True, verbose_name='Начислено взносов, всего', max_digits=15, decimal_places=2)
@@ -90,3 +91,5 @@ class ContributionsInformation(models.Model):
                                blank=True, default=None)
     comment = models.TextField(verbose_name='Комментарий', null=True, blank=True)
     comment2 = models.TextField(verbose_name='Комментарий', null=True, blank=True)
+    files = models.ManyToManyField(File)
+    history = HistoricalRecords()
