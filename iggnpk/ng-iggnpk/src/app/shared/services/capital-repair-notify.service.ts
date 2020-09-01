@@ -6,6 +6,7 @@ import {HttpClient} from "@angular/common/http";
 import {House} from "./house.service";
 import {Organization} from "../interfaces/organization";
 import {CreditOrganization} from "./credit-organization.service";
+import {Organizations} from "./organization.service";
 
 export class NotifyStatus {
   id: number;
@@ -68,6 +69,9 @@ export class CapitalRepairNotifyService {
 
   create(notify: Notify): Observable<Notify> {
     return this.http.post<Notify>(`${environment.backend_url}${this.url}/create/`, notify)
+  }
+  search(params): Observable<Notify> {
+    return this.http.get<Notify>(`${environment.backend_url}${this.url}/search/${params}`)
   }
 
 }

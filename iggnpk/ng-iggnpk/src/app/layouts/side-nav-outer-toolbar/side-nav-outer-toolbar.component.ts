@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 
 import { navigation } from '../../app-navigation';
 import {Router, NavigationEnd, RouterModule} from '@angular/router';
+import {FileSizePipe} from "../../shared/pipes/filesize.pipe";
 
 @Component({
   selector: 'app-side-nav-outer-toolbar',

@@ -4,8 +4,8 @@ import {Observable} from "rxjs/internal/Observable";
 
 
 export declare interface Service {
-    list(param): Observable<any>;
     retrieve(param): Observable<any>;
+    search(param): Observable<any>;
 }
 
 
@@ -46,7 +46,7 @@ export class CustomStoreService {
             params += ' desc';
           }
         }
-        return service.list(params).toPromise()
+        return service.search(params).toPromise()
           .then((data: any) => {
             return {
               data: data.items,

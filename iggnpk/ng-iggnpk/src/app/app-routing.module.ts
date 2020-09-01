@@ -57,6 +57,18 @@ const routes: Routes = [
 
           },
           {
+            path: 'contrib-info',
+            loadChildren: () => import('./pages/contrib-info-table/contributions-information-table.component').then(m => m.ContributionsInformationTableModule),
+            canLoad: [AuthGuardService]
+
+          },
+          {
+            path: 'contrib-info/:id',
+            loadChildren: () => import('./pages/contrib-info-form/contributions-infromation-form.component').then(m => m.ContributionsInfromationFormModule),
+            canLoad: [AuthGuardService]
+
+          },
+          {
             path: 'users',
             loadChildren: () => import('./pages/users/users.component').then(m => m.UsersModule),
             canLoad: [AuthGuardService]

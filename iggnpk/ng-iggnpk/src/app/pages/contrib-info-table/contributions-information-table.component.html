@@ -1,21 +1,20 @@
-<h6 class="content-block">Реестр уведомлений о выбранном собственниками помещений в многоквартирном доме способе
-  формирования фонда капитального ремонта на специальном счете</h6>
+<h6 class="content-block">Сведения о поступлении взносов</h6>
 <div class="dx-card content-block responsive-paddings">
 
 
   <dx-data-grid id="gridContainer"
-                [dataSource]="dataSource"
-                [height]="height"
-                (onToolbarPreparing)="onToolbarPreparing($event)"
-                (onExporting)="onExporting($event)"
-                [allowColumnResizing]="true"
-                [allowColumnReordering]="true"
+    [dataSource]="dataSource"
+    [height]="height"
+    (onToolbarPreparing)="onToolbarPreparing($event)"
+    (onExporting)="onExporting($event)"
+    [allowColumnResizing]="true"
+    [allowColumnReordering]="true"
                 columnResizingMode="widget"
-                [showBorders]="true"
-                [showColumnLines]="true"
-                [wordWrapEnabled]="true"
+    [showBorders]="true"
+    [showColumnLines]="true"
+    [wordWrapEnabled]="true"
   >
-    <dxo-state-storing [enabled]="true" type="localStorage" storageKey="notifies-table-state"></dxo-state-storing>
+    <dxo-state-storing [enabled]="true" type="localStorage" storageKey="conrib-info-table-state"></dxo-state-storing>
     <dxo-scrolling showScrollbar="always">
 
     </dxo-scrolling>
@@ -60,38 +59,38 @@
       <dxi-column
         width="210"
         caption="Наименование муниципального района (городского округа)"
-        dataField="house.address.area"
+        dataField="notify.house.address.area"
         dataType="string">
       </dxi-column>
       <dxi-column
         width="200"
         caption="Населенный пункт"
-        dataField="house.address.city"
+        dataField="notify.house.address.city"
         dataType="string">
       </dxi-column>
       <dxi-column
         width="200"
         caption="Улица (переулок, проспект)"
-        dataField="house.address.street"
+        dataField="notify.house.address.street"
         dataType="string">
       </dxi-column>
       <dxi-column
         width="100"
         caption="Дом / корпус"
-        dataField="house.number"
+        dataField="notify.house.number"
         dataType="string">
       </dxi-column>
       <dxi-column caption="Информация из реестра лицензий">
         <dxi-column
           width="200"
           caption="Название организации"
-          dataField="house.organization.name"
+          dataField="notify.house.organization.name"
           dataType="string">
         </dxi-column>
         <dxi-column
           width="130"
           caption="ИНН организации"
-          dataField="house.organization.inn"
+          dataField="notify.house.organization.inn"
           dataType="string">
         </dxi-column>
       </dxi-column>
@@ -100,19 +99,19 @@
       <dxi-column
         width="200"
         caption="Название организации"
-        dataField="organization.name"
+        dataField="notify.organization.name"
         dataType="string">
       </dxi-column>
       <dxi-column
         width="130"
         caption="ИНН организации"
-        dataField="organization.inn"
+        dataField="notify.organization.inn"
         dataType="string">
       </dxi-column>
       <dxi-column
         width="120"
         caption="Тип организации"
-        dataField="organization.type.text"
+        dataField="notify.organization.type.text"
         dataType="string">
       </dxi-column>
     </dxi-column>
@@ -120,13 +119,13 @@
       <dxi-column
         width="200"
         caption="Наименование юридического лица"
-        dataField="bank.name"
+        dataField="notify.bank.name"
         dataType="string">
       </dxi-column>
       <dxi-column
         width="130"
         caption="ИНН"
-        dataField="bank.inn"
+        dataField="notify.bank.inn"
         dataType="string">
       </dxi-column>
     </dxi-column>
@@ -134,14 +133,14 @@
       <dxi-column
         width="200"
         caption="Номер"
-        dataField="account_number"
+        dataField="notify.account_number"
         dataType="string">
       </dxi-column>
 
       <dxi-column
         width="200"
         caption="Дата открытия"
-        dataField="account_opening_date"
+        dataField="notify.account_opening_date"
         dataType="date">
       </dxi-column>
     </dxi-column>
@@ -149,14 +148,74 @@
     <dxi-column
       width="150"
       caption="Ежемесячный размер взноса на капитальный ремонт, руб/кв.м"
-      dataField="monthly_contribution_amount"
+      dataField="notify.monthly_contribution_amount"
       dataType="number">
     </dxi-column>
     <dxi-column
       width="200"
       caption="Реквизиты протокола общего собрания собственников помещений в многоквартирном доме"
-      dataField="protocol_details"
+      dataField="notify.protocol_details"
       dataType="string">
+    </dxi-column>
+    <dxi-column caption="Сведения о поступлении взносов">
+      <dxi-column caption="Начислено взносов (без учета пеней), рублей">
+        <dxi-column
+          width="150"
+          caption="всего"
+          dataField="assessed_contributions_total"
+          dataType="number">
+        </dxi-column>
+        <dxi-column
+          width="150"
+          caption="из них за отчетный период"
+          dataField="assessed_contributions_current"
+          dataType="number">
+        </dxi-column>
+      </dxi-column>
+      <dxi-column caption="Объем поступивших взносов (без учета пеней), рублей">
+        <dxi-column
+          width="150"
+          caption="всего"
+          dataField="received_contributions_total"
+          dataType="number">
+        </dxi-column>
+        <dxi-column
+          width="150"
+          caption="из них за отчетный период"
+          dataField="received_contributions_current"
+          dataType="number">
+        </dxi-column>
+      </dxi-column>
+      <dxi-column
+        width="150"
+        caption="Задолженность (+), переплата (-) по уплате собственниками помещений взносов на капитальный ремонт на конец отчетного периода, рублей"
+        dataField="delta_total"
+        dataType="number">
+      </dxi-column>
+      <dxi-column
+        width="150"
+        caption="Сведения о размере израсходованных средств на капитальный ремонт со специального счета, рублей"
+        dataField="funds_spent"
+        dataType="number">
+      </dxi-column>
+      <dxi-column
+        width="200"
+        caption="Сведения о заключении договора займа и (или) кредитного договора на проведение капитального ремонта (номер договора, наименование кредитной организации, сумма кредита (займа), рублей"
+        dataField="credit"
+        dataType="number">
+      </dxi-column>
+      <dxi-column
+        width="150"
+        caption="Сведения о размере средств, находящихся на специальном депозите, рублей"
+        dataField="funds_on_special_deposit"
+        dataType="number">
+      </dxi-column>
+      <dxi-column
+        width="150"
+        caption="Остаток средств фонда капитального ремонта на специальном счете на конец отчетного периода (с учетом ДЕПОЗИТА), рублей"
+        dataField="fund_balance"
+        dataType="number">
+      </dxi-column>
     </dxi-column>
     <dxi-column
       width="200"
@@ -165,50 +224,20 @@
       dataType="string">
     </dxi-column>
     <dxi-column *ngIf="comment_visibility"
-                width="200"
-                caption="Комментарий2"
-                dataField="comment2"
-                dataType="string">
+      width="200"
+      caption="Комментарий2"
+      dataField="comment2"
+      dataType="string">
     </dxi-column>
-    <dxi-column *ngIf="comment_visibility"
-                caption="Исключение">
-      <dxi-column
-        width="100"
-        caption="Дата исключения"
-        dataField="date_of_exclusion"
-        dataType="date">
-      </dxi-column>
-      <dxi-column
-        width="100"
-        caption="Дата закрытия счета"
-        dataField="account_closing_date"
-        dataType="date">
-      </dxi-column>
-      <dxi-column
-        width="200"
-        caption="Основание для исключения"
-        dataField="ground_for_exclusion"
-        dataType="string">
-      </dxi-column>
-      <dxi-column
-        width="200"
-        caption="Источник информации"
-        dataField="source_of_information"
-        dataType="string">
-      </dxi-column>
-    </dxi-column>
+
     <div *dxTemplate="let cell of 'idCellTemplate'">
-      <a [routerLink]="['/pages/capital-repair-notify/', cell.text]">{{ cell.text }}</a>
+      <a [routerLink]="['/pages/contrib-info/', cell.text]">{{ cell.text }}</a>
     </div>
     <dxo-filter-panel [visible]="true"></dxo-filter-panel>
     <dxo-summary>
       <dxi-total-item
         column="status.text"
         summaryType="count">
-      </dxi-total-item>
-      <dxi-total-item
-        column="monthly_contribution_amount"
-        summaryType="avg">
       </dxi-total-item>
     </dxo-summary>
 

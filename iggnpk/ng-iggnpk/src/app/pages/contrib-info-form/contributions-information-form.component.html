@@ -1,0 +1,106 @@
+<h2 class="content-block"></h2>
+<div class="dx-card content-block responsive-paddings">
+  <a (click)="back()">Назад</a>
+  <form (submit)="onFormSubmit($event)" method="post" enctype="multipart/form-data">
+    <dx-form #form
+      id="form"
+      [(formData)]="contrib_info"
+    >
+
+      <dxi-item dataField="id" [editorOptions]="{ disabled: true }"></dxi-item>
+
+
+      <dxi-item dataField="date" editorType="dxDateBox" [disabled]="dateIsReadOnly"
+        [editorOptions]="{width: 200, dateSerializationFormat: 'yyyy-MM-dd'}">
+        <dxi-validation-rule
+          type="required"
+          message="Дата внесения записи обязательна для заполнения">
+        </dxi-validation-rule>
+        <dxo-label text="Дата внесения записи"></dxo-label>
+      </dxi-item>
+      <dxi-item
+        dataField="notify"
+        editorType="dxSelectBox"
+        [editorOptions]="{ dataSource:contribInfoDataSource, displayExpr:displayExpr, searchEnabled:true}">
+        <dxo-label text="Уведомление">
+
+        </dxo-label>
+      </dxi-item>
+
+      <dxi-item dataField="assessed_contributions_total" editorType="dxNumberBox" [editorOptions]="{}">
+        <dxo-label text="Начислено взносов (без учета пеней), рублей"></dxo-label>
+
+        <dxi-validation-rule
+          type="required"
+          message="Размер ежемесячного взноса обязателен для заполнения">
+        </dxi-validation-rule>
+      </dxi-item>
+
+
+      <dxi-item dataField="comment" editorType="dxTextArea" [editorOptions]="{ height: 90 }">
+        <dxo-label text="Комментарий"></dxo-label>
+      </dxi-item>
+
+      <dxi-item dataField="comment2" editorType="dxTextArea" [editorOptions]="{ height: 90 }"
+        *ngIf="comment_visibility">
+        <dxo-label text="Комментарий(виден только сотрудникам)"></dxo-label>
+      </dxi-item>
+
+
+    </dx-form>
+
+
+    <div>
+
+      <div class="dx-fileuploader-files-container">
+        <div *ngFor="let f of contrib_info.files" class="dx-fileuploader-file-container">
+          <div class="dx-fileuploader-button-container">
+            <div
+              class="dx-fileuploader-button dx-fileuploader-cancel-button dx-button dx-button-normal dx-button-mode-contained dx-widget dx-button-has-icon"
+              role="button" aria-label="close" tabindex="0" (click)="fileDelete(f)">
+              <div class="dx-button-content"><i class="dx-icon dx-icon-close"></i></div>
+            </div>
+          </div>
+          <div class="dx-fileuploader-button-container">
+            <div
+              class="dx-fileuploader-button dx-fileuploader-upload-button dx-button dx-button-normal dx-button-mode-contained dx-widget dx-button-has-icon"
+              role="button" aria-label="upload" tabindex="0">
+              <div class="dx-button-content"><a href="{{ f.datafile }}"><i class="dx-icon dx-icon-download"></i></a>
+              </div>
+            </div>
+          </div>
+          <div class="dx-fileuploader-file">
+            <div class="dx-fileuploader-file-info">
+              <div class="dx-fileuploader-file-name" style="max-width: 876.719px;">{{ f.name }}
+              </div>
+              <!--<div class="dx-fileuploader-file-size">{{ f.size | filesize }}</div>-->
+            </div>
+            <div class="dx-fileuploader-file-status-message">{{ f.size | filesize }}</div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+    <dx-file-uploader *ngIf="saveButtonVisibility" name="file" [uploadUrl]="uploadUrl"
+      [uploadHeaders]="{'Authorization': uploadAuthorization}"
+
+      (onUploaded)="onUploaded($event)" [showFileList]="true" [maxFileSize]="100*1024*1024"
+      [multiple]="true" [allowedFileExtensions]="['.doc', '.docx', '.pdf']">
+
+    </dx-file-uploader>
+    <div class="buttons-line">
+      <dx-button *ngIf="saveButtonVisibility" type="success" text="Сохранить" [width]="150"
+        (onClick)="onFormSubmit(SubmitType.Saving)"></dx-button>
+      <dx-button *ngIf="sendForApprovalButtonVisibility" type="success" text="Отправить" [width]="150"
+        (onClick)="onFormSubmit(SubmitType.Sending)"></dx-button>
+      <dx-button *ngIf="acceptButtonVisibility" type="success" text="Согласовать" [width]="150"
+        (onClick)="onFormSubmit(SubmitType.Accepting)"></dx-button>
+      <dx-button *ngIf="rejectButtonVisibility" type="danger" text="Вернуть" [width]="150"
+        (onClick)="onFormSubmit(SubmitType.Rejecting)"></dx-button>
+
+
+    </div>
+  </form>
+  <pre>{{ contrib_info | json }}</pre>
+</div>

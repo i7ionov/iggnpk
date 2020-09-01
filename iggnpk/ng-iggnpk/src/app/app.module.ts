@@ -11,6 +11,7 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {FormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
 import {RouterModule} from "@angular/router";
+import {FileSizePipe} from "./shared/pipes/filesize.pipe";
 
 
 const INTERCEPTOR_PROVIDER: Provider = {

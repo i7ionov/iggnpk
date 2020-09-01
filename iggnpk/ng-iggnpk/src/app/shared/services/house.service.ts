@@ -41,6 +41,8 @@ export class HousesService implements Service {
   list(params): Observable<Houses> {
     return this.http.get<Houses>(`${environment.backend_url}${this.url}/${params}`)
   }
-
+  search(params): Observable<Houses> {
+    return this.http.get<Houses>(`${environment.backend_url}${this.url}/search/${params}`)
+  }
 
 }

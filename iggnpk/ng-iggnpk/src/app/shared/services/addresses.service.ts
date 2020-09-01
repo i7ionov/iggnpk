@@ -33,7 +33,7 @@ export class AddressService implements Service {
     return this.http.get<Address>(`${environment.backend_url}${this.url}/${id}/`)
   }
 
-  list(params): Observable<Addresses> {
+  search(params): Observable<Addresses> {
     return this.http.get<Addresses>(`${environment.backend_url}${this.url}/search/${params}`)
   }
 

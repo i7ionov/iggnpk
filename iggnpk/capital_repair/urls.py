@@ -29,9 +29,11 @@ urlpatterns = [
     path('notifies/create/', views.NotifiesViewSet.as_view({'post': 'create'})),
     path('notifies/<int:pk>/', views.NotifiesViewSet.as_view({'get': 'retrieve'})),
     path('notifies/save/<int:pk>/', views.NotifiesViewSet.as_view({'post': 'update'})),
+    path('notifies/search/', views.NotifiesViewSet.as_view({'get': 'search'})),
 
     path('contrib_info/', views.ContributionsInformationViewSet.as_view({'get': 'list'})),
     path('contrib_info/create/', views.ContributionsInformationViewSet.as_view({'post': 'create'})),
     path('contrib_info/<int:pk>/', views.ContributionsInformationViewSet.as_view({'get': 'retrieve'})),
     path('contrib_info/save/<int:pk>/', views.ContributionsInformationViewSet.as_view({'post': 'update'})),
+
 ]

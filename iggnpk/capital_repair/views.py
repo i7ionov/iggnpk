@@ -209,6 +209,28 @@ class NotifiesViewSet(viewsets.ModelViewSet):
         serializer.save(organization=org, bank=bank, house=house, files=files, status=status)
         return Response(serializer.data)
 
+    def search(self, request):
+        if 'searchValue' in request.GET:
+            searchValue = request.GET['searchValue'].strip('"').replace(',', ' ').split(' ')
+            keywords = [x for x in searchValue if x]
+            queryset = self.queryset
+            if request.user.is_staff == False:
+                queryset = queryset.filter(status_id=3)  # поиск только по активным уведомлениям
+                queryset = queryset.filter(organization_id=request.user.organization.id)  # и только по своим
+            for keyword in keywords:
+                queryset = queryset.filter(
+                    Q(id__icontains=keyword) |
+                    Q(house__address__area__icontains=keyword) |
+                    Q(house__address__city__icontains=keyword) |
+                    Q(house__address__street__icontains=keyword) |
+                    Q(house__number__icontains=keyword))
+            queryset = queryset[:10]
+            serializer = self.serializer_class(queryset, many=True)
+            data = {'items': serializer.data}
+            return Response(data)
+        else:
+            return Response()
+
 
 class ContributionsInformationViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, ]

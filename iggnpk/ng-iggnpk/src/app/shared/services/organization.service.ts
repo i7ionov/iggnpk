@@ -23,7 +23,7 @@ export class OrganizationService implements Service{
     return this.http.get<Organization>(`${environment.backend_url}${this.url}/${id}/`)
   }
 
-  list(params): Observable<Organizations> {
+  search(params): Observable<Organizations> {
     return this.http.get<Organizations>(`${environment.backend_url}${this.url}/search/${params}`)
   }
 
