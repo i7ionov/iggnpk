@@ -67,7 +67,7 @@
         </dxi-validation-rule>
       </dxi-item>
 
-      <dxi-item dataField="monthly_contribution_amount" editorType="dxNumberBox" [editorOptions]="{}">
+      <dxi-item dataField="monthly_contribution_amount" editorType="dxNumberBox" [editorOptions]="{step:0}">
         <dxo-label text="Размер ежемесячного взноса"></dxo-label>
         <dxi-validation-rule
           type="range"

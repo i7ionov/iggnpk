@@ -3,15 +3,15 @@
   <a (click)="back()">Назад</a>
   <form (submit)="onFormSubmit($event)" method="post" enctype="multipart/form-data">
     <dx-form #form
-      id="form"
-      [(formData)]="contrib_info"
+             id="form"
+             [(formData)]="contrib_info"
     >
 
       <dxi-item dataField="id" [editorOptions]="{ disabled: true }"></dxi-item>
 
 
       <dxi-item dataField="date" editorType="dxDateBox" [disabled]="dateIsReadOnly"
-        [editorOptions]="{width: 200, dateSerializationFormat: 'yyyy-MM-dd'}">
+                [editorOptions]="{width: 200, dateSerializationFormat: 'yyyy-MM-dd'}">
         <dxi-validation-rule
           type="required"
           message="Дата внесения записи обязательна для заполнения">
@@ -26,23 +26,89 @@
 
         </dxo-label>
       </dxi-item>
+      <dxi-item itemType="group" caption="Начислено взносов (без учета пеней), рублей">
+        <dxi-item dataField="assessed_contributions_total" editorType="dxNumberBox" [editorOptions]="{step:0}">
+          <dxo-label text="всего"></dxo-label>
+          <dxi-validation-rule
+            type="required"
+            message="Обязательно для заполнения">
+          </dxi-validation-rule>
+        </dxi-item>
 
-      <dxi-item dataField="assessed_contributions_total" editorType="dxNumberBox" [editorOptions]="{}">
-        <dxo-label text="Начислено взносов (без учета пеней), рублей"></dxo-label>
+        <dxi-item dataField="assessed_contributions_current" editorType="dxNumberBox" [editorOptions]="{step:0}">
+          <dxo-label text="из них за отчетный период"></dxo-label>
+          <dxi-validation-rule
+            type="required"
+            message="Обязательно для заполнения">
+          </dxi-validation-rule>
+        </dxi-item>
+      </dxi-item>
 
+      <dxi-item itemType="group" caption="Объем поступивших взносов (без учета пеней), рублей">
+        <dxi-item dataField="received_contributions_total" editorType="dxNumberBox" [editorOptions]="{step:0}">
+          <dxo-label text="всего"></dxo-label>
+          <dxi-validation-rule
+            type="required"
+            message="Обязательно для заполнения">
+          </dxi-validation-rule>
+        </dxi-item>
+
+        <dxi-item dataField="received_contributions_current" editorType="dxNumberBox" [editorOptions]="{step:0}">
+          <dxo-label text="из них за отчетный период"></dxo-label>
+          <dxi-validation-rule
+            type="required"
+            message="Обязательно для заполнения">
+          </dxi-validation-rule>
+        </dxi-item>
+      </dxi-item>
+
+
+      <dxi-item dataField="delta_total" editorType="dxNumberBox" [editorOptions]="{step:0}">
+        <dxo-label text="Задолженность (+), переплата (-) по уплате собственниками помещений взносов на капитальный ремонт на конец отчетного периода, рублей"></dxo-label>
         <dxi-validation-rule
           type="required"
-          message="Размер ежемесячного взноса обязателен для заполнения">
+          message="Обязательно для заполнения">
         </dxi-validation-rule>
       </dxi-item>
 
+      <dxi-item dataField="funds_spent" editorType="dxNumberBox" [editorOptions]="{step:0}">
+        <dxo-label text="Сведения о размере израсходованных средств на капитальный ремонт со специального счета, рублей"></dxo-label>
+        <dxi-validation-rule
+          type="required"
+          message="Обязательно для заполнения">
+        </dxi-validation-rule>
+      </dxi-item>
+
+      <dxi-item dataField="credit" editorType="dxNumberBox" [editorOptions]="{step:0}">
+        <dxo-label text="Сведения о заключении договора займа и (или) кредитного договора на проведение капитального ремонта (номер договора, наименование кредитной организации, сумма кредита (займа), рублей"></dxo-label>
+        <dxi-validation-rule
+          type="required"
+          message="Обязательно для заполнения">
+        </dxi-validation-rule>
+      </dxi-item>
+
+      <dxi-item dataField="funds_on_special_deposit" editorType="dxNumberBox" [editorOptions]="{step:0}">
+        <dxo-label text="Сведения о размере средств, находящихся на специальном депозите, рублей"></dxo-label>
+        <dxi-validation-rule
+          type="required"
+          message="Обязательно для заполнения">
+        </dxi-validation-rule>
+      </dxi-item>
+
+      <dxi-item dataField="fund_balance" editorType="dxNumberBox" [editorOptions]="{step:0}">
+        <dxo-label text="Остаток средств фонда капитального ремонта на специальном счете на конец отчетного периода (с учетом ДЕПОЗИТА), рублей"></dxo-label>
+        <dxi-validation-rule
+          type="required"
+          message="Обязательно для заполнения">
+        </dxi-validation-rule>
+      </dxi-item>
 
       <dxi-item dataField="comment" editorType="dxTextArea" [editorOptions]="{ height: 90 }">
         <dxo-label text="Комментарий"></dxo-label>
       </dxi-item>
 
       <dxi-item dataField="comment2" editorType="dxTextArea" [editorOptions]="{ height: 90 }"
-        *ngIf="comment_visibility">
+                *ngIf="comment_visibility">
         <dxo-label text="Комментарий(виден только сотрудникам)"></dxo-label>
       </dxi-item>
 
@@ -83,21 +149,21 @@
 
     </div>
     <dx-file-uploader *ngIf="saveButtonVisibility" name="file" [uploadUrl]="uploadUrl"
-      [uploadHeaders]="{'Authorization': uploadAuthorization}"
+                      [uploadHeaders]="{'Authorization': uploadAuthorization}"
 
-      (onUploaded)="onUploaded($event)" [showFileList]="true" [maxFileSize]="100*1024*1024"
-      [multiple]="true" [allowedFileExtensions]="['.doc', '.docx', '.pdf']">
+                      (onUploaded)="onUploaded($event)" [showFileList]="true" [maxFileSize]="100*1024*1024"
+                      [multiple]="true" [allowedFileExtensions]="['.doc', '.docx', '.pdf']">
 
     </dx-file-uploader>
     <div class="buttons-line">
       <dx-button *ngIf="saveButtonVisibility" type="success" text="Сохранить" [width]="150"
-        (onClick)="onFormSubmit(SubmitType.Saving)"></dx-button>
+                 (onClick)="onFormSubmit(SubmitType.Saving)"></dx-button>
       <dx-button *ngIf="sendForApprovalButtonVisibility" type="success" text="Отправить" [width]="150"
-        (onClick)="onFormSubmit(SubmitType.Sending)"></dx-button>
+                 (onClick)="onFormSubmit(SubmitType.Sending)"></dx-button>
       <dx-button *ngIf="acceptButtonVisibility" type="success" text="Согласовать" [width]="150"
-        (onClick)="onFormSubmit(SubmitType.Accepting)"></dx-button>
+                 (onClick)="onFormSubmit(SubmitType.Accepting)"></dx-button>
       <dx-button *ngIf="rejectButtonVisibility" type="danger" text="Вернуть" [width]="150"
-        (onClick)="onFormSubmit(SubmitType.Rejecting)"></dx-button>
+                 (onClick)="onFormSubmit(SubmitType.Rejecting)"></dx-button>
 
 
     </div>

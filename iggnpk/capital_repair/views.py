@@ -47,7 +47,8 @@ class CreditOrganisationsViewSet(viewsets.ModelViewSet):
             serializer = self.serializer_class(queryset, many=True)
             data = {'items': serializer.data}
             return Response(data)
-        else: return Response()
+        else:
+            return Response()
 
 
 class BranchViewSet(viewsets.ModelViewSet):
@@ -81,7 +82,8 @@ class BranchViewSet(viewsets.ModelViewSet):
             serializer = self.serializer_class(queryset, many=True)
             data = {'items': serializer.data}
             return Response(data)
-        else: return Response()
+        else:
+            return Response()
 
 
 class NotifiesViewSet(viewsets.ModelViewSet):
@@ -111,8 +113,10 @@ class NotifiesViewSet(viewsets.ModelViewSet):
             data = {'items': serializer.data,
                     'totalCount': total_count,
                     'summary': [total_count,
-                                total_queryset.aggregate(Avg('monthly_contribution_amount'))['monthly_contribution_amount__avg'],
-                                total_queryset.aggregate(Sum('monthly_contribution_amount'))['monthly_contribution_amount__sum']]}
+                                total_queryset.aggregate(Avg('monthly_contribution_amount'))[
+                                    'monthly_contribution_amount__avg'],
+                                total_queryset.aggregate(Sum('monthly_contribution_amount'))[
+                                    'monthly_contribution_amount__sum']]}
         return Response(data)
 
     def retrieve(self, request, pk=None):
@@ -143,11 +147,12 @@ class NotifiesViewSet(viewsets.ModelViewSet):
         item = NotifySerializer(data=request.data, exclude=exclude_fields)
         item.is_valid()
         if item.is_valid():
-            if request.data['status']['id']  > 2:
+            if request.data['status']['id'] > 2:
                 return Response('Неправильный статус', status=400)
             status = Status.objects.get(id=request.data['status']['id'])
             bank = CreditOrganization.objects.get(id=request.data['bank']['id'])
-            house, created = House.objects.get_or_create(address_id=request.data['house']['address']['id'], number=str(request.data['house']['number']).strip().lower())
+            house, created = House.objects.get_or_create(address_id=request.data['house']['address']['id'],
+                                                         number=str(request.data['house']['number']).strip().lower())
 
             if request.user.is_staff:
                 org = Organization.objects.get(id=request.data['organization']['id'])
@@ -194,7 +199,8 @@ class NotifiesViewSet(viewsets.ModelViewSet):
                 status = Status.objects.get(id=data['status']['id'])
                 # присваиваем всем другим записям с этим домом статус Исключено
                 if status.text == 'Согласовано':
-                    Notify.objects.filter(house_id=house.id, status_id=3).update(status_id=4, date_of_exclusion=datetime.now())
+                    Notify.objects.filter(house_id=house.id, status_id=3).update(status_id=4,
+                                                                                 date_of_exclusion=datetime.now())
         else:
             status = instance.status
 
@@ -278,16 +284,20 @@ class ContributionsInformationViewSet(viewsets.ModelViewSet):
         item = self.serializer_class(data=request.data, exclude=exclude_fields)
         item.is_valid()
         if item.is_valid():
-            if request.data['status']['id']  > 2:
+            if request.data['status']['id'] > 2:
                 return Response('Неправильный статус', status=400)
             status = Status.objects.get(id=request.data['status']['id'])
+            notify = Notify.objects.get(id=request.data['notify']['id'])
+            if notify.organization.id != request.user.organization.id and not request.user.is_staff:
+                return Response({'Организация, указанная в уведомлениии, не соответствует организации пользователя'},
+                                status=400)
             files = []
             if 'files' in request.data:
                 if request.data['files'] != 'empty':
                     for file in request.data['files']:
                         files.append(File.objects.get(id=file['id']))
 
-            item.save(date=datetime.today().date(), status=status, files=files)
+            item.save(date=datetime.today().date(), status=status, files=files, notify=notify)
             return Response(item.data)
         else:
             return Response(item.errors, status=400)
@@ -312,6 +322,11 @@ class ContributionsInformationViewSet(viewsets.ModelViewSet):
         else:
             status = instance.status
 
+        notify = upd_foreign_key('notify', data, instance, Notify)
+        if notify.organization.id != request.user.organization.id and not request.user.is_staff:
+            return Response({'Организация, указанная в уведомлениии, не соответствует организации пользователя'},
+                            status=400)
+
         if 'files' in data:
             files = []
             if data['files'] != 'empty':
@@ -320,5 +335,5 @@ class ContributionsInformationViewSet(viewsets.ModelViewSet):
         else:
             files = instance.files.all()
 
-        serializer.save(files=files, status=status)
+        serializer.save(files=files, status=status, notify=notify)
         return Response(serializer.data)

@@ -77,8 +77,8 @@ export class ContributionsInformationService {
     return this.http.post<ContributionsInformation>(`${environment.backend_url}${this.url}/create/`, contrib_info)
   }
 
-  search(params): Observable<Organizations> {
-    return this.http.get<Organizations>(`${environment.backend_url}${this.url}/search/${params}`)
+  search(params): Observable<ContributionsInformation> {
+    return this.http.get<ContributionsInformation>(`${environment.backend_url}${this.url}/search/${params}`)
   }
 
 }

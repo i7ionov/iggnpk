@@ -51,7 +51,7 @@ class NotifySerializer(DynamicFieldsModelSerializer):
 
 
 class ContributionsInformationSerializer(DynamicFieldsModelSerializer):
-    notify = NotifySerializer()
+    notify = NotifySerializer(required=False, read_only=True)
     status = StatusSerializer(required=False, read_only=True)
     files = FileSerializer(required=False, read_only=True, many=True)
 
