@@ -23,7 +23,7 @@
     "@angular/platform-browser-dynamic": "~9.0.3",
     "@angular/router": "~9.0.3",
     "devextreme": "20.1.6",
-    "devextreme-angular": "20.1.6",
+    "devextreme-angular": "20.1.7",
     "devextreme-intl": "^19.1.8",
     "devextreme-schematics": "^1.0.13",
     "exceljs": "^4.1.1",
