@@ -23,7 +23,7 @@ def filtered_query(request, query, distinct_field=None):
         query = query.filter(Q(**{field+'__icontains': value}))
     if 'sort' in request.GET:
         sort = json.loads(request.GET['sort'])[0]
-        order_by = sort['selector']
+        order_by = sort['selector'].replace('.', '__')
         desc = sort['desc']
         if desc:
             order_by = '-' + order_by
