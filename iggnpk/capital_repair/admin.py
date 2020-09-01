@@ -6,4 +6,4 @@ from . import models
 admin.site.register(models.CreditOrganization)
 admin.site.register(models.Branch)
 admin.site.register(models.Notify)
-admin.site.register(models.NotifyStatus)
+admin.site.register(models.Status)

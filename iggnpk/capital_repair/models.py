@@ -30,7 +30,7 @@ class Branch(models.Model):
         return f'{self.credit_organization.name} {self.address}'
 
 
-class NotifyStatus(models.Model):
+class Status(models.Model):
     text = models.CharField(max_length=30, blank=True, verbose_name='Статус')
 
 
@@ -57,8 +57,8 @@ class Notify(models.Model):
     protocol_details = models.CharField(max_length=1000, verbose_name='Реквизиты протокола')
     comment = models.TextField(verbose_name='Комментарий', null=True, blank=True)
     comment2 = models.TextField(verbose_name='Комментарий', null=True, blank=True)
-    status = models.ForeignKey(NotifyStatus, on_delete=models.SET_NULL, null=True, verbose_name='Статус',
-                                     blank=True, default=None)
+    status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True, verbose_name='Статус',
+                               blank=True, default=None)
     date_of_exclusion = models.DateField(verbose_name='Дата исключения', null=True, blank=True)
     account_closing_date = models.DateField(verbose_name='Дата закрытия счета', null=True, blank=True)
     ground_for_exclusion = models.CharField(max_length=1000, verbose_name='Основание для исключения', null=True, blank=True)
@@ -86,5 +86,7 @@ class ContributionsInformation(models.Model):
     credit = models.DecimalField(null=True, blank=True, verbose_name='Сведения о заключении договора займа ', max_digits=15, decimal_places=2)
     funds_on_special_deposit = models.DecimalField(null=True, blank=True, verbose_name='Сведения о размере средств, находящихся на специальном депозите ', max_digits=15, decimal_places=2)
     fund_balance = models.DecimalField(null=True, blank=True, verbose_name='Остаток средств', max_digits=15, decimal_places=2)
-    status = models.ForeignKey(NotifyStatus, on_delete=models.SET_NULL, null=True, verbose_name='Статус',
+    status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True, verbose_name='Статус',
                                blank=True, default=None)
+    comment = models.TextField(verbose_name='Комментарий', null=True, blank=True)
+    comment2 = models.TextField(verbose_name='Комментарий', null=True, blank=True)

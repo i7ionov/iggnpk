@@ -2,7 +2,7 @@ from datetime import datetime
 
 import xlrd
 
-from capital_repair.models import NotifyStatus
+from capital_repair.models import Status
 from dictionaries.models import Organization, Address, House, OrganizationType
 from capital_repair import models
 
@@ -150,9 +150,9 @@ def notifies():
         notify.protocol_details = sheet.cell(rownum, 27).value
 
         if sheet.cell(rownum, 28).value == 'Исключен':
-            notify.status = NotifyStatus.objects.get(id=4)
+            notify.status = Status.objects.get(id=4)
         else:
-            notify.status = NotifyStatus.objects.get(id=3)
+            notify.status = Status.objects.get(id=3)
 
         notify.date_of_exclusion = get_datetime(sheet.cell(rownum, 29).value)
         notify.account_closing_date = get_datetime(sheet.cell(rownum, 30).value)

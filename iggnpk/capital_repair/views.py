@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework import permissions
 
 from tools.serializer_tools import upd_foreign_key
-from .models import CreditOrganization, Branch, Notify, NotifyStatus
+from .models import CreditOrganization, Branch, Notify, Status
 from dictionaries.models import Organization, House, File
 from .serializers import CreditOrganisationSerializer, BranchSerializer, NotifySerializer
 from rest_framework.decorators import api_view
@@ -144,7 +144,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
         if item.is_valid():
             if request.data['status']['id']  > 2:
                 return Response('Неправильный статус', status=400)
-            status = NotifyStatus.objects.get(id=request.data['status']['id'])
+            status = Status.objects.get(id=request.data['status']['id'])
             bank = CreditOrganization.objects.get(id=request.data['bank']['id'])
             house, created = House.objects.get_or_create(address_id=request.data['house']['address']['id'], number=str(request.data['house']['number']).strip().lower())
 
@@ -190,7 +190,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
             if instance.status is not None and data['status']['id'] == instance.status.id:
                 status = instance.status
             else:
-                status = NotifyStatus.objects.get(id=data['status']['id'])
+                status = Status.objects.get(id=data['status']['id'])
                 # присваиваем всем другим записям с этим домом статус Исключено
                 if status.text == 'Согласовано':
                     Notify.objects.filter(house_id=house.id, status_id=3).update(status_id=4, date_of_exclusion=datetime.now())
