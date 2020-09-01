@@ -135,7 +135,9 @@ def notifies():
         bank = models.CreditOrganization.objects.get(inn=str(inn).replace('.0', ''))
         notify.bank = bank
 
-        notify.account_number = sheet.cell(rownum, 23).value
+        temp, com = cut_value(sheet.cell(rownum, 23).value, 'Номер спец. счета')
+        notify.comment2 += com
+        notify.account_number = temp
 
         temp, com = cut_value(sheet.cell(rownum, 24).value, 'Дата открытия')
         notify.comment2 += com
