@@ -113,7 +113,7 @@ export class CapitalRepairNotifiesComponent implements OnInit {
 
   onExporting(e) {
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Employees');
+    const worksheet = workbook.addWorksheet('Notifies');
 
     exportDataGrid({
       component: e.component,
