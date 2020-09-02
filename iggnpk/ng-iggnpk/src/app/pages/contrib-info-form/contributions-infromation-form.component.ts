@@ -269,7 +269,7 @@ export class ContributionsInfromationFormComponent implements OnInit {
 
   displayExpr(item) {
     // "item" can be null
-    return item && `№${item.id} от ${item.date}. Адрес: ${item.house.address.city}, ${item.house.address.street}, ${item.house.number}`;
+    return item && `№${item.id}, ${item.account_number} Адрес: ${item.house.address.city}, ${item.house.address.street}, ${item.house.number}`;
   }
 
 

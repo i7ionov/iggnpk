@@ -7,7 +7,8 @@
              [(formData)]="contrib_info"
     >
 
-      <dxi-item dataField="id" [editorOptions]="{ disabled: true }"></dxi-item>
+      <dxi-item dataField="id" [editorOptions]="{ disabled: true }"><dxo-label text="Номер">
+        </dxo-label></dxi-item>
 
 
       <dxi-item dataField="date" editorType="dxDateBox" [disabled]="dateIsReadOnly"
@@ -21,7 +22,9 @@
       <dxi-item
         dataField="notify"
         editorType="dxSelectBox"
-        [editorOptions]="{ dataSource:contribInfoDataSource, displayExpr:displayExpr, searchEnabled:true}">
+        [editorOptions]="{ dataSource:contribInfoDataSource, displayExpr:displayExpr,
+        searchEnabled:true, placeholder: 'Введите номер счета, адрес дома или номер уведомления',
+        showDataBeforeSearch:true}">
         <dxo-label text="Уведомление">
 
         </dxo-label>
