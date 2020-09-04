@@ -33,6 +33,8 @@ class Branch(models.Model):
 class Status(models.Model):
     text = models.CharField(max_length=30, blank=True, verbose_name='Статус')
 
+    def __str__(self):
+        return f'{self.text}'
 
 class Notify(models.Model):
     STATUSES = (
@@ -64,7 +66,7 @@ class Notify(models.Model):
     ground_for_exclusion = models.CharField(max_length=1000, verbose_name='Основание для исключения', null=True, blank=True)
     source_of_information = models.CharField(max_length=1000, verbose_name='Источник получения информации', null=True, blank=True)
 
-    files = models.ManyToManyField(File)
+    files = models.ManyToManyField(File, null=True, blank=True)
     history = HistoricalRecords()
 
     def __str__(self):
@@ -91,5 +93,5 @@ class ContributionsInformation(models.Model):
                                blank=True, default=None)
     comment = models.TextField(verbose_name='Комментарий', null=True, blank=True)
     comment2 = models.TextField(verbose_name='Комментарий', null=True, blank=True)
-    files = models.ManyToManyField(File)
+    files = models.ManyToManyField(File, null=True, blank=True)
     history = HistoricalRecords()
