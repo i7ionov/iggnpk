@@ -66,7 +66,8 @@ class Notify(models.Model):
     ground_for_exclusion = models.CharField(max_length=1000, verbose_name='Основание для исключения', null=True, blank=True)
     source_of_information = models.CharField(max_length=1000, verbose_name='Источник получения информации', null=True, blank=True)
 
-    files = models.ManyToManyField(File, null=True, blank=True)
+    files = models.ManyToManyField(File, blank=True)
+    latest_contrib_date = models.DateField(verbose_name='Дата последней подачи сведений о взносах', blank=True, null=True)
     history = HistoricalRecords()
 
     def __str__(self):
@@ -93,5 +94,5 @@ class ContributionsInformation(models.Model):
                                blank=True, default=None)
     comment = models.TextField(verbose_name='Комментарий', null=True, blank=True)
     comment2 = models.TextField(verbose_name='Комментарий', null=True, blank=True)
-    files = models.ManyToManyField(File, null=True, blank=True)
+    files = models.ManyToManyField(File, blank=True)
     history = HistoricalRecords()

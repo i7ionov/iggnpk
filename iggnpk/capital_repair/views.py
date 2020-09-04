@@ -318,7 +318,7 @@ class ContributionsInformationViewSet(viewsets.ModelViewSet):
 
         serializer = self.serializer_class(instance=instance, data=data, partial=True, exclude=exclude_fields)
         serializer.is_valid(raise_exception=True)
-        if 'status' in data and instance.status is not None and data['status']['id'] == instance.status.id:
+        if 'status' in data:
             if instance.status is not None and data['status']['id'] == instance.status.id:
                 status = instance.status
             else:
@@ -338,6 +338,8 @@ class ContributionsInformationViewSet(viewsets.ModelViewSet):
                     files.append(File.objects.get(id=file['id']))
         else:
             files = instance.files.all()
-
+        if status.id == 3:
+            notify.latest_contrib_date = data['date']
+            notify.save()
         serializer.save(files=files, status=status, notify=notify)
         return Response(serializer.data)
