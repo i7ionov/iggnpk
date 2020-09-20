@@ -30,9 +30,14 @@ def houses():
         city = sheet.cell(rownum, 4).value.strip()
         if street == 'ул. К.Заслонова' and city == 'пгт. Широковский':
             street = 'ул. К. Заслонова'
+        if street == 'ул. Новоселовой':
+            street = 'ул. Новоселова'
         if street == '' and city == 'г. Пермь':
             continue
         area = sheet.cell(rownum, 3).value.strip()
+        if area == 'льская' and city == 'г. Березники':
+            area = 'Березниковский городской округ'
+
         print(f'{area} {city} {street} {number}')
         addr = Address.objects.filter(area__contains=area, city=city, street=street).first()
         house, created = House.objects.get_or_create(address_id=addr.id, number=number)
