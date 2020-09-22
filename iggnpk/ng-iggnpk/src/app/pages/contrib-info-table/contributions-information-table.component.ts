@@ -16,6 +16,8 @@ import ExcelJS from 'exceljs';
 import saveAs from 'file-saver';
 import {AuthService} from "../../shared/services";
 import {ContributionsInformationService} from "../../shared/services/contributions-information.service";
+import {CustomStoreService} from "../../shared/services/custom-store.service";
+import {ContributionsInformationMistakeService} from "../../shared/services/contributions-information-mistake.service";
 
 @Component({
   selector: 'app-contributions-information-table',
@@ -26,14 +28,19 @@ export class ContributionsInformationTableComponent implements OnInit {
   @ViewChild(DxDataGridComponent, {static: false}) dataGrid: DxDataGridComponent;
   dataSource: any = {};
   currentFilter: any;
+  mistakesDataSource: any = {};
+
   get height() {
     return window.innerHeight / 1.35;
-}
-  get comment_visibility() {
-    return this.authService.current_user.permissions.findIndex(p=> p.codename=='view_comment2')>0
   }
 
-  constructor(private contribInfoService: ContributionsInformationService, private router: Router, private authService: AuthService) {
+  get comment_visibility() {
+    return this.authService.current_user.permissions.findIndex(p => p.codename == 'view_comment2') > 0
+  }
+
+  constructor(private contribInfoService: ContributionsInformationService, private router: Router, private authService: AuthService,
+              private customStoreService: CustomStoreService, private contribInfoMistakesService: ContributionsInformationMistakeService,) {
+    this.mistakesDataSource = customStoreService.getSearchCustomStore(contribInfoMistakesService);
 
     function isNotEmpty(value) {
       return value !== undefined && value !== null && value !== "";
@@ -93,6 +100,14 @@ export class ContributionsInformationTableComponent implements OnInit {
     this.dataGrid.instance.refresh();
   }
 
+  fullNameColumn_calculateCellValue(rowData) {
+    let text = '';
+     rowData.mistakes.forEach(function (m) {
+       text = text + m.text + '. '
+     });
+    return text;
+  }
+
   onToolbarPreparing(e) {
     e.toolbarOptions.items.unshift({
       location: 'before',
@@ -130,9 +145,11 @@ export class ContributionsInformationTableComponent implements OnInit {
   }
 
 }
+
 const routes: Routes = [
-  { path: '', component: ContributionsInformationTableComponent}
+  {path: '', component: ContributionsInformationTableComponent}
 ];
+
 @NgModule({
   imports: [
     CommonModule,

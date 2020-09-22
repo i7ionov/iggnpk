@@ -219,6 +219,13 @@
     </dxi-column>
     <dxi-column
       width="200"
+      caption="Ошибки"
+      dataField="mistakes__text"
+      [calculateCellValue]="fullNameColumn_calculateCellValue"
+      dataType="string">
+    </dxi-column>
+    <dxi-column
+      width="200"
       caption="Комментарий"
       dataField="comment"
       dataType="string">
@@ -232,6 +239,14 @@
 
     <div *dxTemplate="let cell of 'idCellTemplate'">
       <a [routerLink]="['/pages/contrib-info/', cell.text]">{{ cell.text }}</a>
+    </div>
+    <div *dxTemplate="let cell of 'mistakesCellTemplate'">
+      <div>
+        <span *ngFor="let item of cell.value">
+          {{ item.text }}.
+        </span>
+      </div>
+
     </div>
     <dxo-filter-panel [visible]="true"></dxo-filter-panel>
     <dxo-summary>
