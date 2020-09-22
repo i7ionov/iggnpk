@@ -29,6 +29,8 @@ def filtered_query(request, query, distinct_field=None):
             order_by = '-' + order_by
     else:
         order_by = 'id'
+    print()
+    query = query.distinct('id')
     if distinct_field:
         distinct_field = distinct_field.replace('.', '__')
         query = query.distinct(distinct_field)

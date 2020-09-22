@@ -112,11 +112,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
             serializer = NotifySerializer(queryset, many=True, exclude=exclude_fields)
             data = {'items': serializer.data,
                     'totalCount': total_count,
-                    'summary': [total_count,
-                                total_queryset.aggregate(Avg('monthly_contribution_amount'))[
-                                    'monthly_contribution_amount__avg'],
-                                total_queryset.aggregate(Sum('monthly_contribution_amount'))[
-                                    'monthly_contribution_amount__sum']]}
+                    'summary': [total_count]}
         return Response(data)
 
     def retrieve(self, request, pk=None):
