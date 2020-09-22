@@ -1,7 +1,8 @@
 from rest_framework.relations import PrimaryKeyRelatedField
 
 from dictionaries.models import File
-from .models import CreditOrganization, Branch, Notify, Status, ContributionsInformation
+from .models import CreditOrganization, Branch, Notify, Status, ContributionsInformation, \
+    ContributionsInformationMistake
 from tools.dynamic_fields_model_serializer import DynamicFieldsModelSerializer
 from dictionaries.serializers import OrganizationSerializer, HouseSerializer, FileSerializer
 from rest_framework import serializers
@@ -24,6 +25,12 @@ class BranchSerializer(DynamicFieldsModelSerializer):
 class StatusSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = Status
+        fields = '__all__'
+
+
+class ContributionsInformationMistakeSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = ContributionsInformationMistake
         fields = '__all__'
 
 
@@ -54,6 +61,7 @@ class ContributionsInformationSerializer(DynamicFieldsModelSerializer):
     notify = NotifySerializer(required=False, read_only=True)
     status = StatusSerializer(required=False, read_only=True)
     files = FileSerializer(required=False, read_only=True, many=True)
+    mistakes = ContributionsInformationMistakeSerializer(required=False, read_only=True, many=True)
 
     class Meta:
         model = ContributionsInformation

@@ -5,3 +5,14 @@ def upd_foreign_key(field, data, instance, model):
         return model.objects.get(id=data[field]['id'])
     else:
         return instance.__getattribute__(field)
+
+
+def upd_many_to_many(field, request, instance, model):
+    array = []
+    if field in request.data:
+        if request.data[field] != 'empty':
+            for f in request.data[field]:
+                array.append(model.objects.get(id=f['id']))
+    elif instance:
+        array = instance.__getattribute__(field).all()
+    return array

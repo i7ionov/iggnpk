@@ -36,6 +36,14 @@ class Status(models.Model):
     def __str__(self):
         return f'{self.text}'
 
+
+class ContributionsInformationMistake(models.Model):
+    text = models.CharField(max_length=30, blank=True, verbose_name='Текст')
+
+    def __str__(self):
+        return f'{self.text}'
+
+
 class Notify(models.Model):
     STATUSES = (
         ('1', 'Editing'),
@@ -92,6 +100,7 @@ class ContributionsInformation(models.Model):
     fund_balance = models.DecimalField(null=True, blank=True, verbose_name='Остаток средств', max_digits=15, decimal_places=2)
     status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True, verbose_name='Статус',
                                blank=True, default=None)
+    mistakes = models.ManyToManyField(ContributionsInformationMistake, blank=True)
     comment = models.TextField(verbose_name='Комментарий', null=True, blank=True)
     comment2 = models.TextField(verbose_name='Комментарий', null=True, blank=True)
     files = models.ManyToManyField(File, blank=True)

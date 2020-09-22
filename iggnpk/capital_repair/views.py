@@ -6,8 +6,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions
 
-from tools.serializer_tools import upd_foreign_key
-from .models import CreditOrganization, Branch, Notify, Status, ContributionsInformation
+from tools.serializer_tools import upd_foreign_key, upd_many_to_many
+from .models import CreditOrganization, Branch, Notify, Status, ContributionsInformation, ContributionsInformationMistake
 from dictionaries.models import Organization, House, File
 from .serializers import CreditOrganisationSerializer, BranchSerializer, NotifySerializer, \
     ContributionsInformationSerializer
@@ -295,12 +295,7 @@ class ContributionsInformationViewSet(viewsets.ModelViewSet):
             if notify.organization.id != request.user.organization.id and not request.user.is_staff:
                 return Response({'Организация, указанная в уведомлениии, не соответствует организации пользователя'},
                                 status=400)
-            files = []
-            if 'files' in request.data:
-                if request.data['files'] != 'empty':
-                    for file in request.data['files']:
-                        files.append(File.objects.get(id=file['id']))
-
+            files = upd_many_to_many('files',request, None, File)
             item.save(date=datetime.today().date(), status=status, files=files, notify=notify)
             return Response(item.data)
         else:
@@ -331,15 +326,11 @@ class ContributionsInformationViewSet(viewsets.ModelViewSet):
             return Response({'Организация, указанная в уведомлениии, не соответствует организации пользователя'},
                             status=400)
 
-        if 'files' in data:
-            files = []
-            if data['files'] != 'empty':
-                for file in data['files']:
-                    files.append(File.objects.get(id=file['id']))
-        else:
-            files = instance.files.all()
+        files = upd_many_to_many('files', request, instance, File)
+        mistakes = upd_many_to_many('mistakes', request, instance, ContributionsInformationMistake)
+
         if status.id == 3:
-            notify.latest_contrib_date = data['date']
+            notify.latest_contrib_date = datetime.now().date()
             notify.save()
-        serializer.save(files=files, status=status, notify=notify)
+        serializer.save(files=files, status=status, notify=notify, mistakes=mistakes)
         return Response(serializer.data)
