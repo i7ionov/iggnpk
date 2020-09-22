@@ -6,5 +6,6 @@ from . import models
 admin.site.register(models.CreditOrganization)
 admin.site.register(models.Branch)
 admin.site.register(models.Notify)
+admin.site.register(models.ContributionsInformation)
 admin.site.register(models.Status)
 admin.site.register(models.ContributionsInformationMistake)
