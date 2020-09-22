@@ -192,7 +192,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
             org = instance.organization
         bank = upd_foreign_key('bank', data, instance, CreditOrganization)
         house = House.objects.get_or_create_new('house', data, instance)
-        if 'status' in data:
+        if 'status' in data and 'id' in data['status']:
             if instance.status is not None and data['status']['id'] == instance.status.id:
                 status = instance.status
             else:
@@ -314,7 +314,7 @@ class ContributionsInformationViewSet(viewsets.ModelViewSet):
 
         serializer = self.serializer_class(instance=instance, data=data, partial=True, exclude=exclude_fields)
         serializer.is_valid(raise_exception=True)
-        if 'status' in data:
+        if 'status' in data and 'id' in data['status']:
             if instance.status is not None and data['status']['id'] == instance.status.id:
                 status = instance.status
             else:
