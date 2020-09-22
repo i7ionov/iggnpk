@@ -10,7 +10,7 @@ from tools.serializer_tools import upd_foreign_key, upd_many_to_many
 from .models import CreditOrganization, Branch, Notify, Status, ContributionsInformation, ContributionsInformationMistake
 from dictionaries.models import Organization, House, File
 from .serializers import CreditOrganisationSerializer, BranchSerializer, NotifySerializer, \
-    ContributionsInformationSerializer
+    ContributionsInformationSerializer, ContributionsInformationMistakeSerializer
 from rest_framework.decorators import api_view
 from rest_framework import viewsets
 from tools import dev_extreme
@@ -296,7 +296,8 @@ class ContributionsInformationViewSet(viewsets.ModelViewSet):
                 return Response({'Организация, указанная в уведомлениии, не соответствует организации пользователя'},
                                 status=400)
             files = upd_many_to_many('files',request, None, File)
-            item.save(date=datetime.today().date(), status=status, files=files, notify=notify)
+            mistakes = upd_many_to_many('mistakes', request, None, ContributionsInformationMistake)
+            item.save(date=datetime.today().date(), status=status, files=files, notify=notify, mistakes=mistakes)
             return Response(item.data)
         else:
             return Response(item.errors, status=400)
@@ -334,3 +335,43 @@ class ContributionsInformationViewSet(viewsets.ModelViewSet):
             notify.save()
         serializer.save(files=files, status=status, notify=notify, mistakes=mistakes)
         return Response(serializer.data)
+
+
+class ContributionsInformationMistakeViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated, ]
+    queryset = ContributionsInformationMistake.objects.all()
+    serializer_class = ContributionsInformationMistakeSerializer
+
+    def list(self, request):
+        if 'group' in request.GET:
+            d, total_count = dev_extreme.populate_group_category(request, self.queryset)
+            data = {"totalCount": total_count, "items": d}
+        else:
+            queryset, total_queryset, total_count = dev_extreme.filtered_query(request, self.queryset)
+            serializer = self.serializer_class(queryset, many=True)
+            data = {'items': serializer.data, 'totalCount': total_count}
+        return Response(data)
+
+    def retrieve(self, request, pk=None):
+        item = get_object_or_404(self.queryset, pk=pk)
+        serializer = self.serializer_class(item)
+        return Response(serializer.data)
+
+    def search(self, request):
+        queryset = self.queryset
+        if 'searchValue' in request.GET:
+            searchValue = request.GET['searchValue'].strip('"').replace(',', ' ').split(' ')
+            keywords = [x for x in searchValue if x]
+            for keyword in keywords:
+                queryset = queryset.filter(
+                    Q(text__icontains=keyword))
+
+            queryset = queryset[:10]
+            serializer = self.serializer_class(queryset, many=True)
+            data = {'items': serializer.data}
+            return Response(data)
+        else:
+            queryset = queryset[:10]
+            serializer = self.serializer_class(queryset, many=True)
+            data = {'items': serializer.data}
+            return Response(data)

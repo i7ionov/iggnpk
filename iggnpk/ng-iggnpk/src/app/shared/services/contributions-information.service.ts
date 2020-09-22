@@ -36,11 +36,12 @@ export class ContributionsInformation {
   comment2?: string;
   status?: Status;
   files?: any[];
-
+  mistakes?: any[];
   constructor() {
     this.id = 0;
 
     this.files = [];
+    this.mistakes = [];
     this.status = new Status();
     this.notify = new Notify();
   }

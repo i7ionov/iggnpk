@@ -3,16 +3,18 @@
   <a (click)="back()">Назад</a>
   <form (submit)="onFormSubmit($event)" method="post" enctype="multipart/form-data">
     <dx-form #form
-             id="form"
-             [(formData)]="contrib_info"
+      id="form"
+      [(formData)]="contrib_info"
     >
 
-      <dxi-item dataField="id" [editorOptions]="{ disabled: true }"><dxo-label text="Номер">
-        </dxo-label></dxi-item>
+      <dxi-item dataField="id" [editorOptions]="{ disabled: true }">
+        <dxo-label text="Номер">
+        </dxo-label>
+      </dxi-item>
 
 
       <dxi-item dataField="date" editorType="dxDateBox" [disabled]="dateIsReadOnly"
-                [editorOptions]="{width: 200, dateSerializationFormat: 'yyyy-MM-dd'}">
+        [editorOptions]="{width: 200, dateSerializationFormat: 'yyyy-MM-dd'}">
         <dxi-validation-rule
           type="required"
           message="Дата внесения записи обязательна для заполнения">
@@ -67,7 +69,8 @@
 
 
       <dxi-item dataField="delta_total" editorType="dxNumberBox" [editorOptions]="{step:0}">
-        <dxo-label text="Задолженность (+), переплата (-) по уплате собственниками помещений взносов на капитальный ремонт на конец отчетного периода, рублей"></dxo-label>
+        <dxo-label
+          text="Задолженность (+), переплата (-) по уплате собственниками помещений взносов на капитальный ремонт на конец отчетного периода, рублей"></dxo-label>
         <dxi-validation-rule
           type="required"
           message="Обязательно для заполнения">
@@ -75,7 +78,8 @@
       </dxi-item>
 
       <dxi-item dataField="funds_spent" editorType="dxNumberBox" [editorOptions]="{step:0}">
-        <dxo-label text="Сведения о размере израсходованных средств на капитальный ремонт со специального счета, рублей"></dxo-label>
+        <dxo-label
+          text="Сведения о размере израсходованных средств на капитальный ремонт со специального счета, рублей"></dxo-label>
         <dxi-validation-rule
           type="required"
           message="Обязательно для заполнения">
@@ -83,7 +87,8 @@
       </dxi-item>
 
       <dxi-item dataField="credit" editorType="dxNumberBox" [editorOptions]="{step:0}">
-        <dxo-label text="Сведения о заключении договора займа и (или) кредитного договора на проведение капитального ремонта (номер договора, наименование кредитной организации, сумма кредита (займа), рублей"></dxo-label>
+        <dxo-label
+          text="Сведения о заключении договора займа и (или) кредитного договора на проведение капитального ремонта (номер договора, наименование кредитной организации, сумма кредита (займа), рублей"></dxo-label>
         <dxi-validation-rule
           type="required"
           message="Обязательно для заполнения">
@@ -99,7 +104,8 @@
       </dxi-item>
 
       <dxi-item dataField="fund_balance" editorType="dxNumberBox" [editorOptions]="{step:0}">
-        <dxo-label text="Остаток средств фонда капитального ремонта на специальном счете на конец отчетного периода (с учетом ДЕПОЗИТА), рублей"></dxo-label>
+        <dxo-label
+          text="Остаток средств фонда капитального ремонта на специальном счете на конец отчетного периода (с учетом ДЕПОЗИТА), рублей"></dxo-label>
         <dxi-validation-rule
           type="required"
           message="Обязательно для заполнения">
@@ -111,7 +117,7 @@
       </dxi-item>
 
       <dxi-item dataField="comment2" editorType="dxTextArea" [editorOptions]="{ height: 90 }"
-                *ngIf="comment_visibility">
+        *ngIf="comment_visibility">
         <dxo-label text="Комментарий(виден только сотрудникам)"></dxo-label>
       </dxi-item>
 
@@ -148,25 +154,53 @@
           </div>
         </div>
       </div>
-
-
     </div>
-    <dx-file-uploader *ngIf="saveButtonVisibility" name="file" [uploadUrl]="uploadUrl"
-                      [uploadHeaders]="{'Authorization': uploadAuthorization}"
 
-                      (onUploaded)="onUploaded($event)" [showFileList]="true" [maxFileSize]="100*1024*1024"
-                      [multiple]="true" [allowedFileExtensions]="['.doc', '.docx', '.pdf']">
+
+    <dx-file-uploader *ngIf="saveButtonVisibility" name="file" [uploadUrl]="uploadUrl"
+      [uploadHeaders]="{'Authorization': uploadAuthorization}"
+
+      (onUploaded)="onUploaded($event)" [showFileList]="true" [maxFileSize]="100*1024*1024"
+      [multiple]="true" [allowedFileExtensions]="['.doc', '.docx', '.pdf']">
 
     </dx-file-uploader>
+    <div *ngIf="mistakes_visibility">
+
+
+      <span class="dx-form-group-caption">Ошибки в заполнении формы</span>
+      <div>
+        <div class="dx-fileuploader-files-container">
+          <div *ngFor="let f of contrib_info.mistakes" class="dx-fileuploader-file-container">
+            <div class="dx-fileuploader-button-container">
+              <div *ngIf="comment_visibility"
+                class="dx-fileuploader-button dx-fileuploader-cancel-button dx-button dx-button-normal dx-button-mode-contained dx-widget dx-button-has-icon"
+                role="button" aria-label="close" tabindex="0" (click)="mistakeDelete(f)">
+                <div class="dx-button-content"><i class="dx-icon dx-icon-close"></i></div>
+              </div>
+            </div>
+            <div class="dx-fileuploader-file">
+              <div class="dx-fileuploader-file-info">
+                <div class="dx-fileuploader-file-name" style="max-width: 876.719px; color: red">{{ f.text }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <dx-select-box #mistakes *ngIf="comment_visibility" [dataSource] = 'mistakesDataSource' displayValue="text" placeholder="Выбрать вид ошибки"
+                                                                     displayExpr="text" (selectedItemChange)="onMistakeSelected($event)"></dx-select-box>
+      </div>
+    </div>
+
     <div class="buttons-line">
       <dx-button *ngIf="saveButtonVisibility" type="success" text="Сохранить" [width]="150"
-                 (onClick)="onFormSubmit(SubmitType.Saving)"></dx-button>
+        (onClick)="onFormSubmit(SubmitType.Saving)"></dx-button>
       <dx-button *ngIf="sendForApprovalButtonVisibility" type="success" text="Отправить" [width]="150"
-                 (onClick)="onFormSubmit(SubmitType.Sending)"></dx-button>
+        (onClick)="onFormSubmit(SubmitType.Sending)"></dx-button>
       <dx-button *ngIf="acceptButtonVisibility" type="success" text="Согласовать" [width]="150"
-                 (onClick)="onFormSubmit(SubmitType.Accepting)"></dx-button>
+        (onClick)="onFormSubmit(SubmitType.Accepting)"></dx-button>
       <dx-button *ngIf="rejectButtonVisibility" type="danger" text="Вернуть" [width]="150"
-                 (onClick)="onFormSubmit(SubmitType.Rejecting)"></dx-button>
+        (onClick)="onFormSubmit(SubmitType.Rejecting)"></dx-button>
 
 
     </div>

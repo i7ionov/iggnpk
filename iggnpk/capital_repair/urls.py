@@ -36,4 +36,8 @@ urlpatterns = [
     path('contrib_info/<int:pk>/', views.ContributionsInformationViewSet.as_view({'get': 'retrieve'})),
     path('contrib_info/save/<int:pk>/', views.ContributionsInformationViewSet.as_view({'post': 'update'})),
 
+    path('contrib_info_mistake/', views.ContributionsInformationMistakeViewSet.as_view({'get': 'list'})),
+    path('contrib_info_mistake/<int:pk>/', views.ContributionsInformationMistakeViewSet.as_view({'get': 'retrieve'})),
+    path('contrib_info_mistake/search/', views.ContributionsInformationMistakeViewSet.as_view({'get': 'search'})),
+
 ]
