@@ -52,7 +52,7 @@ export class ContributionsInfromationFormComponent implements OnInit {
   }
 
   get delta(){
-    return this.contrib_info.assessed_contributions_total - this.contrib_info.received_contributions_total
+    return (this.contrib_info.assessed_contributions_total - this.contrib_info.received_contributions_total).toFixed(2)
   }
 
   id = '';
