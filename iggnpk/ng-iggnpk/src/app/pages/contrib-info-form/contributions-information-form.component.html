@@ -160,8 +160,8 @@
     <dx-file-uploader *ngIf="saveButtonVisibility" name="file" [uploadUrl]="uploadUrl"
       [uploadHeaders]="{'Authorization': uploadAuthorization}"
 
-      (onUploaded)="onUploaded($event)" [showFileList]="true" [maxFileSize]="100*1024*1024"
-      [multiple]="true" [allowedFileExtensions]="['.doc', '.docx', '.pdf']">
+      (onUploaded)="onUploaded($event)" [showFileList]="true" [maxFileSize]="200*1024*1024"
+      [multiple]="true">
 
     </dx-file-uploader>
     <div *ngIf="mistakes_visibility">
