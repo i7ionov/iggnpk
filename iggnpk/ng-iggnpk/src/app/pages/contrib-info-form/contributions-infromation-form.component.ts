@@ -51,8 +51,8 @@ export class ContributionsInfromationFormComponent implements OnInit {
     return `${environment.file_url}create/`
   }
 
-  get delta(){
-    return (this.contrib_info.assessed_contributions_total - this.contrib_info.received_contributions_total).toFixed(2)
+  get delta():number{
+    return Number((this.contrib_info.assessed_contributions_total - this.contrib_info.received_contributions_total).toFixed(2))
   }
 
   id = '';
