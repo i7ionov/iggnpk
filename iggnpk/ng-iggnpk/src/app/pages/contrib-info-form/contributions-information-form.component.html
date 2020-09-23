@@ -3,8 +3,8 @@
   <a (click)="back()">Назад</a>
   <form (submit)="onFormSubmit($event)" method="post" enctype="multipart/form-data">
     <dx-form #form
-      id="form"
-      [(formData)]="contrib_info"
+             id="form"
+             [(formData)]="contrib_info"
     >
 
       <dxi-item dataField="id" [editorOptions]="{ disabled: true }">
@@ -14,7 +14,7 @@
 
 
       <dxi-item dataField="date" editorType="dxDateBox" [disabled]="dateIsReadOnly"
-        [editorOptions]="{width: 200, dateSerializationFormat: 'yyyy-MM-dd'}">
+                [editorOptions]="{width: 200, dateSerializationFormat: 'yyyy-MM-dd'}">
         <dxi-validation-rule
           type="required"
           message="Дата внесения записи обязательна для заполнения">
@@ -68,14 +68,15 @@
       </dxi-item>
 
 
-      <dxi-item dataField="delta_total" editorType="dxNumberBox" [editorOptions]="{step:0}">
-        <dxo-label
-          text="Задолженность (+), переплата (-) по уплате собственниками помещений взносов на капитальный ремонт на конец отчетного периода, рублей"></dxo-label>
-        <dxi-validation-rule
-          type="required"
-          message="Обязательно для заполнения">
-        </dxi-validation-rule>
+      <dxi-item
+        [template]="'testTemplate'">
+        <dxo-label text="Задолженность (+), переплата (-) по уплате собственниками помещений взносов на капитальный ремонт на конец отчетного периода, рублей">
+
+        </dxo-label>
       </dxi-item>
+      <div *dxTemplate="let data of 'testTemplate'">
+        <dx-number-box [value]="delta" [step]="0"></dx-number-box>
+      </div>
 
       <dxi-item dataField="funds_spent" editorType="dxNumberBox" [editorOptions]="{step:0}">
         <dxo-label
@@ -117,7 +118,7 @@
       </dxi-item>
 
       <dxi-item dataField="comment2" editorType="dxTextArea" [editorOptions]="{ height: 90 }"
-        *ngIf="comment_visibility">
+                *ngIf="comment_visibility">
         <dxo-label text="Комментарий(виден только сотрудникам)"></dxo-label>
       </dxi-item>
 
@@ -158,10 +159,10 @@
 
 
     <dx-file-uploader *ngIf="saveButtonVisibility" name="file" [uploadUrl]="uploadUrl"
-      [uploadHeaders]="{'Authorization': uploadAuthorization}"
+                      [uploadHeaders]="{'Authorization': uploadAuthorization}"
 
-      (onUploaded)="onUploaded($event)" [showFileList]="true" [maxFileSize]="200*1024*1024"
-      [multiple]="true">
+                      (onUploaded)="onUploaded($event)" [showFileList]="true" [maxFileSize]="200*1024*1024"
+                      [multiple]="true">
 
     </dx-file-uploader>
     <div *ngIf="mistakes_visibility">
@@ -173,8 +174,8 @@
           <div *ngFor="let f of contrib_info.mistakes" class="dx-fileuploader-file-container">
             <div class="dx-fileuploader-button-container">
               <div *ngIf="comment_visibility"
-                class="dx-fileuploader-button dx-fileuploader-cancel-button dx-button dx-button-normal dx-button-mode-contained dx-widget dx-button-has-icon"
-                role="button" aria-label="close" tabindex="0" (click)="mistakeDelete(f)">
+                   class="dx-fileuploader-button dx-fileuploader-cancel-button dx-button dx-button-normal dx-button-mode-contained dx-widget dx-button-has-icon"
+                   role="button" aria-label="close" tabindex="0" (click)="mistakeDelete(f)">
                 <div class="dx-button-content"><i class="dx-icon dx-icon-close"></i></div>
               </div>
             </div>
@@ -187,20 +188,21 @@
           </div>
         </div>
 
-        <dx-select-box #mistakes *ngIf="comment_visibility" [dataSource] = 'mistakesDataSource' displayValue="text" placeholder="Выбрать вид ошибки"
-                                                                     displayExpr="text" (selectedItemChange)="onMistakeSelected($event)"></dx-select-box>
+        <dx-select-box #mistakes *ngIf="comment_visibility" [dataSource]='mistakesDataSource' displayValue="text"
+                       placeholder="Выбрать вид ошибки"
+                       displayExpr="text" (selectedItemChange)="onMistakeSelected($event)"></dx-select-box>
       </div>
     </div>
 
     <div class="buttons-line">
       <dx-button *ngIf="saveButtonVisibility" type="success" text="Сохранить" [width]="150"
-        (onClick)="onFormSubmit(SubmitType.Saving)"></dx-button>
+                 (onClick)="onFormSubmit(SubmitType.Saving)"></dx-button>
       <dx-button *ngIf="sendForApprovalButtonVisibility" type="success" text="Отправить" [width]="150"
-        (onClick)="onFormSubmit(SubmitType.Sending)"></dx-button>
+                 (onClick)="onFormSubmit(SubmitType.Sending)"></dx-button>
       <dx-button *ngIf="acceptButtonVisibility" type="success" text="Согласовать" [width]="150"
-        (onClick)="onFormSubmit(SubmitType.Accepting)"></dx-button>
+                 (onClick)="onFormSubmit(SubmitType.Accepting)"></dx-button>
       <dx-button *ngIf="rejectButtonVisibility" type="danger" text="Вернуть" [width]="150"
-        (onClick)="onFormSubmit(SubmitType.Rejecting)"></dx-button>
+                 (onClick)="onFormSubmit(SubmitType.Rejecting)"></dx-button>
 
 
     </div>

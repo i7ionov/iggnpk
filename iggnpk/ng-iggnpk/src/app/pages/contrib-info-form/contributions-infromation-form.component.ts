@@ -5,7 +5,7 @@ import {
   DxButtonModule,
   DxDataGridModule,
   DxFileUploaderModule,
-  DxFormComponent, DxFormModule,
+  DxFormComponent, DxFormModule, DxNumberBoxModule,
   DxPopupModule, DxSelectBoxComponent, DxSelectBoxModule,
   DxTemplateModule, DxTextAreaModule
 } from "devextreme-angular";
@@ -51,6 +51,9 @@ export class ContributionsInfromationFormComponent implements OnInit {
     return `${environment.file_url}create/`
   }
 
+  get delta(){
+    return this.contrib_info.assessed_contributions_total - this.contrib_info.received_contributions_total
+  }
 
   id = '';
   contrib_info: ContributionsInformation = new ContributionsInformation();
@@ -181,6 +184,7 @@ export class ContributionsInfromationFormComponent implements OnInit {
     let is_form_valid = true;
     let is_credit_org_valid = true;
     let is_house_valid = true;
+    this.contrib_info.delta_total = this.delta;
     if (e != SubmitType.Exclusion && !this.skip_verification) {
       is_form_valid = this.form.instance.validate().isValid;
     }
@@ -327,6 +331,7 @@ const routes: Routes = [
     DxCheckBoxModule,
     DxTextBoxModule,
     DxTextAreaModule,
+    DxNumberBoxModule,
     DxValidatorModule,
     DxValidationGroupModule,
     DxPopupModule,
