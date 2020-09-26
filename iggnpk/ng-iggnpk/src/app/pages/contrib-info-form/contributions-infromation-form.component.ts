@@ -276,7 +276,6 @@ export class ContributionsInfromationFormComponent implements OnInit {
         this.contrib_info.files = []
       }
       const file = JSON.parse(e.request.response);
-      console.log(file);
       this.contrib_info.files.push(file);
     }
   }
@@ -292,12 +291,15 @@ export class ContributionsInfromationFormComponent implements OnInit {
         }
       }
     });
-
   }
 
   displayExpr(item) {
     // "item" can be null
-    return item && `№${item.id}, ${item.account_number} Адрес: ${item.house.address.city}, ${item.house.address.street}, ${item.house.number}`;
+    let latest_contrib_date = '';
+    if (item && item.latest_contrib_date) {
+      latest_contrib_date = `(${item.latest_contrib_date})`
+    }
+    return item && `№${item.id}, ${item.account_number} Адрес: ${item.house.address.city}, ${item.house.address.street}, ${item.house.number} ${latest_contrib_date}`;
   }
 
 
