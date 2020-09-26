@@ -92,6 +92,14 @@ export class ContributionsInformationTableComponent implements OnInit {
 
   }
 
+  onRowPrepared(e) {
+    if (e.rowType === "data") {
+      if (e.data.mistakes.length) {
+        e.rowElement.style.backgroundColor = "LightSalmon";
+      }
+    }
+  }
+
   add() {
     this.router.navigate(['/pages/contrib-info/0']);
   }
@@ -102,9 +110,9 @@ export class ContributionsInformationTableComponent implements OnInit {
 
   fullNameColumn_calculateCellValue(rowData) {
     let text = '';
-     rowData.mistakes.forEach(function (m) {
-       text = text + m.text + '. '
-     });
+    rowData.mistakes.forEach(function (m) {
+      text = text + m.text + '. '
+    });
     return text;
   }
 

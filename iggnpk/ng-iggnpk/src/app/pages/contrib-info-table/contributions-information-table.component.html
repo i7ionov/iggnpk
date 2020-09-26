@@ -3,16 +3,17 @@
 
 
   <dx-data-grid id="gridContainer"
-    [dataSource]="dataSource"
-    [height]="height"
-    (onToolbarPreparing)="onToolbarPreparing($event)"
-    (onExporting)="onExporting($event)"
-    [allowColumnResizing]="true"
-    [allowColumnReordering]="true"
+                [dataSource]="dataSource"
+                [height]="height"
+                (onToolbarPreparing)="onToolbarPreparing($event)"
+                (onExporting)="onExporting($event)"
+                (onRowPrepared)="onRowPrepared($event)"
+                [allowColumnResizing]="true"
+                [allowColumnReordering]="true"
                 columnResizingMode="widget"
-    [showBorders]="true"
-    [showColumnLines]="true"
-    [wordWrapEnabled]="true"
+                [showBorders]="true"
+                [showColumnLines]="true"
+                [wordWrapEnabled]="true"
   >
     <dxo-state-storing [enabled]="true" type="localStorage" storageKey="conrib-info-table-state"></dxo-state-storing>
     <dxo-scrolling showScrollbar="always">
@@ -231,10 +232,10 @@
       dataType="string">
     </dxi-column>
     <dxi-column *ngIf="comment_visibility"
-      width="200"
-      caption="Комментарий2"
-      dataField="comment2"
-      dataType="string">
+                width="200"
+                caption="Комментарий2"
+                dataField="comment2"
+                dataType="string">
     </dxi-column>
 
     <div *dxTemplate="let cell of 'idCellTemplate'">
