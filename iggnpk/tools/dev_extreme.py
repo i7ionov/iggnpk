@@ -33,7 +33,7 @@ def filtered_query(request, query, distinct_field=None):
         distinct_field = distinct_field.replace('.', '__')
         query = query.distinct(distinct_field)
     else:
-        query = query.order_by(order_by)
+        query = query.order_by(order_by).distinct()
     return query[start:end], query, query.count()
 
 
