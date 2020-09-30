@@ -36,6 +36,8 @@ class UserManager(BaseUserManager):
 class OrganizationType(models.Model):
     text = models.CharField(max_length=30, blank=True)
 
+    def __str__(self):
+        return self.text
 
 class Organization(models.Model):
     inn = models.CharField(max_length=30, blank=True)
@@ -45,6 +47,8 @@ class Organization(models.Model):
     history = HistoricalRecords()
     REQUIRED_FIELDS = ['name', 'inn', 'ogrn', 'type']
 
+    def __str__(self):
+        return f'{self.name}, ИНН {self.inn}'
 
 class User(AbstractUser):
     name = models.CharField(max_length=100, blank=True)
@@ -68,7 +72,7 @@ class Address(models.Model):
     street = models.CharField(max_length=100, verbose_name='Улица')
 
     def __str__(self):
-        return f'{self.area}, {self.city}, {self.street}'
+        return f'{self.city}, {self.street}'
 
     class Meta:
         verbose_name = "Адрес"
@@ -113,6 +117,9 @@ class House(models.Model):
         verbose_name='Дата включения МКД в Региональную программу капитального ремонта', null=True, blank=True)
     history = HistoricalRecords()
     objects = HouseManager()
+
+    def __str__(self):
+        return f'{self.address}, {self.number}'
 
     class Meta:
         verbose_name = "Дом"
