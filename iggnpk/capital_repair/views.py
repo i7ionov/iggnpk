@@ -342,14 +342,14 @@ class ContributionsInformationViewSet(viewsets.ModelViewSet):
         if pk:
             doc = DocxTemplate(os.path.join(settings.MEDIA_ROOT, 'templates', 'act.docx'))
             contrib_info = ContributionsInformation.objects.get(pk=pk)
-            if datetime.now().month < 4:
+            if datetime.now() < datetime(datetime.now().year,3,20):
                 month = date.MONTH_NAMES[11]
-            elif datetime.now().month < 7:
+            elif datetime.now() < datetime(datetime.now().year,6,20):
                 month = date.MONTH_NAMES[2]
-            elif datetime.now().month < 10:
+            elif datetime.now() < datetime(datetime.now().year,9,20):
                 month = date.MONTH_NAMES[5]
             else:
-                month = date.MONTH_NAMES[10]
+                month = date.MONTH_NAMES[8]
             context = {'date': date.russian_date(datetime.now()),
                        'org': contrib_info.notify.organization,
                        'house': contrib_info.notify.house,
