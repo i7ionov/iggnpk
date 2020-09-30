@@ -1,3 +1,5 @@
+import io
+import os
 from datetime import datetime
 from django.db.models import Avg, Sum
 from django.db.models import Q
@@ -5,7 +7,10 @@ from rest_framework.parsers import FileUploadParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions
-
+from django.http import HttpResponse
+from iggnpk import settings
+from tools.docx_response import docx_response
+from tools import date
 from tools.serializer_tools import upd_foreign_key, upd_many_to_many
 from .models import CreditOrganization, Branch, Notify, Status, ContributionsInformation, ContributionsInformationMistake
 from dictionaries.models import Organization, House, File
@@ -15,6 +20,7 @@ from rest_framework.decorators import api_view
 from rest_framework import viewsets
 from tools import dev_extreme
 from django.shortcuts import get_object_or_404
+from docxtpl import DocxTemplate
 
 
 class CreditOrganisationsViewSet(viewsets.ModelViewSet):
@@ -239,7 +245,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
 
 
 class ContributionsInformationViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated, ]
+    #permission_classes = [permissions.IsAuthenticated, ]
     queryset = ContributionsInformation.objects.all()
     serializer_class = ContributionsInformationSerializer
 
@@ -331,6 +337,28 @@ class ContributionsInformationViewSet(viewsets.ModelViewSet):
             notify.save()
         serializer.save(files=files, status=status, notify=notify, mistakes=mistakes)
         return Response(serializer.data)
+
+    def generate_act(self, request, pk=None):
+        if pk:
+            doc = DocxTemplate(os.path.join(settings.MEDIA_ROOT, 'templates', 'act.docx'))
+            contrib_info = ContributionsInformation.objects.get(pk=pk)
+            if datetime.now() < datetime(datetime.now().year,3,20):
+                month = date.MONTH_NAMES[11]
+            elif datetime.now() < datetime(datetime.now().year,6,20):
+                month = date.MONTH_NAMES[2]
+            elif datetime.now() < datetime(datetime.now().year,9,20):
+                month = date.MONTH_NAMES[5]
+            else:
+                month = date.MONTH_NAMES[8]
+            context = {'date': date.russian_date(datetime.now()),
+                       'org': contrib_info.notify.organization,
+                       'house': contrib_info.notify.house,
+                       'month': month,
+                       'year': datetime.now().year}
+            doc.render(context)
+            return docx_response(doc, 'act')
+        else:
+            return Response({'error': 'Не указан id сведений'}, status=400)
 
 
 class ContributionsInformationMistakeViewSet(viewsets.ModelViewSet):
