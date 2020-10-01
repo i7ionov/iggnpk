@@ -22,6 +22,7 @@ import {DxCheckBoxModule} from "devextreme-angular/ui/check-box";
 
 import {DxTextBoxModule} from "devextreme-angular/ui/text-box";
 import {FileSizePipe} from "../../shared/pipes/filesize.pipe";
+import {generate} from "../../shared/tools/word";
 import {
   ContributionsInformation,
   ContributionsInformationService
@@ -31,6 +32,7 @@ import {CustomStoreService} from "../../shared/services/custom-store.service";
 import {CapitalRepairNotifyService} from "../../shared/services/capital-repair-notify.service";
 import {ContributionsInformationMistakeService} from "../../shared/services/contributions-information-mistake.service";
 import {DxiGroupComponent, DxiGroupModule} from "devextreme-angular/ui/nested";
+
 
 
 @Component({
@@ -98,7 +100,15 @@ export class ContributionsInfromationFormComponent implements OnInit {
   }
 
   act(){
-    window.location.href=`/api/v1/cr/contrib_info/generate_act/${this.id}/`;
+    let data = {
+      date: '11.11.11',
+      org: this.contrib_info.notify.organization,
+      house: this.contrib_info.notify.house,
+      month: 'месяц',
+      year: 'год'
+    }
+    generate('/media/templates/act.docx', data)
+    //window.location.href=`/api/v1/cr/contrib_info/generate_act/${this.id}/`;
   }
   setPermissions(user) {
 

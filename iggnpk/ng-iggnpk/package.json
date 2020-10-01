@@ -26,9 +26,11 @@
     "devextreme-angular": "20.1.7",
     "devextreme-intl": "^19.1.8",
     "devextreme-schematics": "^1.0.13",
+    "docxtemplater": "^3.19.6",
     "exceljs": "^4.1.1",
     "file-saver": "^2.0.2",
     "ionicons": "^4.6.3",
+    "pizzip": "^3.0.6",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"
