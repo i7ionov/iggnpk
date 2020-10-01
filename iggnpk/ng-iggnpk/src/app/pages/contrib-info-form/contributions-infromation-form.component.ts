@@ -34,7 +34,6 @@ import {ContributionsInformationMistakeService} from "../../shared/services/cont
 import {DxiGroupComponent, DxiGroupModule} from "devextreme-angular/ui/nested";
 
 
-
 @Component({
   selector: 'app-contributions-information-form',
   templateUrl: './contributions-information-form.component.html',
@@ -53,7 +52,7 @@ export class ContributionsInfromationFormComponent implements OnInit {
     return `${environment.file_url}create/`
   }
 
-  get delta():number{
+  get delta(): number {
     return Number((this.contrib_info.assessed_contributions_total - this.contrib_info.received_contributions_total).toFixed(2))
   }
 
@@ -70,9 +69,11 @@ export class ContributionsInfromationFormComponent implements OnInit {
   get comment_visibility() {
     return this.auth.current_user.permissions.findIndex(p => p.codename == 'view_comment2') > 0
   }
+
   get mistakes_visibility() {
     return this.comment_visibility || this.contrib_info.mistakes.length > 0
   }
+
   get skip_verification() {
     return this.auth.current_user.permissions.findIndex(p => p.codename == 'view_comment2') > 0
   }
@@ -84,7 +85,6 @@ export class ContributionsInfromationFormComponent implements OnInit {
       return false
     }
   };
-
 
 
   constructor(private route: ActivatedRoute,
@@ -99,17 +99,26 @@ export class ContributionsInfromationFormComponent implements OnInit {
     this.mistakesDataSource = customStoreService.getSearchCustomStore(contribInfoMistakesService);
   }
 
-  act(){
+  act() {
+    let now = new Date();
+
+    var options = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timezone: 'UTC'};
+
     let data = {
-      date: '11.11.11',
+      date: now.toLocaleString("ru", options),
       org: this.contrib_info.notify.organization,
       house: this.contrib_info.notify.house,
       month: 'месяц',
       year: 'год'
     }
-    generate('/media/templates/act.docx', data)
+    //generate('/media/templates/act.docx', data)
     //window.location.href=`/api/v1/cr/contrib_info/generate_act/${this.id}/`;
   }
+
   setPermissions(user) {
 
     if (this.contrib_info.notify.organization.id == this.auth.current_user.organization.id || user.groups.indexOf(UserGroup.Admin) != -1) {
@@ -157,7 +166,6 @@ export class ContributionsInfromationFormComponent implements OnInit {
         )
       } else {
         let a = new Date();
-        a.getFullYear();
         this.contrib_info.date = `${a.getFullYear()}-${a.getMonth() + 1}-${a.getDate()}`;
         this.sendForApprovalButtonVisibility = true;
         this.saveButtonVisibility = true;
