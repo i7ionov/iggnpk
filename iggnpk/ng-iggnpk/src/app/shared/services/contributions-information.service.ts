@@ -82,4 +82,7 @@ export class ContributionsInformationService {
     return this.http.get<ContributionsInformation>(`${environment.backend_url}${this.url}/search/${params}`)
   }
 
+  generate_act(id): Observable<ContributionsInformation> {
+    return this.http.get<ContributionsInformation>(`${environment.backend_url}${this.url}/generate_act/${id}/`)
+  }
 }

@@ -39,6 +39,7 @@ class Status(models.Model):
 
 class ContributionsInformationMistake(models.Model):
     text = models.CharField(max_length=30, blank=True, verbose_name='Текст')
+    full_text = models.TextField(blank=True, verbose_name='Полный текст')
 
     def __str__(self):
         return f'{self.text}'

@@ -203,7 +203,8 @@
                  (onClick)="onFormSubmit(SubmitType.Accepting)"></dx-button>
       <dx-button *ngIf="rejectButtonVisibility" type="danger" text="Вернуть" [width]="150"
                  (onClick)="onFormSubmit(SubmitType.Rejecting)"></dx-button>
-
+      <dx-button type="danger" text="Акт" [width]="150"
+                 (onClick)="act()"></dx-button>
 
     </div>
   </form>

@@ -83,6 +83,8 @@ export class ContributionsInfromationFormComponent implements OnInit {
     }
   };
 
+
+
   constructor(private route: ActivatedRoute,
               private router: Router,
               private contribInfoService: ContributionsInformationService,
@@ -95,7 +97,9 @@ export class ContributionsInfromationFormComponent implements OnInit {
     this.mistakesDataSource = customStoreService.getSearchCustomStore(contribInfoMistakesService);
   }
 
-
+  act(){
+    window.location.href=`/api/v1/cr/contrib_info/generate_act/${this.id}/`;
+  }
   setPermissions(user) {
 
     if (this.contrib_info.notify.organization.id == this.auth.current_user.organization.id || user.groups.indexOf(UserGroup.Admin) != -1) {

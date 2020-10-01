@@ -245,7 +245,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
 
 
 class ContributionsInformationViewSet(viewsets.ModelViewSet):
-    #permission_classes = [permissions.IsAuthenticated, ]
+    permission_classes = [permissions.IsAuthenticated, ]
     queryset = ContributionsInformation.objects.all()
     serializer_class = ContributionsInformationSerializer
 
@@ -338,28 +338,6 @@ class ContributionsInformationViewSet(viewsets.ModelViewSet):
         serializer.save(files=files, status=status, notify=notify, mistakes=mistakes)
         return Response(serializer.data)
 
-    def generate_act(self, request, pk=None):
-        if pk:
-            doc = DocxTemplate(os.path.join(settings.MEDIA_ROOT, 'templates', 'act.docx'))
-            contrib_info = ContributionsInformation.objects.get(pk=pk)
-            if datetime.now() < datetime(datetime.now().year,3,20):
-                month = date.MONTH_NAMES[11]
-            elif datetime.now() < datetime(datetime.now().year,6,20):
-                month = date.MONTH_NAMES[2]
-            elif datetime.now() < datetime(datetime.now().year,9,20):
-                month = date.MONTH_NAMES[5]
-            else:
-                month = date.MONTH_NAMES[8]
-            context = {'date': date.russian_date(datetime.now()),
-                       'org': contrib_info.notify.organization,
-                       'house': contrib_info.notify.house,
-                       'month': month,
-                       'year': datetime.now().year}
-            doc.render(context)
-            return docx_response(doc, 'act')
-        else:
-            return Response({'error': 'Не указан id сведений'}, status=400)
-
 
 class ContributionsInformationMistakeViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, ]
@@ -399,3 +377,26 @@ class ContributionsInformationMistakeViewSet(viewsets.ModelViewSet):
             serializer = self.serializer_class(queryset, many=True)
             data = {'items': serializer.data}
             return Response(data)
+
+
+def generate_act(self, pk=None):
+    if pk:
+        doc = DocxTemplate(os.path.join(settings.MEDIA_ROOT, 'templates', 'act.docx'))
+        contrib_info = ContributionsInformation.objects.get(pk=pk)
+        if datetime.now() < datetime(datetime.now().year,3,20):
+            month = date.MONTH_NAMES[11]
+        elif datetime.now() < datetime(datetime.now().year,6,20):
+            month = date.MONTH_NAMES[2]
+        elif datetime.now() < datetime(datetime.now().year,9,20):
+            month = date.MONTH_NAMES[5]
+        else:
+            month = date.MONTH_NAMES[8]
+        context = {'date': date.russian_date(datetime.now()),
+                   'org': contrib_info.notify.organization,
+                   'house': contrib_info.notify.house,
+                   'month': month,
+                   'year': datetime.now().year}
+        doc.render(context)
+        return docx_response(doc, 'act')
+    else:
+        return Response({'error': 'Не указан id сведений'}, status=400)
