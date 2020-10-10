@@ -130,6 +130,15 @@ export class ContributionsInformationTableComponent implements OnInit {
         onClick: this.add.bind(this)
       }
     })
+
+    e.toolbarOptions.items.unshift({
+      location: 'after',
+      widget: 'dxButton',
+      options: {
+        icon: 'refresh',
+        onClick: this.refreshDataGrid.bind(this)
+      }
+    })
     if (this.comment_visibility) {
       e.toolbarOptions.items.unshift({
         location: 'after',
@@ -140,14 +149,6 @@ export class ContributionsInformationTableComponent implements OnInit {
         }
       });
     }
-    e.toolbarOptions.items.unshift({
-      location: 'after',
-      widget: 'dxButton',
-      options: {
-        icon: 'refresh',
-        onClick: this.refreshDataGrid.bind(this)
-      }
-    })
   }
 
   exportActs() {

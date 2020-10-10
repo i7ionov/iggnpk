@@ -8,13 +8,17 @@ import {DxValidationGroupModule} from "devextreme-angular/ui/validation-group";
 import {DxPopupModule, DxButtonModule, DxTemplateModule, DxDataGridComponent} from 'devextreme-angular';
 
 import {CapitalRepairNotifyService, Notifies, Notify} from "../../shared/services/capital-repair-notify.service";
-
+import * as JSZip from 'jszip';
 import {DxDataGridModule} from 'devextreme-angular';
 import {exportDataGrid} from 'devextreme/excel_exporter';
 import CustomStore from 'devextreme/data/custom_store';
 import ExcelJS from 'exceljs';
 import saveAs from 'file-saver';
 import {AuthService} from "../../shared/services";
+import {getContent} from "../../shared/tools/contrib-info-act";
+import {environment} from "../../../environments/environment";
+import {generate} from "../../shared/tools/word";
+import {ContributionsInformationMistakeService} from "../../shared/services/contributions-information-mistake.service";
 
 @Component({
   selector: 'app-capital-repair-notifies',
@@ -25,14 +29,16 @@ export class CapitalRepairNotifiesComponent implements OnInit {
   @ViewChild(DxDataGridComponent, {static: false}) dataGrid: DxDataGridComponent;
   dataSource: any = {};
   currentFilter: any;
+
   get height() {
     return window.innerHeight / 1.35;
-}
-  get comment_visibility() {
-    return this.authService.current_user.permissions.findIndex(p=> p.codename=='view_comment2')>0
   }
 
-  constructor(private notifyService: CapitalRepairNotifyService, private router: Router, private authService: AuthService) {
+  get comment_visibility() {
+    return this.authService.current_user.permissions.findIndex(p => p.codename == 'view_comment2') > 0
+  }
+
+  constructor(private notifyService: CapitalRepairNotifyService, private router: Router, private authService: AuthService, private mistakeService: ContributionsInformationMistakeService) {
 
     function isNotEmpty(value) {
       return value !== undefined && value !== null && value !== "";
@@ -98,17 +104,58 @@ export class CapitalRepairNotifiesComponent implements OnInit {
       widget: 'dxButton',
       options: {
         width: 200,
-        text: 'Новое уведомление',
+        text: 'Новая запись',
         onClick: this.add.bind(this)
       }
-    }, {
+    })
+
+    e.toolbarOptions.items.unshift({
       location: 'after',
       widget: 'dxButton',
       options: {
         icon: 'refresh',
         onClick: this.refreshDataGrid.bind(this)
       }
-    });
+    })
+    if (this.comment_visibility) {
+      e.toolbarOptions.items.unshift({
+        location: 'after',
+        widget: 'dxButton',
+        options: {
+          text: 'Акты',
+          onClick: this.exportActs.bind(this)
+        }
+      });
+    }
+  }
+
+  exportActs() {
+    this.dataGrid.instance.beginCustomLoading('загрузка')
+    const mistake = this.mistakeService.retrieve('3').subscribe(m => {
+      let params = '?filter=' + JSON.stringify(this.dataGrid.instance.getCombinedFilter())
+      this.notifyService.getNotifies(params).toPromise()
+        .then((data: any) => {
+
+          const zip = new JSZip();
+          data.items.forEach(i => {
+
+            const file = generate(`${environment.backend_url}/media/templates/act.docx`, getContent(i, [m]))
+            const filename = `${i.house.address.city}, ${i.house.address.street}, ${i.house.number}.docx`.replace('\\', ' кор. ').replace('/', ' кор. ')
+            zip.file(filename, file);
+          })
+
+          zip.generateAsync({type: 'blob'}).then((content) => {
+
+            saveAs(content, 'example.zip');
+            this.dataGrid.instance.endCustomLoading()
+          });
+        })
+        .catch(error => {
+          throw 'Data Loading Error'
+        });
+    })
+
+
   }
 
   onExporting(e) {
@@ -129,9 +176,11 @@ export class CapitalRepairNotifiesComponent implements OnInit {
   }
 
 }
+
 const routes: Routes = [
-  { path: '', component: CapitalRepairNotifiesComponent}
+  {path: '', component: CapitalRepairNotifiesComponent}
 ];
+
 @NgModule({
   imports: [
     CommonModule,
