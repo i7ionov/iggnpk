@@ -33,7 +33,7 @@ import {CapitalRepairNotifyService} from "../../shared/services/capital-repair-n
 import {ContributionsInformationMistakeService} from "../../shared/services/contributions-information-mistake.service";
 import {DxiGroupComponent, DxiGroupModule} from "devextreme-angular/ui/nested";
 import {getContent} from "../../shared/tools/contrib-info-act";
-
+import saveAs from "file-saver"
 
 @Component({
   selector: 'app-contributions-information-form',
@@ -102,7 +102,10 @@ export class ContributionsInfromationFormComponent implements OnInit {
 
   act() {
     const data = getContent(this.contrib_info.notify, this.contrib_info.mistakes)
-    generate(`${environment.backend_url}/media/templates/act.docx`, data)
+    generate(`${environment.backend_url}/media/templates/act.docx`, data).then(a=>{
+      saveAs(a, "file.docx")
+    })
+
     //window.location.href=`/api/v1/cr/contrib_info/generate_act/${this.id}/`;
   }
 

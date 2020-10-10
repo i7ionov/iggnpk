@@ -9,6 +9,7 @@ import {DxPopupModule, DxButtonModule, DxTemplateModule, DxDataGridComponent} fr
 
 import {CapitalRepairNotifyService, Notifies, Notify} from "../../shared/services/capital-repair-notify.service";
 
+import * as JSZip from 'jszip';
 import {DxDataGridModule} from 'devextreme-angular';
 import {exportDataGrid} from 'devextreme/excel_exporter';
 import CustomStore from 'devextreme/data/custom_store';
@@ -18,6 +19,9 @@ import {AuthService} from "../../shared/services";
 import {ContributionsInformationService} from "../../shared/services/contributions-information.service";
 import {CustomStoreService} from "../../shared/services/custom-store.service";
 import {ContributionsInformationMistakeService} from "../../shared/services/contributions-information-mistake.service";
+import {getContent} from "../../shared/tools/contrib-info-act";
+import {environment} from "../../../environments/environment";
+import {generate} from "../../shared/tools/word";
 
 @Component({
   selector: 'app-contributions-information-table',
@@ -125,14 +129,51 @@ export class ContributionsInformationTableComponent implements OnInit {
         text: 'Новая запись',
         onClick: this.add.bind(this)
       }
-    }, {
+    })
+    if (this.comment_visibility) {
+      e.toolbarOptions.items.unshift({
+        location: 'after',
+        widget: 'dxButton',
+        options: {
+          text: 'Акты',
+          onClick: this.exportActs.bind(this)
+        }
+      });
+    }
+    e.toolbarOptions.items.unshift({
       location: 'after',
       widget: 'dxButton',
       options: {
         icon: 'refresh',
         onClick: this.refreshDataGrid.bind(this)
       }
-    });
+    })
+  }
+
+  exportActs() {
+    this.dataGrid.instance.beginCustomLoading('загрузка')
+    let params = '?filter=' + JSON.stringify(this.dataGrid.instance.getCombinedFilter())
+    this.contribInfoService.list(params).toPromise()
+      .then((data: any) => {
+
+        const zip = new JSZip();
+        data.items.forEach(i => {
+          const file = generate(`${environment.backend_url}/media/templates/act.docx`, getContent(i.notify, i.mistakes))
+          const filename = `${i.notify.house.address.city}, ${i.notify.house.address.street}, ${i.notify.house.number}.docx`.replace('\\', ' кор. ').replace('/', ' кор. ')
+          zip.file(filename, file);
+        })
+
+        zip.generateAsync({type: 'blob'}).then((content) => {
+
+          saveAs(content, 'example.zip');
+          this.dataGrid.instance.endCustomLoading()
+        });
+      })
+      .catch(error => {
+        throw 'Data Loading Error'
+      });
+
+
   }
 
   onExporting(e) {
