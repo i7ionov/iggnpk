@@ -1,10 +1,12 @@
+import os
 from datetime import datetime
-
+import requests
 import xlrd
 
 from capital_repair.models import Status
 from dictionaries.models import Organization, Address, House, OrganizationType
 from capital_repair import models
+from iggnpk import settings
 
 
 def cut_value(val, comment):
@@ -16,7 +18,12 @@ def cut_value(val, comment):
         return val, ''
 
 def houses():
-    rb = xlrd.open_workbook('C:\\Users\\User\\Desktop\\Code\\iggnpk\\iggnpk\\reestr_licensing.xlsx')
+
+    f = open(os.path.join(settings.MEDIA_ROOT, 'temp', 'reestr_licensing.xlsx'), "wb")  # открываем файл для записи, в режиме wb
+    ufr = requests.get("https://iggn.permkrai.ru/download.php?id=1621")  # делаем запрос
+    f.write(ufr.content)  # записываем содержимое в файл; как видите - content запроса
+    f.close()
+    rb = xlrd.open_workbook(os.path.join(settings.MEDIA_ROOT, 'temp', 'reestr_licensing.xlsx'))
     sheet = rb.sheet_by_index(1)
     for rownum in range(6, sheet.nrows):
         if sheet.cell(rownum, 0).value == '':
