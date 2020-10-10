@@ -70,12 +70,19 @@ function generate(url, data) {
 let expressions = require('angular-expressions');
 let assign = require("lodash/assign");
 // define your filter functions here, for example, to be able to write {clientname | lower}
-expressions.filters.lower = function(input) {
+expressions.filters.russian_date = function(input) {
     // This condition should be used to make sure that if your input is
     // undefined, your output will be undefined as well and will not
     // throw an error
     if(!input) return input;
-    return input.toLowerCase();
+    let options = {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      timezone: 'UTC'
+    };
+    input = new Date(input);
+    return input.toLocaleString("ru", options);
 }
 function angularParser(tag) {
     if (tag === '.') {

@@ -101,7 +101,7 @@ export class ContributionsInfromationFormComponent implements OnInit {
   }
 
   act() {
-    const data = getContent(this.contrib_info)
+    const data = getContent(this.contrib_info.notify, this.contrib_info.mistakes)
     generate(`${environment.backend_url}/media/templates/act.docx`, data)
     //window.location.href=`/api/v1/cr/contrib_info/generate_act/${this.id}/`;
   }

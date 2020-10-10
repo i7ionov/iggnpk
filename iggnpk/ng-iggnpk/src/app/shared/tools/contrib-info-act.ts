@@ -1,6 +1,5 @@
-import {ContributionsInformation} from "../services/contributions-information.service";
 
-function getContent(contrib_info: ContributionsInformation){
+function getContent(notify, mistakes){
   let options = {
       year: 'numeric',
       month: 'long',
@@ -8,14 +7,14 @@ function getContent(contrib_info: ContributionsInformation){
       timezone: 'UTC'
     };
     let now = new Date();
-    let mistakes = '';
-    contrib_info.mistakes.forEach(function (item, i, arr) {
+    let mistakes_text = '';
+    mistakes.forEach(function (item, i, arr) {
       if (i > 0){
-        mistakes = mistakes + ', ';
+        mistakes_text = mistakes_text + ', ';
       }
-      mistakes = mistakes + item.full_text;
+      mistakes_text = mistakes_text + item.full_text;
       if (i > arr.length-2){
-        mistakes = mistakes + '.';
+        mistakes_text = mistakes_text + '.';
       }
     });
     let reporting_quarter_date;
@@ -40,14 +39,15 @@ function getContent(contrib_info: ContributionsInformation){
       reporting_quarter_date = new Date(last_reporting_date4.getFullYear(), last_reporting_date4.getMonth()-1, 20);
       last_reporting_date = last_reporting_date4;
     }
-    mistakes = mistakes.replace(new RegExp('{house}', 'g'), `${contrib_info.notify.house.address.city}, ${contrib_info.notify.house.address.street}, д. ${contrib_info.notify.house.number}`);
-    mistakes = mistakes.replace(new RegExp('{reporting_quarter_date}', 'g'), reporting_quarter_date.toLocaleString("ru", options));
-    mistakes = mistakes.replace(new RegExp('{last_reporting_date}', 'g'), last_reporting_date.toLocaleString("ru", options));
+    mistakes_text = mistakes_text.replace(new RegExp('{house}', 'g'), `${notify.house.address.city}, ${notify.house.address.street}, д. ${notify.house.number}`);
+    mistakes_text = mistakes_text.replace(new RegExp('{reporting_quarter_date}', 'g'), reporting_quarter_date.toLocaleString("ru", options));
+    mistakes_text = mistakes_text.replace(new RegExp('{last_reporting_date}', 'g'), last_reporting_date.toLocaleString("ru", options));
 
     let data = {
       date: now.toLocaleString("ru", options),
-      org: contrib_info.notify.organization,
-      mistakes: mistakes
+      notify: notify,
+      mistakes_text: mistakes_text,
+      reporting_quarter_date: reporting_quarter_date.toLocaleString("ru", options)
     }
     return data;
 }
