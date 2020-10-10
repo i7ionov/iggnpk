@@ -3,7 +3,7 @@ from datetime import datetime
 import requests
 import xlrd
 
-from capital_repair.models import Status
+from capital_repair.models import Status, Notify
 from dictionaries.models import Organization, Address, House, OrganizationType
 from capital_repair import models
 from iggnpk import settings
@@ -56,6 +56,9 @@ def houses():
         org.save()
         house.organization = org
         house.save()
+        for n in Notify.objects.filter(house=house, status_id=3):
+            n.same_organization_in_license_registry = n.organization == org
+            n.save()
 
 
 def notifies():

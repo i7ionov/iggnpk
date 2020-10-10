@@ -54,6 +54,7 @@ class Notify(models.Model):
     date = models.DateField(verbose_name='Дата внесения записи', null=True, blank=True, default=None)
     organization = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True, verbose_name='Организация',
                                      blank=True, default=None)
+    same_organization_in_license_registry = models.BooleanField(default=None, null=True, blank=True)
     house = models.ForeignKey(House, on_delete=models.SET_NULL, null=True, verbose_name='Дом',
                               blank=True)
     credit_organization_branch = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True,
