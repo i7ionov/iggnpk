@@ -132,6 +132,7 @@ def populate_group_category(request, queryset):
     items, totalItems, count = filtered_query(request, queryset, selector)
     if 'groupInterval' in groups[0]:
         if groups[0]['groupInterval'] == 'year':
+            result.append({'key': None, 'items': []})
             for item in items:
                 year = -1
                 month = -1
