@@ -49,16 +49,26 @@ def houses():
         addr = Address.objects.filter(area__contains=area, city=city, street=street).first()
         house, created = House.objects.get_or_create(address_id=addr.id, number=number)
         # организация
-        inn = str(sheet.cell(rownum, 1).value).strip().replace('.0', '')
-        name = sheet.cell(rownum, 2).value.strip()
-        org, created = Organization.objects.get_or_create(inn=inn)
-        org.name = name
-        org.save()
-        house.organization = org
-        house.save()
+        if sheet.cell(rownum, 8).value == ' ' or sheet.cell(rownum, 8).value == '':
+            inn = str(sheet.cell(rownum, 1).value).strip().replace('.0', '')
+            name = sheet.cell(rownum, 2).value.strip()
+            org, created = Organization.objects.get_or_create(inn=inn)
+            org.name = name
+            org.save()
+            house.organization = org
+            house.save()
+        else:
+            house.organization = None
+            house.save()
+
         for n in Notify.objects.filter(house=house, status_id=3):
-            n.same_organization_in_license_registry = n.organization == org
-            n.save()
+            if sheet.cell(rownum, 8).value == ' ' or sheet.cell(rownum, 8).value == '':
+                n.same_organization_in_license_registry = n.organization == org
+                n.save()
+            else:
+                n.same_organization_in_license_registry = None
+                n.save()
+
 
 
 def notifies():
