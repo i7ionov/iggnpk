@@ -1,6 +1,8 @@
 import io
 import os
 from datetime import datetime
+from io import BytesIO
+
 from django.db.models import Avg, Sum
 from django.db.models import Q
 from rest_framework.parsers import FileUploadParser
@@ -8,8 +10,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions
 from django.http import HttpResponse
+
+from capital_repair.tasks import send_acts
+from dictionaries.serializers import UserSerializer
 from iggnpk import settings
-from tools.docx_response import docx_response
 from tools import date
 from tools.serializer_tools import upd_foreign_key, upd_many_to_many
 from .models import CreditOrganization, Branch, Notify, Status, ContributionsInformation, ContributionsInformationMistake
@@ -21,7 +25,7 @@ from rest_framework import viewsets
 from tools import dev_extreme
 from django.shortcuts import get_object_or_404
 from docxtpl import DocxTemplate
-
+import zipfile
 
 class CreditOrganisationsViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, ]
@@ -30,10 +34,10 @@ class CreditOrganisationsViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         if 'group' in request.GET:
-            d, total_count = dev_extreme.populate_group_category(request, CreditOrganization)
+            d, total_count = dev_extreme.populate_group_category(request.GET, CreditOrganization)
             data = {"totalCount": total_count, "items": d}
         else:
-            queryset, total_queryset, total_count = dev_extreme.filtered_query(request, CreditOrganization)
+            queryset, total_queryset, total_count = dev_extreme.filtered_query(request.GET, CreditOrganization)
             serializer = self.serializer_class(queryset, many=True)
             data = {'items': serializer.data, 'totalCount': total_count}
         return Response(data)
@@ -64,10 +68,10 @@ class BranchViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         if 'group' in request.GET:
-            d, total_count = dev_extreme.populate_group_category(request, Branch)
+            d, total_count = dev_extreme.populate_group_category(request.GET, Branch)
             data = {"totalCount": total_count, "items": d}
         else:
-            queryset, total_queryset, total_count = dev_extreme.filtered_query(request, Branch)
+            queryset, total_queryset, total_count = dev_extreme.filtered_query(request.GET, Branch)
             serializer = BranchSerializer(queryset, many=True)
             data = {'items': serializer.data, 'totalCount': total_count}
         return Response(data)
@@ -111,10 +115,10 @@ class NotifiesViewSet(viewsets.ModelViewSet):
         else:
             queryset = self.queryset
         if 'group' in request.GET:
-            d, total_count = dev_extreme.populate_group_category(request, queryset)
+            d, total_count = dev_extreme.populate_group_category(request.GET, queryset)
             data = {"totalCount": total_count, "items": d}
         else:
-            queryset, total_queryset, total_count = dev_extreme.filtered_query(request, queryset)
+            queryset, total_queryset, total_count = dev_extreme.filtered_query(request.GET, queryset)
             serializer = NotifySerializer(queryset, many=True, exclude=exclude_fields)
             data = {'items': serializer.data,
                     'totalCount': total_count,
@@ -243,6 +247,11 @@ class NotifiesViewSet(viewsets.ModelViewSet):
             data = {'items': serializer.data}
             return Response(data)
 
+    def generate_acts(self, request):
+        user = UserSerializer(request.user)
+        send_acts.delay(request.GET, user.data['email'])
+        return Response({},
+                        status=200)
 
 class ContributionsInformationViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, ]
@@ -259,10 +268,10 @@ class ContributionsInformationViewSet(viewsets.ModelViewSet):
         else:
             queryset = self.queryset
         if 'group' in request.GET:
-            d, total_count = dev_extreme.populate_group_category(request, queryset)
+            d, total_count = dev_extreme.populate_group_category(request.GET, queryset)
             data = {"totalCount": total_count, "items": d}
         else:
-            queryset, total_queryset, total_count = dev_extreme.filtered_query(request, queryset)
+            queryset, total_queryset, total_count = dev_extreme.filtered_query(request.GET, queryset)
             serializer = self.serializer_class(queryset, many=True, exclude=exclude_fields)
             data = {'items': serializer.data,
                     'totalCount': total_count,
@@ -346,10 +355,10 @@ class ContributionsInformationMistakeViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         if 'group' in request.GET:
-            d, total_count = dev_extreme.populate_group_category(request, self.queryset)
+            d, total_count = dev_extreme.populate_group_category(request.GET, self.queryset)
             data = {"totalCount": total_count, "items": d}
         else:
-            queryset, total_queryset, total_count = dev_extreme.filtered_query(request, self.queryset)
+            queryset, total_queryset, total_count = dev_extreme.filtered_query(request.GET, self.queryset)
             serializer = self.serializer_class(queryset, many=True)
             data = {'items': serializer.data, 'totalCount': total_count}
         return Response(data)
@@ -377,26 +386,3 @@ class ContributionsInformationMistakeViewSet(viewsets.ModelViewSet):
             serializer = self.serializer_class(queryset, many=True)
             data = {'items': serializer.data}
             return Response(data)
-
-
-def generate_act(self, pk=None):
-    if pk:
-        doc = DocxTemplate(os.path.join(settings.MEDIA_ROOT, 'templates', 'act.docx'))
-        contrib_info = ContributionsInformation.objects.get(pk=pk)
-        if datetime.now() < datetime(datetime.now().year,3,20):
-            month = date.MONTH_NAMES[11]
-        elif datetime.now() < datetime(datetime.now().year,6,20):
-            month = date.MONTH_NAMES[2]
-        elif datetime.now() < datetime(datetime.now().year,9,20):
-            month = date.MONTH_NAMES[5]
-        else:
-            month = date.MONTH_NAMES[8]
-        context = {'date': date.russian_date(datetime.now()),
-                   'org': contrib_info.notify.organization,
-                   'house': contrib_info.notify.house,
-                   'month': month,
-                   'year': datetime.now().year}
-        doc.render(context)
-        return docx_response(doc, 'act')
-    else:
-        return Response({'error': 'Не указан id сведений'}, status=400)

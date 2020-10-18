@@ -3,26 +3,26 @@ from datetime import datetime
 from django.db.models import Q
 
 
-def filtered_query(request, query, distinct_field=None):
+def filtered_query(request_GET, query, distinct_field=None):
 
-    if 'skip' in request.GET:
-        start = int(request.GET['skip'])
+    if 'skip' in request_GET:
+        start = int(request_GET['skip'])
     else:
         start = 0
-    if 'take' in request.GET:
-        end = int(request.GET['skip']) + int(request.GET['take'])
+    if 'take' in request_GET:
+        end = int(request_GET['skip']) + int(request_GET['take'])
     else:
         end = query.count()
-    if 'filter' in request.GET:
+    if 'filter' in request_GET:
         """"[["id","=",1],"and",["!",["doc_number","=","+2664Л-1"]]]"""
-        q = build_q_object(json.loads(request.GET['filter']))
+        q = build_q_object(json.loads(request_GET['filter']))
         query = query.filter(q)
-    if 'searchValue' in request.GET:
-        field = request.GET['searchExpr'].replace("\"", "")
-        value = request.GET['searchValue'].replace("\"", "")
+    if 'searchValue' in request_GET:
+        field = request_GET['searchExpr'].replace("\"", "")
+        value = request_GET['searchValue'].replace("\"", "")
         query = query.filter(Q(**{field+'__icontains': value}))
-    if 'sort' in request.GET:
-        sort = json.loads(request.GET['sort'])[0]
+    if 'sort' in request_GET:
+        sort = json.loads(request_GET['sort'])[0]
         order_by = sort['selector'].replace('.', '__')
         desc = sort['desc']
         if desc:
@@ -110,7 +110,7 @@ def build_q_object(filter_request):
     return result
 
 
-def populate_group_category(request, queryset):
+def populate_group_category(request_GET, queryset):
     """
 
     :param groups: [{'selector': 'doc_date', 'groupInterval': 'year', 'isExpanded': True},
@@ -125,11 +125,11 @@ def populate_group_category(request, queryset):
             count: 22}
         }
     """
-    groups = json.loads(request.GET['group'])
+    groups = json.loads(request_GET['group'])
     result = []
     selector = groups[0]['selector']
     selector = selector.replace('.', '__')
-    items, totalItems, count = filtered_query(request, queryset, selector)
+    items, totalItems, count = filtered_query(request_GET, queryset, selector)
     if 'groupInterval' in groups[0]:
         if groups[0]['groupInterval'] == 'year':
             result.append({'key': None, 'items': []})

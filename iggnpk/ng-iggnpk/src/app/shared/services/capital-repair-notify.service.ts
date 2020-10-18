@@ -70,8 +70,13 @@ export class CapitalRepairNotifyService {
   create(notify: Notify): Observable<Notify> {
     return this.http.post<Notify>(`${environment.backend_url}${this.url}/create/`, notify)
   }
+
   search(params): Observable<Notify> {
     return this.http.get<Notify>(`${environment.backend_url}${this.url}/search/${params}`)
+  }
+
+  generateActs(params): Observable<any> {
+    return this.http.get<Notify>(`${environment.backend_url}${this.url}/generate_acts/${params}`)
   }
 
 }

@@ -19,6 +19,7 @@ import {getContent} from "../../shared/tools/contrib-info-act";
 import {environment} from "../../../environments/environment";
 import {generate} from "../../shared/tools/word";
 import {ContributionsInformationMistakeService} from "../../shared/services/contributions-information-mistake.service";
+import {alert} from "devextreme/ui/dialog";
 
 @Component({
   selector: 'app-capital-repair-notifies',
@@ -130,6 +131,19 @@ export class CapitalRepairNotifiesComponent implements OnInit {
   }
 
   exportActs() {
+
+    let params = '?filter=' + JSON.stringify(this.dataGrid.instance.getCombinedFilter())
+    //window.location.href= environment.backend_url + `/api/v1/cr/notifies/generate_acts/${params}`;
+    this.notifyService.generateActs(params).subscribe(res => {
+      let result = alert("<i>Задача на формирование актов поставлена в обработку.<br>" +
+        "Файл будет направлен по электронной почте</i>", "Формирование актов");
+      result.then((dialogResult) => {
+
+      });
+    })
+  }
+
+  exportActs123() {
     this.dataGrid.instance.beginCustomLoading('загрузка')
     const mistake = this.mistakeService.retrieve('3').subscribe(m => {
       let params = '?filter=' + JSON.stringify(this.dataGrid.instance.getCombinedFilter())

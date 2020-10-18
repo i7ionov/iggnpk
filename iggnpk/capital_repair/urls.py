@@ -30,15 +30,18 @@ urlpatterns = [
     path('notifies/<int:pk>/', views.NotifiesViewSet.as_view({'get': 'retrieve'})),
     path('notifies/save/<int:pk>/', views.NotifiesViewSet.as_view({'post': 'update'})),
     path('notifies/search/', views.NotifiesViewSet.as_view({'get': 'search'})),
+    path('notifies/generate_acts/', views.NotifiesViewSet.as_view({'get': 'generate_acts'})),
 
     path('contrib_info/', views.ContributionsInformationViewSet.as_view({'get': 'list'})),
     path('contrib_info/create/', views.ContributionsInformationViewSet.as_view({'post': 'create'})),
     path('contrib_info/<int:pk>/', views.ContributionsInformationViewSet.as_view({'get': 'retrieve'})),
     path('contrib_info/save/<int:pk>/', views.ContributionsInformationViewSet.as_view({'post': 'update'})),
-    path('contrib_info/generate_act/<int:pk>/', views.generate_act),
+
 
     path('contrib_info_mistake/', views.ContributionsInformationMistakeViewSet.as_view({'get': 'list'})),
     path('contrib_info_mistake/<int:pk>/', views.ContributionsInformationMistakeViewSet.as_view({'get': 'retrieve'})),
     path('contrib_info_mistake/search/', views.ContributionsInformationMistakeViewSet.as_view({'get': 'search'})),
+
+
 
 ]

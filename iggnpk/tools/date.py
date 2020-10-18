@@ -16,5 +16,5 @@ MONTH_NAMES = [
 def russian_date(date):
     format = "%d !B %Y"
     result = date.strftime(format)
-    result = result.replace('!B', MONTH_NAMES[date.month - 1]) + 'г.'
+    result = result.replace('!B', MONTH_NAMES[date.month - 1]) + ' г.'
     return result
