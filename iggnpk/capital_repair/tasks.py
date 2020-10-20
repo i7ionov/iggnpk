@@ -66,7 +66,7 @@ def send_acts(request_GET, mail):
         doc.render(context)
         f = io.BytesIO()
         doc.save(f)
-        zip_file.writestr(org.name.replace('/', '') + '.docx', f.getvalue())
+        zip_file.writestr(org.name.replace('/', '') + ', ' + org.inn + '.docx', f.getvalue())
     zip_file.close()
     email = EmailMessage(
         f'Акты',
