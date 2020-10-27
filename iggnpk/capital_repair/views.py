@@ -223,8 +223,8 @@ class NotifiesViewSet(viewsets.ModelViewSet):
 
     def search(self, request):
         queryset = self.queryset
+        queryset = queryset.filter(status_id=3)  # поиск только по активным уведомлениям
         if request.user.is_staff == False:
-            queryset = queryset.filter(status_id=3)  # поиск только по активным уведомлениям
             queryset = queryset.filter(organization_id=request.user.organization.id)  # и только по своим
         if 'searchValue' in request.GET:
             searchValue = request.GET['searchValue'].strip('"').replace(',', ' ').split(' ')
