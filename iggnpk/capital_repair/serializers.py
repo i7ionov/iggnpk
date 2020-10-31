@@ -34,12 +34,33 @@ class ContributionsInformationMistakeSerializer(DynamicFieldsModelSerializer):
         fields = '__all__'
 
 
+class ContributionsInformationMinimalSerializer(DynamicFieldsModelSerializer):
+
+    mistakes = ContributionsInformationMistakeSerializer(required=False, read_only=True, many=True)
+
+    class Meta:
+        model = ContributionsInformation
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        # Don't pass the 'fields' arg up to the superclass
+        exclude = kwargs.pop('exclude', None)
+
+        # Instantiate the superclass normally
+        super(DynamicFieldsModelSerializer, self).__init__(*args, **kwargs)
+
+        if exclude is not None:
+            for field in exclude:
+                self.fields.pop(field)
+
+
 class NotifySerializer(DynamicFieldsModelSerializer):
     organization = OrganizationSerializer(required=False, read_only=True)
     bank = CreditOrganisationSerializer(required=False, read_only=True)
     house = HouseSerializer(required=False, read_only=True)
     files = FileSerializer(required=False, read_only=True, many=True)
     status = StatusSerializer(required=False, read_only=True)
+    last_contrib = ContributionsInformationMinimalSerializer(read_only=True)
 
     class Meta:
         model = Notify

@@ -83,6 +83,9 @@ class Notify(models.Model):
     def __str__(self):
         return f'{self.date}, № {self.id}'
 
+    def last_contrib(self):
+        return self.contributionsinformation_set.last()
+
     class Meta:
         permissions = (("view_comment2", 'view comment2'),)
 
