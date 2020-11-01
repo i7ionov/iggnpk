@@ -3,3 +3,5 @@ iggnpk/media/
 iggnpk/venv/
 iggnpk/ng-iggnpk/node_modules/
 iggnpk/iggnpk/local_settings.py
+**/migrations/
+

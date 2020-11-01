@@ -21,7 +21,7 @@ services:
   restart: always
   container_name: iggnpk_django
   volumes:
-   - ./iggnpk:/iggnpk
+   - ./app:/iggnpk
    - sock:/tmp
   build:
    context: .
@@ -40,7 +40,7 @@ services:
   container_name: iggnpk_celery
   command: celery -A iggnpk worker -l info
   volumes:
-   - ./iggnpk:/iggnpk
+   - ./app:/iggnpk
   depends_on:
    - postgres
    - redis
@@ -70,7 +70,7 @@ services:
   restart: always
   container_name: iggnpk_nginx
   volumes:
-   - ./iggnpk:/iggnpk
+   - ./app:/iggnpk
    - sock:/sock
    - ./letsencrypt:/etc/letsencrypt
    - ./config/nginx/django.conf:/etc/nginx/conf.d/default.conf
