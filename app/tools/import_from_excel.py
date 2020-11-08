@@ -17,8 +17,25 @@ def cut_value(val, comment):
             val = val.strip()
         return val, ''
 
-def houses():
+def regional_program():
+    f = open(os.path.join(settings.MEDIA_ROOT, 'temp', 'regional_program.xlsx'),
+             "wb")  # открываем файл для записи, в режиме wb
+    ufr = requests.get("https://fond59.ru/upload/iblock/a47/a476b04ebb126fe72eac416ef34fd80c.xlsx")  # делаем запрос
+    f.write(ufr.content)  # записываем содержимое в файл; как видите - content запроса
+    f.close()
+    rb = xlrd.open_workbook(os.path.join(settings.MEDIA_ROOT, 'temp', 'regional_program.xlsx'))
+    sheet = rb.sheet_by_index(1)
+    for rownum in range(3, sheet.nrows):
+        if sheet.cell(rownum, 1).value == '':
+            continue
+        print(sheet.cell(rownum, 2).value)
+        city = str(sheet.cell(rownum, 2).value).strip()
+        street = str(sheet.cell(rownum, 3).value).strip()
+        number = str(sheet.cell(rownum, 4).value).strip()
+        address = Address.objects.get(city=city, street=street)
+        print(address)
 
+def houses():
     f = open(os.path.join(settings.MEDIA_ROOT, 'temp', 'reestr_licensing.xlsx'), "wb")  # открываем файл для записи, в режиме wb
     ufr = requests.get("https://iggn.permkrai.ru/download.php?id=1621")  # делаем запрос
     f.write(ufr.content)  # записываем содержимое в файл; как видите - content запроса
