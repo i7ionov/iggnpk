@@ -1,7 +1,7 @@
 **/.idea/
-iggnpk/media/
-iggnpk/venv/
-iggnpk/ng-iggnpk/node_modules/
-iggnpk/iggnpk/local_settings.py
+app/media/
+app/venv/
+app/ng-iggnpk/node_modules/
+app/iggnpk/local_settings.py
 **/migrations/
 
