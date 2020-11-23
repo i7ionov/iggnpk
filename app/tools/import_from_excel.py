@@ -17,15 +17,36 @@ def cut_value(val, comment):
             val = val.strip()
         return val, ''
 
-def patch():
-    """Удалить после патча"""
+
+def swap_number_in_street(street):
+    """Ставит порядковое число в улице в конец. Например, если было пер. 1-й Короткий, то будет пер. Короткий 1-й """
+    temp = street.split(' ')
+    if len(temp) < 3:
+        return street
+    # меняем только в том числе, если второе слово в названии улицы содержит число и тире
+    if any(map(str.isdigit, temp[1])) and '-' in temp[1]:
+        return temp[0] + ' ' + temp[2] + ' ' + temp[1]
+    return street
+
+
+def safe_address_delete(id):
     try:
-        Address.objects.get(id=2696).delete()
-        Address.objects.get(id=90).delete()
+        Address.objects.get(id=id).delete()
     except Address.DoesNotExist:
         pass
-    for a in Address.objects.filter(area='Верещагинский муниципальный район', place='Зюкайское сельское поселение', city='п. Зюкайка'):
+
+
+def patch():
+    """Нужно будет потом далить после патча"""
+    for id in ['2696', '90', '11457', '11675', '11675', '11677', '14929', '11457', '11675', '15320']:
+        safe_address_delete(id)
+
+    for a in Address.objects.filter(area='Верещагинский муниципальный район', place='Зюкайское сельское поселение',
+                                    city='п. Зюкайка'):
         a.delete()
+    for a in Address.objects.filter(city__icontains='Липовая'):
+        a.city = a.city.replace(' 1', '').replace(' 2', '')
+        a.save()
 
     for a in Address.objects.all():
         a.city = normalize_city(a.city)
@@ -34,48 +55,132 @@ def patch():
 
 
 def normalize_street(street):
-    street = street.replace('Максима ', '').replace('М.', '').replace('ул. Р. Люксембург', 'ул. Розы Люксембург')\
+    street = street.split('/')[0].strip() # отсекаем вторую часть улицы вида "ул. Большевистская /Матросова, 18"
+
+    street = street.replace('Максима ', '').replace('М.', '').replace('ул. Р. Люксембург', 'ул. Розы Люксембург') \
         .replace('К.Маркса', 'Карла Маркса').replace('К. Маркса', 'Карла Маркса') \
-        .replace('Александра Матросова', 'Матросова').replace('А.Матросова', 'Матросова').replace('А. Матросова', 'Матросова') \
-        .replace('пр-т', 'пр-кт')\
-        .replace('ё', 'е')
+        .replace('Александра Матросова', 'Матросова').replace('А.Матросова', 'Матросова').replace('А. Матросова',
+                                                                                                  'Матросова') \
+        .replace('Константина Заслонова', 'Заслонова').replace('К.Заслонова', 'Заслонова').replace('К. Заслонова',
+                                                                                                   'Заслонова') \
+        .replace('Олега Кошевого', 'Кошевого').replace('О.Кошевого', 'Кошевого').replace('О. Кошевого',
+                                                                                         'Кошевого') \
+        .replace('Павлика Морозова', 'Морозова').replace('П.Морозова', 'Морозова').replace('П. Морозова',
+                                                                                           'Морозова') \
+        .replace('Л.Чайкиной', 'Лизы Чайкиной').replace('Л. Чайкиной', 'Лизы Чайкиной') \
+        .replace('Ф.Энгельса', 'Энгельса').replace('Ф. Энгельса', 'Энгельса') \
+        .replace('В.И. Кузнецова', 'Кузнецова').replace('Н.Кузнецова', 'Кузнецова') \
+        .replace('Кузнецова В.И.', 'Кузнецова').replace('Разведчика Н.И.Кузнецова', 'Кузнецова') \
+        .replace('Николая Кузнецова', 'Кузнецова') \
+        .replace('Александра Невского', 'Невского').replace('А.Невского', 'Невского') \
+        .replace('ул. Розы Землячки', 'ул. Розалии Землячки') \
+        .replace('ул. Р.Люксембург', 'ул. Розы Люксембург') \
+        .replace('Г.Богомягкова', 'Богомягкова').replace('Богомягкова Степана Николаевича', 'Богомягкова') \
+        .replace('Сергея Корнеева', 'Корнеева') \
+        .replace('ул. 8-е марта', 'ул. 8 Марта') \
+        .replace('ул. 8-е Марта', 'ул. 8 Марта') \
+        .replace('ул. 8е Марта', 'ул. 8 Марта') \
+        .replace('ул. Ветеранов Войны', 'ул. Ветеранов войны') \
+        .replace('ул. Газеты Правда', 'ул. им. газ. Правда') \
+        .replace('Газеты Правды', 'Правды') \
+        .replace('тракт Ленский', 'Ленский тракт') \
+        .replace('тракт Плехановский', 'Плехановский тракт') \
+        .replace('ул. Шпалозавод', 'п. Шпалозавода') \
+        .replace('ул. Иренская набережная', 'Иренская набережная') \
+        .replace('ул. Ириловская набережная', 'Ириловская набережная') \
+        .replace('ул. Виталия Онькова', 'ул. Онькова Виталия') \
+        .replace('ул. Братьев Вагановых', 'ул. Вагановых') \
+        .replace('ул. Татьяны Барамзиной', 'ул. Барамзиной Татьяны') \
+        .replace('ул. А.И. Осокина', 'ул. Осокина А.И.') \
+        .replace('П.Осипенко', 'Полины Осипенко') \
+        .replace('ул. Лаврова', 'ул. Льва Лаврова') \
+        .replace('ул. ПМС-14', 'ул. ОПМС-14') \
+        .replace('ул. 9-го Мая', 'ул. 9 Мая') \
+        .replace('40-летия', '40 лет') \
+        .replace('тракт Сибирский', 'Сибирский тракт') \
+        .replace('пр-т', 'пр-кт') \
+        .replace('пр-д', 'проезд') \
+        .replace('ё', 'е').replace('мкр ', 'мкр. ')
+
+    if street in ['пер. 1-й Дубровский', 'пер. 2-й Дубровский', 'пер. 1-й Еловский', 'проезд 1-й Павловский',
+                  'ул. 13-я Линия', 'ул. 1-я Ипподромная', 'ул. 1-я Колхозная', 'ул. 1-я Красноармейская',
+                  'ул. 1-я Нейвинская', 'ул. 2-я Гамовская', 'ул. 2-я Казанцевская', 'ул. 2-я Пограничная', 'ул. 4-я Запрудская',
+                  'ул. 5-я Каховская', 'ул. 1-я Железнодорожная']:
+        street = swap_number_in_street(street)
     if 'Пятилетки' in street:
         street = street.replace('-й', '').replace('-ой', '')
+    if street.strip() == '-':
+        street = ''
     return street
 
 
 def normalize_city(city):
-    city = city.replace('р.п.', 'п.').replace('рп ', 'п. ')
+    city = city.replace('ё', 'е').replace('р.п.', 'п.').replace('рп ', 'п. ').replace('пгт ', 'п. ').replace('ст.п.', 'п.') \
+        .replace('ст.п', 'п.').replace('п/ст ', 'п. ').replace('п. ст. ', 'п. ').replace('рп. ', 'п. ') \
+        .replace('п. Южный Коспашский', 'п. Южный-Коспашский')
     return city
 
 
 def regional_program():
-    #f = open(os.path.join(settings.MEDIA_ROOT, 'temp', 'regional_program.xlsx'),
+    # f = open(os.path.join(settings.MEDIA_ROOT, 'temp', 'regional_program.xlsx'),
     #         "wb+")  # открываем файл для записи, в режиме wb
-    #ufr = requests.get("https://fond59.ru/upload/iblock/a47/a476b04ebb126fe72eac416ef34fd80c.xlsx")  # делаем запрос
-    #f.write(ufr.content)  # записываем содержимое в файл; как видите - content запроса
-    #f.close()
+    # ufr = requests.get("https://fond59.ru/upload/iblock/a47/a476b04ebb126fe72eac416ef34fd80c.xlsx")  # делаем запрос
+    # f.write(ufr.content)  # записываем содержимое в файл; как видите - content запроса
+    # f.close()
+
+    for h in House.objects.all():
+        h.included_in_the_regional_program = False
+        h.save()
+
     rb = xlrd.open_workbook(os.path.join(settings.MEDIA_ROOT, 'temp', 'regional_program.xlsx'))
     sheet = rb.sheet_by_index(1)
     for rownum in range(3, sheet.nrows):
         if sheet.cell(rownum, 1).value == '':
             continue
-        print(sheet.cell(rownum, 0).value)
         area = str(sheet.cell(rownum, 1).value).strip()
-        area = area.replace('Березники', 'Березниковский')
+        area = area.replace('Березники', 'Березниковский').replace('Пермь', 'Пермский').replace('Лысьва', 'Лысьвенский')
         city = str(sheet.cell(rownum, 2).value).strip()
+        city = city.replace('д. Ваньки', 'с. Ваньки').replace('с. Большой Букор','д. Большой Букор')\
+            .replace('Белоборово','Белобородово')
         city = normalize_city(city)
-        if city=='г. Усолье' or city=='п. Железнодорожный' or city=='с. Пыскор':
-            area = 'Усольский муниципальный район'
         street = str(sheet.cell(rownum, 3).value).strip()
         street = normalize_street(street)
 
+        city = city.replace('ЗАТО Звездный', 'пгт. Звездный').replace('д. Берег Камы (Юго-Камское г/п)', 'д. Берег Камы')
+        if city == 'г. Усолье' or city == 'п. Железнодорожный' or city == 'с. Пыскор':
+            area = 'Усольский муниципальный район'
+        elif city == 'г. Чусовой, п. Лямино':
+            city = 'п. Лямино'
+        elif 'п. Новые Ляды' in city:
+            city = 'г. Пермь'
+            street = street.replace('ул. 40-летия Победы', 'ул. 40 лет Победы (Новые Ляды)')\
+                .replace('ул. Веселая', 'ул. Веселая (Новые Ляды)')\
+                .replace('ул. Мира', 'ул. Мира (Новые Ляды)') \
+                .replace('ул. Молодежная', 'ул. Молодежная (Новые Ляды)') \
+                .replace('ул. Островского', 'ул. Островского (Новые Ляды)')\
+                .replace('ул. Чусовская', 'ул. Чусовская (Новые Ляды)')
+        elif city == 'с. Григорьевское':
+            street = street.replace('пл. Советская', 'ул. Советская')
+        elif city == 'п. Октябрьский':
+            street = street.replace('ул. Крупской', 'ул. Крупская')
+        elif city == 'г. Чердынь':
+            street = street.replace('пер. Сарапулова', 'ул. Сарапулова').replace('мкр. АК-5', 'ул. АТК')
+
+
+
         number = str(sheet.cell(rownum, 4).value).strip()
-        address = Address.objects.get(area__icontains=area, city__iexact=city, street__iexact=street)
-        print(f'{area} {address}')
+        try:
+            address = Address.objects.get(area__icontains=area, city__iexact=city, street__iexact=street)
+            house = House.objects.get(address_id=address.id)
+            house.included_in_the_regional_program = True
+            house.save()
+        except (Address.DoesNotExist, Address.MultipleObjectsReturned):
+            print(f'Not Founded {rownum} {area} {city} {street} {number}')
+
 
 def houses():
-    f = open(os.path.join(settings.MEDIA_ROOT, 'temp', 'reestr_licensing.xlsx'), "wb+")  # открываем файл для записи, в режиме wb
+    f = open(os.path.join(settings.MEDIA_ROOT, 'temp', 'reestr_licensing.xlsx'),
+             "wb+")  # открываем файл для записи, в режиме wb
     ufr = requests.get("https://iggn.permkrai.ru/download.php?id=1621")  # делаем запрос
     f.write(ufr.content)  # записываем содержимое в файл; как видите - content запроса
     f.close()
@@ -128,7 +233,6 @@ def houses():
                 n.save()
 
 
-
 def notifies():
     rb = xlrd.open_workbook('C:\\Users\\User\\Desktop\\Code\\iggnpk\\iggnpk\\notify.xlsx')
     sheet = rb.sheet_by_index(0)
@@ -139,10 +243,11 @@ def notifies():
         notify.comment2 = ''
         try:
             notify.date = get_datetime(sheet.cell(rownum, 1).value)
-        except TypeError: pass
+        except TypeError:
+            pass
         street = sheet.cell(rownum, 6).value.strip()
 
-        street = street.replace('ул. Садовое кольцо', 'ул. Садовое Кольцо').replace('1-я Колхозная', 'Колхозная 1-я').\
+        street = street.replace('ул. Садовое кольцо', 'ул. Садовое Кольцо').replace('1-я Колхозная', 'Колхозная 1-я'). \
             replace('Братьев Вагановых', 'Вагановых'). \
             replace('января', 'Января'). \
             replace('Войкого', 'Войкова'). \
@@ -155,7 +260,7 @@ def notifies():
 (Луначарского)""", '').replace('ё', 'е')
         if '/' in street:
             street = street[:street.find('/')].strip()
-        area = str(sheet.cell(rownum, 2).value).replace('г. Соликамск', 'Соликамский').\
+        area = str(sheet.cell(rownum, 2).value).replace('г. Соликамск', 'Соликамский'). \
             replace('г. Березники', 'Березниковский'). \
             replace('г. Лысьва', 'Лысьвенский'). \
             replace('г. Кунгур', 'Кунгурский'). \
@@ -168,7 +273,7 @@ def notifies():
             replace('г.Пермь', 'Пермский'). \
             replace('Пермский край', '')
 
-        city = sheet.cell(rownum, 4).value.replace('Ё', 'Е')\
+        city = sheet.cell(rownum, 4).value.replace('Ё', 'Е') \
             .replace('пос. Железнодорожный', 'п. Железнодорожный') \
             .replace('д. Усть-Сыны', 'с. Усть-Сыны') \
             .replace('п. Звездный', 'пгт. Звездный') \
@@ -187,18 +292,19 @@ def notifies():
             area = 'Добрянский'
         print(f'{area} {city} {street}')
         addr = Address.objects.filter(area__contains=area, city=city, street=street).first()
-        notify.house, created = House.objects.get_or_create(address_id=addr.id, number=str(sheet.cell(rownum, 7).value).strip().lower().replace('.0', ''))
+        notify.house, created = House.objects.get_or_create(address_id=addr.id, number=str(
+            sheet.cell(rownum, 7).value).strip().lower().replace('.0', ''))
         temp, com = cut_value(sheet.cell(rownum, 16).value, 'Дата включения в программу КР')
         notify.comment2 += com
         notify.house.date_of_inclusion = get_datetime(temp)
-
 
         temp, com = cut_value(sheet.cell(rownum, 15).value, 'Включен в программу КР')
         notify.comment2 += com
         notify.house.included_in_the_regional_program = temp == 'Включен'
         notify.house.save()
 
-        org, created = Organization.objects.get_or_create(inn=str(sheet.cell(rownum, 12).value).strip().replace('.0', ''))
+        org, created = Organization.objects.get_or_create(
+            inn=str(sheet.cell(rownum, 12).value).strip().replace('.0', ''))
         if created:
             org.name = sheet.cell(rownum, 11).value.strip()
             org.ogrn = 'нет'
@@ -226,7 +332,8 @@ def notifies():
         notify.comment2 += com
         notify.account_opening_date = get_datetime(temp)
         try:
-            monthly_contribution_amount = sheet.cell(rownum, 26).value.strip().split(' ')[0] + '.' + sheet.cell(rownum, 26).value.strip().split(' ')[2]
+            monthly_contribution_amount = sheet.cell(rownum, 26).value.strip().split(' ')[0] + '.' + \
+                                          sheet.cell(rownum, 26).value.strip().split(' ')[2]
             notify.monthly_contribution_amount = float(monthly_contribution_amount)
         except IndexError:
             notify.monthly_contribution_amount = 0
