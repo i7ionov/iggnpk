@@ -91,6 +91,7 @@ def normalize_street(street):
         .replace('ул. Виталия Онькова', 'ул. Онькова Виталия') \
         .replace('ул. Братьев Вагановых', 'ул. Вагановых') \
         .replace('ул. Татьяны Барамзиной', 'ул. Барамзиной Татьяны') \
+        .replace('ул. Володи Дубинина', 'ул. Дубинина') \
         .replace('ул. А.И. Осокина', 'ул. Осокина А.И.') \
         .replace('П.Осипенко', 'Полины Осипенко') \
         .replace('ул. Лаврова', 'ул. Льва Лаврова') \
@@ -122,12 +123,11 @@ def normalize_city(city):
 
 
 def regional_program():
-    # f = open(os.path.join(settings.MEDIA_ROOT, 'temp', 'regional_program.xlsx'),
-    #         "wb+")  # открываем файл для записи, в режиме wb
-    # ufr = requests.get("https://fond59.ru/upload/iblock/a47/a476b04ebb126fe72eac416ef34fd80c.xlsx")  # делаем запрос
-    # f.write(ufr.content)  # записываем содержимое в файл; как видите - content запроса
-    # f.close()
-
+    f = open(os.path.join(settings.MEDIA_ROOT, 'temp', 'regional_program.xlsx'),
+             "wb+")
+    ufr = requests.get("https://fond59.ru/upload/iblock/a47/a476b04ebb126fe72eac416ef34fd80c.xlsx")
+    f.write(ufr.content)
+    f.close()
     for h in House.objects.all():
         h.included_in_the_regional_program = False
         h.save()
@@ -168,14 +168,18 @@ def regional_program():
 
 
 
-        number = str(sheet.cell(rownum, 4).value).strip()
+        number = str(sheet.cell(rownum, 4).value).strip().replace('.0', '').lower()
         try:
             address = Address.objects.get(area__icontains=area, city__iexact=city, street__iexact=street)
-            house = House.objects.get(address_id=address.id)
+            house = House.objects.get(address_id=address.id, number__iexact=number)
             house.included_in_the_regional_program = True
             house.save()
         except (Address.DoesNotExist, Address.MultipleObjectsReturned):
+            print(f'Not Founded {rownum} {area} {city} {street}')
+        except House.DoesNotExist:
             print(f'Not Founded {rownum} {area} {city} {street} {number}')
+        except House.MultipleObjectsReturned:
+            print(f'Multiple Founded {rownum} {area} {city} {street} {number}')
 
 
 def houses():
