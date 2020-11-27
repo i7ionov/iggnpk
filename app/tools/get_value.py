@@ -23,3 +23,13 @@ def datetime_handler(obj):
         return obj.strftime('%d.%m.%Y')
     else:
         return str(obj)
+
+
+def cut_value(val, comment):
+    """удаляет фрагмент в скобках. К примеру, cut_value('foo (bar)', 'myfield') вернет кортеж ('foo', 'myfield: (bar). ')  """
+    if '(' in str(val):
+        return val[:val.find('(')].strip(), comment + ": " + val[val.find('('):].strip() + ". "
+    else:
+        if type(val) == str:
+            val = val.strip()
+        return val, ''

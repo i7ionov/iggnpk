@@ -39,6 +39,7 @@ class OrganizationType(models.Model):
     def __str__(self):
         return self.text
 
+
 class Organization(models.Model):
     inn = models.CharField(max_length=30, blank=True)
     ogrn = models.CharField(max_length=30, blank=True)
@@ -49,6 +50,7 @@ class Organization(models.Model):
 
     def __str__(self):
         return f'{self.name}, ИНН {self.inn}'
+
 
 class User(AbstractUser):
     name = models.CharField(max_length=100, blank=True)
@@ -81,11 +83,13 @@ class Address(models.Model):
 def upload_path_handler(instance, filename):
     return "{inn}/{file}".format(inn=instance.owner.organization.inn, file=filename)
 
+
 class File(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(User, to_field='id', on_delete=models.SET_NULL, null=True, blank=True)
     datafile = models.FileField(upload_to=upload_path_handler)
     name = models.CharField(max_length=100, verbose_name='Название файла')
+
     class Meta:
         verbose_name = "Файл"
 
@@ -115,6 +119,12 @@ class House(models.Model):
     included_in_the_regional_program = models.BooleanField(null=True, blank=True)
     date_of_inclusion = models.DateField(
         verbose_name='Дата включения МКД в Региональную программу капитального ремонта', null=True, blank=True)
+    year_of_building = models.IntegerField(verbose_name='Дата постройки', null=True, blank=True)
+    number_of_apartments = models.IntegerField(null=True, blank=True, verbose_name='Количество квартир')
+    total_area = models.FloatField(null=True, blank=True, verbose_name='Общая площадь')
+    residential_premises_area = models.FloatField(null=True, blank=True, verbose_name='Общая площадь жилых помещений')
+    nonresidential_premises_area = models.FloatField(null=True, blank=True, verbose_name='Общая площадь нежилых помещений')
+
     history = HistoricalRecords()
     objects = HouseManager()
 
@@ -123,5 +133,3 @@ class House(models.Model):
 
     class Meta:
         verbose_name = "Дом"
-
-
