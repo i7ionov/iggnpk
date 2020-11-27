@@ -177,13 +177,37 @@ def houses_info():
         area = sheet.cell(rownum, 0).value.strip()
         city = normalize_city(sheet.cell(rownum, 2).value.strip())
         street = normalize_street(sheet.cell(rownum, 3).value.strip())
-        number = normalize_number(sheet.cell(rownum, 4).value.strip())
-        year_of_building = int(sheet.cell(rownum, 5).value)
-        number_of_apartments = int(sheet.cell(rownum, 6).value)
-        total_area = float(sheet.cell(rownum, 7).value)
-        residential_premises_area = float(sheet.cell(rownum, 8).value)
-        nonresidential_premises_area = float(sheet.cell(rownum, 9).value)
-
+        number = normalize_number(str(sheet.cell(rownum, 4).value).strip().replace('.0', ''))
+        year_of_building = None
+        number_of_apartments = None
+        total_area = None
+        residential_premises_area = None
+        nonresidential_premises_area = None
+        if type(sheet.cell(rownum, 5).value)==float:
+            year_of_building = int(sheet.cell(rownum, 5).value)
+        if type(sheet.cell(rownum, 6).value)==float:
+            number_of_apartments = int(sheet.cell(rownum, 6).value)
+        if type(sheet.cell(rownum, 7).value)==float:
+            total_area = float(sheet.cell(rownum, 7).value)
+        if type(sheet.cell(rownum, 8).value)==float:
+            residential_premises_area = float(sheet.cell(rownum, 8).value)
+        if type(sheet.cell(rownum, 9).value)==float:
+                nonresidential_premises_area = float(sheet.cell(rownum, 9).value)
+        try:
+            house =  House.objects.get(address__area=area, address__city=city, address__street=street, number=number)
+        except House.DoesNotExist:
+            print(f'{area}, {city}, {street}, {number}')
+        if house.year_of_building is None or house.year_of_building == 0:
+            house.year_of_building = year_of_building
+        if house.number_of_apartments is None or house.number_of_apartments == 0:
+            house.number_of_apartments = number_of_apartments
+        if house.total_area is None or house.total_area == 0:
+            house.total_area = total_area
+        if house.residential_premises_area is None or house.residential_premises_area == 0:
+            house.residential_premises_area = residential_premises_area
+        if house.nonresidential_premises_area is None or house.nonresidential_premises_area == 0:
+            house.nonresidential_premises_area = nonresidential_premises_area
+        house.save()
 
 def notifies():
     rb = xlrd.open_workbook('C:\\Users\\User\\Desktop\\Code\\iggnpk\\iggnpk\\notify.xlsx')
