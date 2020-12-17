@@ -1,4 +1,4 @@
-from capital_repair.models import ContributionsInformationMistake, ContributionsInformation
+from capital_repair.models import ContributionsInformationMistake, ContributionsInformation, Notify
 from dictionaries import models
 from mixer.backend.django import mixer
 
@@ -16,15 +16,12 @@ def create_organizations():
 
 
 def create_conrib_infos():
-    mistake1 = ContributionsInformationMistake(text='Ошибка 1')
-    mistake1.save()
-    mistake2 = ContributionsInformationMistake(text='Ошибка 2')
-    mistake2.save()
-    mistake3 = ContributionsInformationMistake(text='Ошибка 3')
-    mistake3.save()
-    c1 = ContributionsInformation(received_contributions_total=3)
-    c1.save()
-    c1.mistakes.set([mistake1, mistake2])
-    c2 = ContributionsInformation(received_contributions_total=2)
-    c2.save()
-    c2.mistakes.set([mistake1, mistake2])
+    mistake1 = mixer.blend(ContributionsInformationMistake, text='Ошибка 1')
+    mistake2 = mixer.blend(ContributionsInformationMistake, text='Ошибка 2')
+    mistake3 = mixer.blend(ContributionsInformationMistake, text='Ошибка 3')
+    n1 = mixer.blend(Notify)
+    n2 = mixer.blend(Notify)
+    n3 = mixer.blend(Notify)
+    c1 = mixer.blend(ContributionsInformation, notify=n1, mistakes=[mistake1, mistake2], comment='c1')
+    c2 = mixer.blend(ContributionsInformation, notify=n2, mistakes=[mistake1, mistake2], comment='c2')
+    c3 = mixer.blend(ContributionsInformation, notify=n3, mistakes=[mistake3], comment='c3')
