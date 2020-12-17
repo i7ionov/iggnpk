@@ -99,12 +99,10 @@ def regional_program():
         elif city == 'г. Чердынь':
             street = street.replace('пер. Сарапулова', 'ул. Сарапулова').replace('мкр. АК-5', 'ул. АТК')
 
-
-
-        number =  normalize_number(str(sheet.cell(rownum, 4).value).strip().replace('.0', '').lower())
+        number = normalize_number(str(sheet.cell(rownum, 4).value).strip().replace('.0', '').lower())
         try:
             address = Address.objects.get(area__icontains=area, city__iexact=city, street__iexact=street)
-            house = House.objects.get(address_id=address.id, number__iexact=number)
+            house, created = House.objects.get_or_create(address_id=address.id, number__iexact=number)
             house.included_in_the_regional_program = True
             house.save()
         except (Address.DoesNotExist, Address.MultipleObjectsReturned):
