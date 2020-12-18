@@ -1,21 +1,41 @@
-from capital_repair.models import ContributionsInformationMistake, ContributionsInformation, Notify
+from django.contrib.auth.models import Group, Permission
+
+from capital_repair.models import ContributionsInformationMistake, ContributionsInformation, Notify, Status
 from dictionaries import models
 from mixer.backend.django import mixer
 
+from dictionaries.models import User
 
-def create_organizations():
+
+def populate_db():
+    admin_group = mixer.blend(Group)
+    admin_group.permissions.set(Permission.objects.all())
+    uk_group = mixer.blend(Group)
+    uk_group.permissions.set(
+        [Permission.objects.get(codename='view_notify'),
+         Permission.objects.get(codename='change_notify'),
+         Permission.objects.get(codename='add_notify')])
+    admin = mixer.blend(User, grous=[admin_group], username='admin', organization=mixer.RANDOM, is_staff=True)
+    admin.set_password('123')
+    admin.save()
+
+    uk = mixer.blend(User, username='uk',organization=mixer.blend(models.Organization), is_staff=False)
+    uk.set_password('123')
+    uk.save()
+
     mixer.cycle(5).blend(models.OrganizationType,
                          text=mixer.FAKE,
                          )
     mixer.cycle(25).blend(models.Organization,
-                         name=mixer.FAKE,
-                         inn=mixer.FAKE,
-                         ogrn=mixer.FAKE,
-                         type=mixer.SELECT
-                         )
+                          name=mixer.FAKE,
+                          inn=mixer.FAKE,
+                          ogrn=mixer.FAKE,
+                          type=mixer.SELECT
+                          )
 
-
-def create_conrib_infos():
+    n1 = mixer.blend(Status, id=1, text='Редактирование')
+    n2 = mixer.blend(Status, id=2, text='Согласование')
+    n3 = mixer.blend(Status, id=3, text='Согласовно')
     mistake1 = mixer.blend(ContributionsInformationMistake, text='Ошибка 1')
     mistake2 = mixer.blend(ContributionsInformationMistake, text='Ошибка 2')
     mistake3 = mixer.blend(ContributionsInformationMistake, text='Ошибка 3')
@@ -25,3 +45,5 @@ def create_conrib_infos():
     c1 = mixer.blend(ContributionsInformation, notify=n1, mistakes=[mistake1, mistake2], comment='c1')
     c2 = mixer.blend(ContributionsInformation, notify=n2, mistakes=[mistake1, mistake2], comment='c2')
     c3 = mixer.blend(ContributionsInformation, notify=n3, mistakes=[mistake3], comment='c3')
+    mixer.cycle(100).blend(Notify, organization=mixer.SELECT)
+    mixer.cycle(25).blend(Notify, organization=uk.organization)

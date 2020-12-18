@@ -26,6 +26,7 @@ from tools import dev_extreme
 from django.shortcuts import get_object_or_404
 from docxtpl import DocxTemplate
 import zipfile
+from django.db.models import Sum
 
 class CreditOrganisationsViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, ]
@@ -97,18 +98,15 @@ class BranchViewSet(viewsets.ModelViewSet):
 
 
 class NotifiesViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated, ]
+    permission_classes = [permissions.IsAuthenticated]
     queryset = Notify.objects.all()
     serializer_class = NotifySerializer
+    additional_fields = ['comment2','date_of_exclusion','account_closing_date', 'ground_for_exclusion', 'source_of_information']
 
     def list(self, request):
         exclude_fields = []
         if not request.user.is_staff:
-            exclude_fields.append('comment2')
-            exclude_fields.append('date_of_exclusion')
-            exclude_fields.append('account_closing_date')
-            exclude_fields.append('ground_for_exclusion')
-            exclude_fields.append('source_of_information')
+            exclude_fields.extend(self.additional_fields)
         # пользователь видит уведомления только своей организации
         if not request.user.is_staff:
             queryset = self.queryset.filter(organization_id=request.user.organization.id)
@@ -128,11 +126,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk=None):
         exclude_fields = []
         if not request.user.is_staff:
-            exclude_fields.append('comment2')
-            exclude_fields.append('date_of_exclusion')
-            exclude_fields.append('account_closing_date')
-            exclude_fields.append('ground_for_exclusion')
-            exclude_fields.append('source_of_information')
+            exclude_fields.extend(self.additional_fields)
         # пользователь видит уведомления только своей организации
         if not request.user.is_staff:
             queryset = self.queryset.filter(organization_id=request.user.organization.id)
@@ -145,11 +139,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         exclude_fields = []
         if not request.user.is_staff:
-            exclude_fields.append('comment2')
-            exclude_fields.append('date_of_exclusion')
-            exclude_fields.append('account_closing_date')
-            exclude_fields.append('ground_for_exclusion')
-            exclude_fields.append('source_of_information')
+            exclude_fields.extend(self.additional_fields)
         item = NotifySerializer(data=request.data, exclude=exclude_fields)
         item.is_valid()
         if item.is_valid():
@@ -184,11 +174,7 @@ class NotifiesViewSet(viewsets.ModelViewSet):
         if not request.user.is_staff:
             if instance.status.id > 2:
                 return Response('Вы не можете редактировать эту запись', status=400)
-            exclude_fields.append('comment2')
-            exclude_fields.append('date_of_exclusion')
-            exclude_fields.append('account_closing_date')
-            exclude_fields.append('ground_for_exclusion')
-            exclude_fields.append('source_of_information')
+            exclude_fields.extend(self.additional_fields)
 
         serializer = self.serializer_class(instance=instance, data=data, partial=True, exclude=exclude_fields)
         serializer.is_valid(raise_exception=True)
@@ -224,6 +210,9 @@ class NotifiesViewSet(viewsets.ModelViewSet):
     def search(self, request):
         queryset = self.queryset
         queryset = queryset.filter(status_id=3)  # поиск только по активным уведомлениям
+        exclude_fields = []
+        if not request.user.is_staff:
+            exclude_fields.extend(self.additional_fields)
         if request.user.is_staff == False:
             queryset = queryset.filter(organization_id=request.user.organization.id)  # и только по своим
         if 'searchValue' in request.GET:
@@ -238,12 +227,12 @@ class NotifiesViewSet(viewsets.ModelViewSet):
                     Q(house__address__street__icontains=keyword) |
                     Q(house__number__icontains=keyword))
             queryset = queryset[:10]
-            serializer = self.serializer_class(queryset, many=True)
+            serializer = self.serializer_class(queryset, many=True, exclude=exclude_fields)
             data = {'items': serializer.data}
             return Response(data)
         else:
             queryset = queryset[:10]
-            serializer = self.serializer_class(queryset, many=True)
+            serializer = self.serializer_class(queryset, many=True, exclude=exclude_fields)
             data = {'items': serializer.data}
             return Response(data)
 
