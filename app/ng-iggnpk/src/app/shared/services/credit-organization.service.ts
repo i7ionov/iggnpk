@@ -54,7 +54,7 @@ export class CreditOrganizationService implements Service {
   }
 
   search(params): Observable<CreditOrganizations> {
-    return this.http.get<CreditOrganizations>(`${environment.backend_url}${this.url}/search/${params}`)
+    return this.http.get<CreditOrganizations>(`${environment.backend_url}${this.url}/${params}`)
   }
 
 }
@@ -74,7 +74,7 @@ export class BranchService {
   }
 
   search(params): Observable<CreditOrganizations> {
-    return this.http.get<CreditOrganizations>(`${environment.backend_url}${this.url}/search/${params}`)
+    return this.http.get<CreditOrganizations>(`${environment.backend_url}${this.url}/${params}`)
   }
 
 }

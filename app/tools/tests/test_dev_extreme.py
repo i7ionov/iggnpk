@@ -13,7 +13,7 @@ class FilteredQueryTest(BaseTest):
         paged_qury, full_query, count = dev_extreme.filtered_query(request.GET, Organization.objects.all())
         self.assertEqual(type(paged_qury), type(Organization.objects.all()))
         self.assertEqual(type(full_query), type(Organization.objects.all()))
-        self.assertEqual(count, 25)
+        self.assertEqual(count, Organization.objects.all().count())
 
     def test_filter_single_item(self):
         """"[["id","=",1]"""

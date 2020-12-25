@@ -13,7 +13,7 @@ class OrganizationTypeSerializer(DynamicFieldsModelSerializer):
 
 
 class OrganizationSerializer(DynamicFieldsModelSerializer):
-    type = OrganizationTypeSerializer()
+    type = OrganizationTypeSerializer(required=False)
     class Meta:
         model = Organization
         fields = '__all__'
@@ -56,7 +56,7 @@ class FileSerializer(DynamicFieldsModelSerializer):
         read_only=True,
         slug_field='id'
     )
-    datafile = serializers.FileField()
+    datafile = serializers.FileField(required=False,allow_empty_file=True)
     size = serializers.SerializerMethodField()
 
     class Meta:
@@ -67,6 +67,6 @@ class FileSerializer(DynamicFieldsModelSerializer):
     def get_size(self, obj):
         try:
             return obj.datafile.size
-        except FileNotFoundError:
+        except (FileNotFoundError, ValueError):
             return None
 

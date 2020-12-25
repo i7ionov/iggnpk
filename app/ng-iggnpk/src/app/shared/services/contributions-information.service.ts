@@ -71,18 +71,19 @@ export class ContributionsInformationService {
   }
 
   update(id, contrib_info: any): Observable<ContributionsInformation> {
-    return this.http.post<ContributionsInformation>(`${environment.backend_url}${this.url}/save/${id}/`, contrib_info)
+    return this.http.patch<ContributionsInformation>(`${environment.backend_url}${this.url}/${id}/`, contrib_info)
   }
 
   create(contrib_info: ContributionsInformation): Observable<ContributionsInformation> {
-    return this.http.post<ContributionsInformation>(`${environment.backend_url}${this.url}/create/`, contrib_info)
+    return this.http.post<ContributionsInformation>(`${environment.backend_url}${this.url}/`, contrib_info)
   }
 
   search(params): Observable<ContributionsInformation> {
-    return this.http.get<ContributionsInformation>(`${environment.backend_url}${this.url}/search/${params}`)
+    return this.http.get<ContributionsInformation>(`${environment.backend_url}${this.url}/${params}`)
   }
 
   generate_act(id): Observable<ContributionsInformation> {
     return this.http.get<ContributionsInformation>(`${environment.backend_url}${this.url}/generate_act/${id}/`)
   }
+
 }

@@ -44,7 +44,7 @@ export class ContributionsInformationMistakeService {
   }
 
   search(params): Observable<ContributionsInformationMistake> {
-    return this.http.get<ContributionsInformationMistake>(`${environment.backend_url}${this.url}/search/${params}`)
+    return this.http.get<ContributionsInformationMistake>(`${environment.backend_url}${this.url}/${params}`)
   }
 
 }

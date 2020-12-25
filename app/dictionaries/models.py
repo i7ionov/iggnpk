@@ -34,7 +34,7 @@ class UserManager(BaseUserManager):
 
 
 class OrganizationType(models.Model):
-    text = models.CharField(max_length=30, blank=True)
+    text = models.CharField(max_length=30, blank=True, null=True)
 
     def __str__(self):
         return self.text
@@ -46,7 +46,6 @@ class Organization(models.Model):
     name = models.CharField(max_length=100, blank=True)
     type = models.ForeignKey(OrganizationType, on_delete=models.SET_NULL, null=True, blank=True)
     history = HistoricalRecords()
-    REQUIRED_FIELDS = ['name', 'inn', 'ogrn', 'type']
 
     def __str__(self):
         return f'{self.name}, ИНН {self.inn}'
@@ -87,7 +86,7 @@ def upload_path_handler(instance, filename):
 class File(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(User, to_field='id', on_delete=models.SET_NULL, null=True, blank=True)
-    datafile = models.FileField(upload_to=upload_path_handler)
+    datafile = models.FileField(upload_to=upload_path_handler, null=True, blank=True)
     name = models.CharField(max_length=100, verbose_name='Название файла')
 
     class Meta:

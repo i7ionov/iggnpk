@@ -1,6 +1,9 @@
+from datetime import datetime
+
 from rest_framework.relations import PrimaryKeyRelatedField
 
-from dictionaries.models import File
+from dictionaries.models import File, Organization, House
+from tools.serializers import DevExtremeListSerializer
 from .models import CreditOrganization, Branch, Notify, Status, ContributionsInformation, \
     ContributionsInformationMistake
 from tools.dynamic_fields_model_serializer import DynamicFieldsModelSerializer
@@ -8,17 +11,10 @@ from dictionaries.serializers import OrganizationSerializer, HouseSerializer, Fi
 from rest_framework import serializers
 
 
-class CreditOrganisationSerializer(DynamicFieldsModelSerializer):
+class CreditOrganizationSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = CreditOrganization
-        fields = '__all__'
-
-
-class BranchSerializer(DynamicFieldsModelSerializer):
-    credit_organization = CreditOrganisationSerializer()
-
-    class Meta:
-        model = Branch
+        list_serializer_class = DevExtremeListSerializer
         fields = '__all__'
 
 
@@ -55,15 +51,16 @@ class ContributionsInformationMinimalSerializer(DynamicFieldsModelSerializer):
 
 
 class NotifySerializer(DynamicFieldsModelSerializer):
-    organization = OrganizationSerializer(required=False, read_only=True)
-    bank = CreditOrganisationSerializer(required=False, read_only=True)
-    house = HouseSerializer(required=False, read_only=True)
-    files = FileSerializer(required=False, read_only=True, many=True)
-    status = StatusSerializer(required=False, read_only=True)
+    organization = OrganizationSerializer(partial=True, read_only=True)
+    bank = CreditOrganizationSerializer(partial=True, read_only=True)
+    house = HouseSerializer(partial=True, read_only=True)
+    files = FileSerializer(partial=True, many=True, read_only=True)
+    status = StatusSerializer(partial=True, read_only=True)
     last_contrib = ContributionsInformationMinimalSerializer(read_only=True)
 
     class Meta:
         model = Notify
+        list_serializer_class = DevExtremeListSerializer
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
@@ -78,6 +75,8 @@ class NotifySerializer(DynamicFieldsModelSerializer):
                 self.fields.pop(field)
 
 
+
+
 class ContributionsInformationSerializer(DynamicFieldsModelSerializer):
     notify = NotifySerializer(required=False, read_only=True)
     status = StatusSerializer(required=False, read_only=True)
@@ -86,6 +85,7 @@ class ContributionsInformationSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = ContributionsInformation
+        list_serializer_class = DevExtremeListSerializer
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):

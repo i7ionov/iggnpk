@@ -15,11 +15,11 @@ def populate_db():
         [Permission.objects.get(codename='view_notify'),
          Permission.objects.get(codename='change_notify'),
          Permission.objects.get(codename='add_notify')])
-    admin = mixer.blend(User, grous=[admin_group], username='admin', organization=mixer.RANDOM, is_staff=True)
+    admin = mixer.blend(User, groups=[admin_group], username='admin', organization=mixer.RANDOM, is_staff=True)
     admin.set_password('123')
     admin.save()
 
-    uk = mixer.blend(User, username='uk',organization=mixer.blend(models.Organization), is_staff=False)
+    uk = mixer.blend(User, groups=[uk_group], username='uk',organization=mixer.blend(models.Organization), is_staff=False)
     uk.set_password('123')
     uk.save()
 
@@ -39,9 +39,9 @@ def populate_db():
     mistake1 = mixer.blend(ContributionsInformationMistake, text='Ошибка 1')
     mistake2 = mixer.blend(ContributionsInformationMistake, text='Ошибка 2')
     mistake3 = mixer.blend(ContributionsInformationMistake, text='Ошибка 3')
-    n1 = mixer.blend(Notify)
-    n2 = mixer.blend(Notify)
-    n3 = mixer.blend(Notify)
+    n1 = mixer.blend(Notify, organization=mixer.SELECT)
+    n2 = mixer.blend(Notify, organization=mixer.SELECT)
+    n3 = mixer.blend(Notify, organization=mixer.SELECT)
     c1 = mixer.blend(ContributionsInformation, notify=n1, mistakes=[mistake1, mistake2], comment='c1')
     c2 = mixer.blend(ContributionsInformation, notify=n2, mistakes=[mistake1, mistake2], comment='c2')
     c3 = mixer.blend(ContributionsInformation, notify=n3, mistakes=[mistake3], comment='c3')

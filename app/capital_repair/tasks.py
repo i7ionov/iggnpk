@@ -37,6 +37,8 @@ def send_acts(request_GET, mail):
         mistakes = []
         mistakes_text = ''
         for notify in total_queryset.filter(organization=org):
+            if notify.house is None or notify.organization is None:
+                continue
             contrib_info = notify.contributionsinformation_set.last()
             if contrib_info is None or contrib_info.date < datetime(datetime.now().year, month, 1).date():
                 mistakes.append(ContributionsInformationMistake.objects.get(id=3).full_text)

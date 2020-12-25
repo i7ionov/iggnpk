@@ -2,6 +2,8 @@ from django.contrib.auth import authenticate
 from django.test import TestCase
 from rest_framework.test import APIRequestFactory
 from rest_framework.authtoken.models import Token
+
+from iggnpk import settings
 from iggnpk.tests import data
 
 

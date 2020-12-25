@@ -82,9 +82,7 @@ export class HouseInputComponent implements OnInit {
 
     this.addresses = customStoreService.getSearchCustomStore(addressService);
 
-    this.houses = new DataSource({
-      store: customStoreService.getSearchCustomStore(houseService)
-    });
+    this.houses = customStoreService.getSearchCustomStore(houseService);
 
   }
 

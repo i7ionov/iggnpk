@@ -1,6 +1,8 @@
 import {Injectable} from "@angular/core";
 import CustomStore from "devextreme/data/custom_store";
 import {Observable} from "rxjs/internal/Observable";
+import DevExpress from "devextreme";
+import DataSource from "devextreme/data/data_source";
 
 
 export declare interface Service {
@@ -18,8 +20,8 @@ export class CustomStoreService {
       return value !== undefined && value !== null && value !== "";
     }
 
-  getSearchCustomStore(service: Service){
-    return new CustomStore({
+  getSearchCustomStore(service: Service) {
+    return new DataSource({
       key: "id",
       totalCount: function () {
         return 6
@@ -34,6 +36,8 @@ export class CustomStoreService {
         [
           "searchValue",
           "searchExpr",
+          "take",
+          "skip",
           "filter"
         ].forEach(function (i) {
           if (i in loadOptions && CustomStoreService.isNotEmpty(loadOptions[i]))

@@ -64,15 +64,15 @@ export class CapitalRepairNotifyService {
   }
 
   update(id, notify: any): Observable<Notify> {
-    return this.http.post<Notify>(`${environment.backend_url}${this.url}/save/${id}/`, notify)
+    return this.http.patch<Notify>(`${environment.backend_url}${this.url}/${id}/`, notify)
   }
 
   create(notify: Notify): Observable<Notify> {
-    return this.http.post<Notify>(`${environment.backend_url}${this.url}/create/`, notify)
+    return this.http.post<Notify>(`${environment.backend_url}${this.url}/`, notify)
   }
 
   search(params): Observable<Notify> {
-    return this.http.get<Notify>(`${environment.backend_url}${this.url}/search/${params}`)
+    return this.http.get<Notify>(`${environment.backend_url}${this.url}/${params}`)
   }
 
   generateActs(params): Observable<any> {

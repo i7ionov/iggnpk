@@ -4,7 +4,6 @@ from django.db.models import Q
 
 
 def filtered_query(request_GET, query, distinct_field=None):
-
     if 'skip' in request_GET:
         start = int(request_GET['skip'])
     else:
@@ -18,9 +17,10 @@ def filtered_query(request_GET, query, distinct_field=None):
         q = build_q_object(json.loads(request_GET['filter']))
         query = query.filter(q)
     if 'searchValue' in request_GET:
-        field = request_GET['searchExpr'].replace("\"", "")
-        value = request_GET['searchValue'].replace("\"", "")
-        query = query.filter(Q(**{field+'__icontains': value}))
+        if request_GET['searchExpr']!='undefined':
+            field = request_GET['searchExpr'].replace("\"", "")
+            value = request_GET['searchValue'].replace("\"", "")
+            query = query.filter(Q(**{field+'__icontains': value}))
     if 'sort' in request_GET:
         sort = json.loads(request_GET['sort'])[0]
         order_by = sort['selector'].replace('.', '__')
@@ -34,7 +34,9 @@ def filtered_query(request_GET, query, distinct_field=None):
         query = query.distinct(distinct_field)
     else:
         query = query.order_by(order_by).distinct()
-    return query[start:end], query, query.count()
+    if start != 0 or end != query.count():
+        query = query[start:end]
+    return query, query, query.count()
 
 
 def build_q_object(filter_request):

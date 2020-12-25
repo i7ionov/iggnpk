@@ -97,6 +97,8 @@ export class ContributionsInfromationFormComponent implements OnInit {
               public auth: AuthService,
               private customStoreService: CustomStoreService) {
     this.contribInfoDataSource = customStoreService.getSearchCustomStore(notifyService);
+    this.contribInfoDataSource.pageSize(10);
+    this.contribInfoDataSource.filter(["status.id", "=", '3']);
     this.mistakesDataSource = customStoreService.getSearchCustomStore(contribInfoMistakesService);
   }
 
@@ -308,10 +310,21 @@ export class ContributionsInfromationFormComponent implements OnInit {
   displayExpr(item) {
     // "item" can be null
     let latest_contrib_date = '';
+    let address = '';
     if (item && item.latest_contrib_date) {
       latest_contrib_date = `(${item.latest_contrib_date})`
     }
-    return item && `№${item.id}, ${item.account_number} Адрес: ${item.house.address.city}, ${item.house.address.street}, ${item.house.number} ${latest_contrib_date}`;
+    if (item && item.house)
+    {
+      address = `${item.house.address.city}, ${item.house.address.street}, ${item.house.number}`;
+    }
+    else
+    {
+      address = 'нет';
+    }
+    return item && `№${item.id}, ${item.account_number} Адрес: ${address} ${latest_contrib_date}`;
+
+
   }
 
 

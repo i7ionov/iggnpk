@@ -2,25 +2,27 @@ import io
 import os
 from datetime import datetime
 from io import BytesIO
-
+from django.contrib.auth.decorators import permission_required
 from django.db.models import Avg, Sum
 from django.db.models import Q
 from rest_framework.parsers import FileUploadParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import permissions
+from rest_framework import permissions, mixins
 from django.http import HttpResponse
 
 from capital_repair.tasks import send_acts
 from dictionaries.serializers import UserSerializer
 from iggnpk import settings
 from tools import date
+from tools.permissions import ModelPermissions
 from tools.serializer_tools import upd_foreign_key, upd_many_to_many
+from tools.viewsets import DevExtremeViewSet
 from .models import CreditOrganization, Branch, Notify, Status, ContributionsInformation, ContributionsInformationMistake
 from dictionaries.models import Organization, House, File
-from .serializers import CreditOrganisationSerializer, BranchSerializer, NotifySerializer, \
-    ContributionsInformationSerializer, ContributionsInformationMistakeSerializer
-from rest_framework.decorators import api_view
+from .serializers import NotifySerializer, \
+    ContributionsInformationSerializer, ContributionsInformationMistakeSerializer, CreditOrganizationSerializer
+from rest_framework.decorators import api_view, action
 from rest_framework import viewsets
 from tools import dev_extreme
 from django.shortcuts import get_object_or_404
@@ -28,113 +30,34 @@ from docxtpl import DocxTemplate
 import zipfile
 from django.db.models import Sum
 
-class CreditOrganisationsViewSet(viewsets.ModelViewSet):
+
+class CreditOrganizationsViewSet(DevExtremeViewSet):
+    lookup_fields = ['inn', 'name']
     permission_classes = [permissions.IsAuthenticated, ]
     queryset = CreditOrganization.objects.all()
-    serializer_class = CreditOrganisationSerializer
+    serializer_class = CreditOrganizationSerializer
 
-    def list(self, request):
-        if 'group' in request.GET:
-            d, total_count = dev_extreme.populate_group_category(request.GET, CreditOrganization)
-            data = {"totalCount": total_count, "items": d}
-        else:
-            queryset, total_queryset, total_count = dev_extreme.filtered_query(request.GET, CreditOrganization)
-            serializer = self.serializer_class(queryset, many=True)
-            data = {'items': serializer.data, 'totalCount': total_count}
-        return Response(data)
-
-    def retrieve(self, request, pk=None):
-        item = get_object_or_404(self.queryset, pk=pk)
-        serializer = self.serializer_class(item)
-        return Response(serializer.data)
-
-    def search(self, request):
-        if 'searchValue' in request.GET:
-            searchValue = request.GET['searchValue'].strip('"').replace(',', ' ').split(' ')
-            keywords = [x for x in searchValue if x]
-            queryset = self.queryset
-            for keyword in keywords:
-                queryset = queryset.filter(Q(inn__icontains=keyword) | Q(name__icontains=keyword))
-            serializer = self.serializer_class(queryset, many=True)
-            data = {'items': serializer.data}
-            return Response(data)
-        else:
-            return Response()
+    def search_filter(self, queryset):
+        return queryset.filter(allow_to_select=True)
 
 
-class BranchViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated, ]
-    queryset = Branch.objects.all()
-    serializer_class = BranchSerializer
-
-    def list(self, request):
-        if 'group' in request.GET:
-            d, total_count = dev_extreme.populate_group_category(request.GET, Branch)
-            data = {"totalCount": total_count, "items": d}
-        else:
-            queryset, total_queryset, total_count = dev_extreme.filtered_query(request.GET, Branch)
-            serializer = BranchSerializer(queryset, many=True)
-            data = {'items': serializer.data, 'totalCount': total_count}
-        return Response(data)
-
-    def retrieve(self, request, pk=None):
-        queryset = Branch.objects.all()
-        item = get_object_or_404(queryset, pk=pk)
-        serializer = BranchSerializer(item)
-        return Response(serializer.data)
-
-    def search(self, request):
-        if 'searchValue' in request.GET:
-            searchValue = request.GET['searchValue'].strip('"').replace(',', ' ').split(' ')
-            keywords = [x for x in searchValue if x]
-            queryset = self.queryset
-            for keyword in keywords:
-                queryset = queryset.filter(Q(address__icontains=keyword) | Q(kpp__icontains=keyword))
-            serializer = self.serializer_class(queryset, many=True)
-            data = {'items': serializer.data}
-            return Response(data)
-        else:
-            return Response()
-
-
-class NotifiesViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated]
+class NotifiesViewSet(DevExtremeViewSet):
     queryset = Notify.objects.all()
-    serializer_class = NotifySerializer
     additional_fields = ['comment2','date_of_exclusion','account_closing_date', 'ground_for_exclusion', 'source_of_information']
+    lookup_fields = ['id', 'account_number', 'house__address__area','house__address__city', 'house__address__street', 'house__number']
+    serializer_class = NotifySerializer
 
-    def list(self, request):
-        exclude_fields = []
-        if not request.user.is_staff:
-            exclude_fields.extend(self.additional_fields)
-        # пользователь видит уведомления только своей организации
-        if not request.user.is_staff:
-            queryset = self.queryset.filter(organization_id=request.user.organization.id)
+    def search_filter(self, queryset):
+        if not self.request.user.is_staff:
+            return queryset.filter(organization_id=self.request.user.organization.id)
         else:
-            queryset = self.queryset
-        if 'group' in request.GET:
-            d, total_count = dev_extreme.populate_group_category(request.GET, queryset)
-            data = {"totalCount": total_count, "items": d}
-        else:
-            queryset, total_queryset, total_count = dev_extreme.filtered_query(request.GET, queryset)
-            serializer = NotifySerializer(queryset, many=True, exclude=exclude_fields)
-            data = {'items': serializer.data,
-                    'totalCount': total_count,
-                    'summary': [total_count]}
-        return Response(data)
+            return queryset
 
-    def retrieve(self, request, pk=None):
-        exclude_fields = []
-        if not request.user.is_staff:
-            exclude_fields.extend(self.additional_fields)
-        # пользователь видит уведомления только своей организации
-        if not request.user.is_staff:
-            queryset = self.queryset.filter(organization_id=request.user.organization.id)
+    def list_filter(self, queryset):
+        if not self.request.user.is_staff:
+            return queryset.filter(organization_id=self.request.user.organization.id)
         else:
-            queryset = self.queryset
-        item = get_object_or_404(queryset, pk=pk)
-        serializer = NotifySerializer(item, exclude=exclude_fields)
-        return Response(serializer.data)
+            return queryset
 
     def create(self, request, *args, **kwargs):
         exclude_fields = []
@@ -174,14 +97,20 @@ class NotifiesViewSet(viewsets.ModelViewSet):
         if not request.user.is_staff:
             if instance.status.id > 2:
                 return Response('Вы не можете редактировать эту запись', status=400)
+            if data['status']['id'] > 2:
+                return Response('Неправильный статус', status=400)
             exclude_fields.extend(self.additional_fields)
 
-        serializer = self.serializer_class(instance=instance, data=data, partial=True, exclude=exclude_fields)
+        serializer = self.get_serializer_class()(instance=instance, data=data, partial=True, exclude=exclude_fields)
         serializer.is_valid(raise_exception=True)
         if request.user.is_staff:
             org = upd_foreign_key('organization', data, instance, Organization)
         else:
             org = instance.organization
+        if request.user.is_staff and 'date' in data:
+            date = data['date']
+        else:
+            date = instance.date
         bank = upd_foreign_key('bank', data, instance, CreditOrganization)
         house = House.objects.get_or_create_new('house', data, instance)
         if 'status' in data and 'id' in data['status']:
@@ -204,87 +133,39 @@ class NotifiesViewSet(viewsets.ModelViewSet):
         else:
             files = instance.files.all()
 
-        serializer.save(organization=org, bank=bank, house=house, files=files, status=status)
+        serializer.save(organization=org, bank=bank, house=house, files=files, status=status, date=date)
         return Response(serializer.data)
 
-    def search(self, request):
-        queryset = self.queryset
-        queryset = queryset.filter(status_id=3)  # поиск только по активным уведомлениям
-        exclude_fields = []
-        if not request.user.is_staff:
-            exclude_fields.extend(self.additional_fields)
-        if request.user.is_staff == False:
-            queryset = queryset.filter(organization_id=request.user.organization.id)  # и только по своим
-        if 'searchValue' in request.GET:
-            searchValue = request.GET['searchValue'].strip('"').replace(',', ' ').split(' ')
-            keywords = [x for x in searchValue if x]
-            for keyword in keywords:
-                queryset = queryset.filter(
-                    Q(id__icontains=keyword) |
-                    Q(account_number__contains=keyword) |
-                    Q(house__address__area__icontains=keyword) |
-                    Q(house__address__city__icontains=keyword) |
-                    Q(house__address__street__icontains=keyword) |
-                    Q(house__number__icontains=keyword))
-            queryset = queryset[:10]
-            serializer = self.serializer_class(queryset, many=True, exclude=exclude_fields)
-            data = {'items': serializer.data}
-            return Response(data)
-        else:
-            queryset = queryset[:10]
-            serializer = self.serializer_class(queryset, many=True, exclude=exclude_fields)
-            data = {'items': serializer.data}
-            return Response(data)
-
+    @action(detail=False)
     def generate_acts(self, request):
+        if request.user.is_staff is False:
+            return Response('У вас нет соответствующих прав', status=400)
         user = UserSerializer(request.user)
         send_acts.delay(request.GET, user.data['email'])
         return Response({},
                         status=200)
 
-class ContributionsInformationViewSet(viewsets.ModelViewSet):
+
+class ContributionsInformationViewSet(DevExtremeViewSet):
     permission_classes = [permissions.IsAuthenticated, ]
     queryset = ContributionsInformation.objects.all()
     serializer_class = ContributionsInformationSerializer
+    lookup_fields = ['id', 'notify__account_number', 'notify__house__address__area','notify__house__address__city', 'notify__house__address__street', 'notify__house__number']
 
-    def list(self, request):
-        exclude_fields = []
-        if not request.user.is_staff:
-            exclude_fields.append('comment2')
-        # пользователь видит уведомления только своей организации
-        if not request.user.is_staff:
-            queryset = self.queryset.filter(notify__organization_id=request.user.organization.id)
+    def search_filter(self, queryset):
+        if not self.request.user.is_staff:
+            return self.queryset.filter(notify__organization_id=self.request.user.organization.id)
         else:
-            queryset = self.queryset
-        if 'group' in request.GET:
-            d, total_count = dev_extreme.populate_group_category(request.GET, queryset)
-            data = {"totalCount": total_count, "items": d}
-        else:
-            queryset, total_queryset, total_count = dev_extreme.filtered_query(request.GET, queryset)
-            serializer = self.serializer_class(queryset, many=True, exclude=exclude_fields)
-            data = {'items': serializer.data,
-                    'totalCount': total_count,
-                    'summary': [total_count]}
+            return queryset
 
-        return Response(data)
-
-    def retrieve(self, request, pk=None):
-        exclude_fields = []
-        if not request.user.is_staff:
-            exclude_fields.append('comment2')
-        # пользователь видит уведомления только своей организации
-        if not request.user.is_staff:
-            queryset = self.queryset.filter(notify__organization_id=request.user.organization.id)
+    def list_filter(self, queryset):
+        if not self.request.user.is_staff:
+            return self.queryset.filter(notify__organization_id=self.request.user.organization.id)
         else:
-            queryset = self.queryset
-        item = get_object_or_404(queryset, pk=pk)
-        serializer = self.serializer_class(item, exclude=exclude_fields)
-        return Response(serializer.data)
+            return queryset
 
     def create(self, request, *args, **kwargs):
         exclude_fields = []
-        if not request.user.is_staff:
-            exclude_fields.append('comment2')
         item = self.serializer_class(data=request.data, exclude=exclude_fields)
         item.is_valid()
         if item.is_valid():
@@ -337,41 +218,8 @@ class ContributionsInformationViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class ContributionsInformationMistakeViewSet(viewsets.ModelViewSet):
+class ContributionsInformationMistakeViewSet(DevExtremeViewSet):
     permission_classes = [permissions.IsAuthenticated, ]
     queryset = ContributionsInformationMistake.objects.all()
     serializer_class = ContributionsInformationMistakeSerializer
-
-    def list(self, request):
-        if 'group' in request.GET:
-            d, total_count = dev_extreme.populate_group_category(request.GET, self.queryset)
-            data = {"totalCount": total_count, "items": d}
-        else:
-            queryset, total_queryset, total_count = dev_extreme.filtered_query(request.GET, self.queryset)
-            serializer = self.serializer_class(queryset, many=True)
-            data = {'items': serializer.data, 'totalCount': total_count}
-        return Response(data)
-
-    def retrieve(self, request, pk=None):
-        item = get_object_or_404(self.queryset, pk=pk)
-        serializer = self.serializer_class(item)
-        return Response(serializer.data)
-
-    def search(self, request):
-        queryset = self.queryset
-        if 'searchValue' in request.GET:
-            searchValue = request.GET['searchValue'].strip('"').replace(',', ' ').split(' ')
-            keywords = [x for x in searchValue if x]
-            for keyword in keywords:
-                queryset = queryset.filter(
-                    Q(text__icontains=keyword))
-
-            queryset = queryset[:10]
-            serializer = self.serializer_class(queryset, many=True)
-            data = {'items': serializer.data}
-            return Response(data)
-        else:
-            queryset = queryset[:10]
-            serializer = self.serializer_class(queryset, many=True)
-            data = {'items': serializer.data}
-            return Response(data)
+    lookup_fields = ['text']
