@@ -26,5 +26,3 @@ class DevExtremeGroupListSerializer(serializers.Serializer):
         kwargs.pop('exclude', None)
         super(serializers.Serializer, self).__init__(*args, **kwargs)
 
-    class Meta:
-        list_serializer_class = DevExtremeListSerializer

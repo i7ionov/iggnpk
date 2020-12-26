@@ -147,10 +147,10 @@ class NotifiesViewSet(DevExtremeViewSet):
 
 
 class ContributionsInformationViewSet(DevExtremeViewSet):
-    permission_classes = [permissions.IsAuthenticated, ]
     queryset = ContributionsInformation.objects.all()
     serializer_class = ContributionsInformationSerializer
     lookup_fields = ['id', 'notify__account_number', 'notify__house__address__area','notify__house__address__city', 'notify__house__address__street', 'notify__house__number']
+    additional_fields = ['comment2']
 
     def search_filter(self, queryset):
         if not self.request.user.is_staff:
@@ -165,8 +165,7 @@ class ContributionsInformationViewSet(DevExtremeViewSet):
             return queryset
 
     def create(self, request, *args, **kwargs):
-        exclude_fields = []
-        item = self.serializer_class(data=request.data, exclude=exclude_fields)
+        item = self.get_serializer(data=request.data)
         item.is_valid()
         if item.is_valid():
             if request.data['status']['id'] > 2:
@@ -177,7 +176,10 @@ class ContributionsInformationViewSet(DevExtremeViewSet):
                 return Response({'Организация, указанная в уведомлениии, не соответствует организации пользователя'},
                                 status=400)
             files = upd_many_to_many('files',request, None, File)
-            mistakes = upd_many_to_many('mistakes', request, None, ContributionsInformationMistake)
+            if request.user.is_staff:
+                mistakes = upd_many_to_many('mistakes', request, None, ContributionsInformationMistake)
+            else:
+                mistakes = []
             item.save(date=datetime.today().date(), status=status, files=files, notify=notify, mistakes=mistakes)
             return Response(item.data)
         else:
@@ -189,6 +191,8 @@ class ContributionsInformationViewSet(DevExtremeViewSet):
         instance = self.get_object()
 
         if not request.user.is_staff:
+            if request.data['status']['id'] > 2:
+                return Response('Неправильный статус', status=400)
             if instance.status.id > 2:
                 return Response('Вы не можете редактировать эту запись', status=400)
             exclude_fields.append('comment2')
@@ -203,18 +207,26 @@ class ContributionsInformationViewSet(DevExtremeViewSet):
         else:
             status = instance.status
 
+        if request.user.is_staff and 'date' in request.data:
+            date = request.data['date']
+        else:
+            date = instance.date
+
         notify = upd_foreign_key('notify', data, instance, Notify)
         if notify.organization.id != request.user.organization.id and not request.user.is_staff:
             return Response({'Организация, указанная в уведомлениии, не соответствует организации пользователя'},
                             status=400)
 
         files = upd_many_to_many('files', request, instance, File)
-        mistakes = upd_many_to_many('mistakes', request, instance, ContributionsInformationMistake)
+        if request.user.is_staff:
+            mistakes = upd_many_to_many('mistakes', request, instance, ContributionsInformationMistake)
+        else:
+            mistakes = instance.mistakes.all()
 
         if status.id == 3:
             notify.latest_contrib_date = datetime.now().date()
             notify.save()
-        serializer.save(files=files, status=status, notify=notify, mistakes=mistakes)
+        serializer.save(files=files, status=status, notify=notify, mistakes=mistakes, date=date)
         return Response(serializer.data)
 
 

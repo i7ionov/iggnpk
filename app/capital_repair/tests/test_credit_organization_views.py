@@ -26,7 +26,7 @@ class CreditOrganizationListViewSetTest(BaseTest):
         response = client.get(f'{endpoint_url}?searchValue=%22{bank.inn}%22&searchExpr=undefined')
         self.assertEqual(response.data['items'][0]['id'], bank.id)
 
-class NotifiesRetrieveViewSetTest(BaseTest):
+class CreditOrganizationRetrieveViewSetTest(BaseTest):
     def test_returns_object(self):
         bank = mixer.blend(CreditOrganization, allow_to_select=True)
         client = APIClient(HTTP_AUTHORIZATION='Token ' + self.uk_token.key)

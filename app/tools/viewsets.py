@@ -1,5 +1,6 @@
 from django.db.models import Q
 from rest_framework import viewsets, mixins, permissions
+from rest_framework.response import Response
 
 from tools import dev_extreme
 from tools.permissions import ModelPermissions
@@ -15,6 +16,7 @@ class DevExtremeViewSet(viewsets.ModelViewSet, mixins.ListModelMixin):
     lookup_fields = None
     totalCount = None
     serializer_class = None
+
     def get_exclude_fields(self):
         if not self.request.user.is_staff:
             return self.additional_fields
@@ -37,9 +39,10 @@ class DevExtremeViewSet(viewsets.ModelViewSet, mixins.ListModelMixin):
             context.update({"totalCount": self.totalCount})
         return context
 
-    #TODO: по-хорошему, поисковый фильтр нужно переложить на фронтенд
+    # TODO: по-хорошему, поисковый фильтр нужно переложить на фронтенд
     def search_filter(self, queryset):
         return queryset
+
     def list_filter(self, queryset):
         return queryset
 
@@ -54,7 +57,7 @@ class DevExtremeViewSet(viewsets.ModelViewSet, mixins.ListModelMixin):
             for keyword in keywords:
                 q = Q()
                 for field in self.lookup_fields:
-                    q = q | Q(**{field+'__icontains': keyword})
+                    q = q | Q(**{field + '__icontains': keyword})
                 queryset = queryset.filter(q)
             self.totalCount = queryset.count()
             queryset = queryset[:10]
@@ -63,3 +66,12 @@ class DevExtremeViewSet(viewsets.ModelViewSet, mixins.ListModelMixin):
             queryset = self.list_filter(queryset)
             queryset, total_queryset, self.totalCount = dev_extreme.filtered_query(self.request.GET, queryset)
         return queryset
+
+    def list(self, request, *args, **kwargs):
+
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        data = {'items': serializer.data,
+                'totalCount': self.totalCount,
+                'summary': [self.totalCount]}
+        return Response(data)

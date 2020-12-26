@@ -14,7 +14,6 @@ from rest_framework import serializers
 class CreditOrganizationSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = CreditOrganization
-        list_serializer_class = DevExtremeListSerializer
         fields = '__all__'
 
 
@@ -60,7 +59,6 @@ class NotifySerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = Notify
-        list_serializer_class = DevExtremeListSerializer
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
@@ -85,7 +83,6 @@ class ContributionsInformationSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = ContributionsInformation
-        list_serializer_class = DevExtremeListSerializer
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):

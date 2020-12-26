@@ -35,8 +35,10 @@ def filtered_query(request_GET, query, distinct_field=None):
     else:
         query = query.order_by(order_by).distinct()
     if start != 0 or end != query.count():
-        query = query[start:end]
-    return query, query, query.count()
+        paged_query = query[start:end]
+    else:
+        paged_query = query
+    return paged_query, query, query.count()
 
 
 def build_q_object(filter_request):

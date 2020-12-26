@@ -1,6 +1,5 @@
 import datetime
 
-from django.contrib.auth import authenticate
 from django.test import override_settings
 
 from capital_repair.models import Notify, CreditOrganization
@@ -21,19 +20,6 @@ class NotifiesListViewSetTest(BaseTest):
         self.assertTrue('items' in response.data)
         self.assertTrue('totalCount' in response.data)
         self.assertTrue('summary' in response.data)
-
-    def test_needs_authentification(self):
-        client = APIClient()
-        response = client.get(f'{endpoint_url}')
-        self.assertEqual(response.status_code, 401)
-
-    def test_needs_permission(self):
-        self.uk.groups.set([])
-        self.uk.save()
-        self.uk = User.objects.get(id=self.uk.id)  # обновление закэшированых разрешений
-        client = APIClient(HTTP_AUTHORIZATION='Token ' + self.uk_token.key)
-        response = client.get(f'{endpoint_url}')
-        self.assertEqual(response.status_code, 403)
 
     def test_uk_can_see_its_own_notifies(self):
         """Управляющие организации не должны видеть уведомления других"""
@@ -91,7 +77,7 @@ class NotifiesListViewSetTest(BaseTest):
         mixer.blend(Notify, date=datetime.date(2012, 11, 15))
         mixer.blend(Notify, date=datetime.date(2013, 11, 15))
         response = client.get(
-            '/api/v1/cr/notifies/?group=[{%22selector%22:%22date%22,%22groupInterval%22:%22year%22,%22isExpanded%22:true},{%22selector%22:%22date%22,%22groupInterval%22:%22month%22,%22isExpanded%22:true},{%22selector%22:%22date%22,%22groupInterval%22:%22day%22,%22isExpanded%22:false}]')
+            endpoint_url+'?group=[{%22selector%22:%22date%22,%22groupInterval%22:%22year%22,%22isExpanded%22:true},{%22selector%22:%22date%22,%22groupInterval%22:%22month%22,%22isExpanded%22:true},{%22selector%22:%22date%22,%22groupInterval%22:%22day%22,%22isExpanded%22:false}]')
         self.assertTrue('items' in response.data)
         self.assertTrue('totalCount' in response.data)
         self.assertTrue('key' in response.data['items'][0])
@@ -121,35 +107,30 @@ class NotifiesListViewSetTest(BaseTest):
         response = client.get(f'/api/v1/cr/notifies/?searchValue=%22number%22&searchExpr=undefined')
         self.assertEqual(response.data['items'][0]['id'], notify.id)
 
-    def test_allow_search_by_defined_fields(self):
-        """Должен производиться поиск по следующим полям: id, номер счета, поля адреса"""
-        house = mixer.blend(House, address=mixer.blend(Address, area='area', city='city', street='street'),
-                            number='number')
-        notify = mixer.blend(Notify, organization=self.uk.organization, status_id=3, house=house,
-                             account_number='account_number')
-        client = APIClient(HTTP_AUTHORIZATION='Token ' + self.uk_token.key)
-        response = client.get(f'{endpoint_url}?searchValue=%22account_number%22&searchExpr=undefined')
-        self.assertEqual(response.data['items'][0]['id'], notify.id)
-        response = client.get(f'{endpoint_url}?searchValue=%22area%22&searchExpr=undefined')
-        self.assertEqual(response.data['items'][0]['id'], notify.id)
-        response = client.get(f'{endpoint_url}?searchValue=%22city%22&searchExpr=undefined')
-        self.assertEqual(response.data['items'][0]['id'], notify.id)
-        response = client.get(f'{endpoint_url}?searchValue=%22street%22&searchExpr=undefined')
-        self.assertEqual(response.data['items'][0]['id'], notify.id)
-        response = client.get(f'{endpoint_url}?searchValue=%22number%22&searchExpr=undefined')
-        self.assertEqual(response.data['items'][0]['id'], notify.id)
-
     def test_pagination(self):
         client = APIClient(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
         response = client.get(f'{endpoint_url}?skip=0&take=20')
         self.assertEqual(len(response.data['items']), 20)
+
+    def test_needs_authentification(self):
+        client = APIClient()
+        response = client.get(f'{endpoint_url}')
+        self.assertEqual(response.status_code, 401)
+
+    def test_needs_permission(self):
+        self.uk.groups.set([])
+        self.uk.save()
+        self.uk = User.objects.get(id=self.uk.id)  # обновление закэшированых разрешений
+        client = APIClient(HTTP_AUTHORIZATION='Token ' + self.uk_token.key)
+        response = client.get(f'{endpoint_url}')
+        self.assertEqual(response.status_code, 403)
 
 
 class NotifiesCreateViewSetTest(BaseTest):
     def test_creates_object(self):
         bank = mixer.blend(CreditOrganization)
         address = mixer.blend(Address)
-        mixer.blend(File, owner=mixer.SELECT)
+        file = mixer.blend(File, owner=mixer.SELECT)
         mixer.blend(File, owner=mixer.SELECT)
         client = APIClient(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
         response = client.post(f'{endpoint_url}', {
@@ -186,7 +167,7 @@ class NotifiesCreateViewSetTest(BaseTest):
                 "allow_to_select": 'false'
             },
             "files": [{
-                "id": 1,
+                "id": file.id,
                 "owner": 1,
                 "datafile": "/media/123/1.pdf",
                 "size": 206767,
@@ -230,6 +211,7 @@ class NotifiesCreateViewSetTest(BaseTest):
         self.assertEqual(notify.source_of_information, '3333')
 
     def test_does_not_allow_status_more_than_2(self):
+        previous_notify = mixer.blend(Notify)
         client = APIClient(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
         bank = mixer.blend(CreditOrganization)
         address = mixer.blend(Address)
@@ -257,6 +239,7 @@ class NotifiesCreateViewSetTest(BaseTest):
 
         }, format='json')
         self.assertEqual(response.status_code, 400)
+        self.assertTrue(previous_notify, Notify.objects.last())
 
     def test_creates_house_only_its_doesnt_exists(self):
         client = APIClient(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)

@@ -14,7 +14,11 @@ def populate_db():
     uk_group.permissions.set(
         [Permission.objects.get(codename='view_notify'),
          Permission.objects.get(codename='change_notify'),
-         Permission.objects.get(codename='add_notify')])
+         Permission.objects.get(codename='add_notify'),
+         Permission.objects.get(codename='view_contributionsinformation'),
+         Permission.objects.get(codename='change_contributionsinformation'),
+         Permission.objects.get(codename='add_contributionsinformation')
+         ])
     admin = mixer.blend(User, groups=[admin_group], username='admin', organization=mixer.RANDOM, is_staff=True)
     admin.set_password('123')
     admin.save()
