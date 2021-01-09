@@ -4,7 +4,6 @@ from rest_framework.response import Response
 
 from tools import dev_extreme
 from tools.permissions import ModelPermissions
-from tools.serializers import DevExtremeGroupListSerializer
 
 
 class DevExtremeViewSet(viewsets.ModelViewSet, mixins.ListModelMixin):
@@ -22,8 +21,6 @@ class DevExtremeViewSet(viewsets.ModelViewSet, mixins.ListModelMixin):
             return self.additional_fields
 
     def get_serializer_class(self):
-        if 'group' in self.request.GET:
-            return DevExtremeGroupListSerializer
         return self.serializer_class
 
     def get_serializer(self, *args, **kwargs):
@@ -35,8 +32,6 @@ class DevExtremeViewSet(viewsets.ModelViewSet, mixins.ListModelMixin):
 
     def get_serializer_context(self):
         context = super(DevExtremeViewSet, self).get_serializer_context()
-        if self.totalCount:
-            context.update({"totalCount": self.totalCount})
         return context
 
     # TODO: по-хорошему, поисковый фильтр нужно переложить на фронтенд
@@ -68,10 +63,13 @@ class DevExtremeViewSet(viewsets.ModelViewSet, mixins.ListModelMixin):
         return queryset
 
     def list(self, request, *args, **kwargs):
-
-        queryset = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(queryset, many=True)
-        data = {'items': serializer.data,
-                'totalCount': self.totalCount,
-                'summary': [self.totalCount]}
+        if 'group' in request.GET:
+            d, total_count = dev_extreme.populate_group_category(request.GET, self.queryset)
+            data = {"totalCount": total_count, "items": d}
+        else:
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = self.get_serializer(queryset, many=True)
+            data = {'items': serializer.data,
+                    'totalCount': self.totalCount,
+                    'summary': [self.totalCount]}
         return Response(data)

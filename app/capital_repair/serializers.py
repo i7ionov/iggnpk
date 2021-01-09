@@ -3,7 +3,6 @@ from datetime import datetime
 from rest_framework.relations import PrimaryKeyRelatedField
 
 from dictionaries.models import File, Organization, House
-from tools.serializers import DevExtremeListSerializer
 from .models import CreditOrganization, Branch, Notify, Status, ContributionsInformation, \
     ContributionsInformationMistake
 from tools.dynamic_fields_model_serializer import DynamicFieldsModelSerializer
