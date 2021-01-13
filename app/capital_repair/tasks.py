@@ -36,6 +36,7 @@ def send_acts(request_GET, mail):
         notifies = []
         mistakes = []
         mistakes_text = ''
+        paragraph = ''
         for notify in total_queryset.filter(organization=org):
             if notify.house is None or notify.organization is None:
                 continue
@@ -45,6 +46,8 @@ def send_acts(request_GET, mail):
                 notifies.append(notify)
             else:
                 for mistake in contrib_info.mistakes.all():
+                    if mistake.id == 1:
+                        paragraph = ' Пункта 6'
                     mistakes.append(mistake.full_text)
                 if contrib_info.mistakes.count() > 0:
                     notifies.append(notify)
@@ -64,6 +67,7 @@ def send_acts(request_GET, mail):
                    'reporting_quarter_date': date.russian_date(datetime(datetime.now().year, month, 20)),
                    'year': datetime.now().year,
                    'notifies': notifies,
+                   'paragraph': paragraph,
                    'mistakes_text': mistakes_text}
         doc.render(context)
         f = io.BytesIO()
