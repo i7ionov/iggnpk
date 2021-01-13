@@ -2,7 +2,7 @@ import io
 import os
 import zipfile
 from datetime import datetime
-
+from dateutil.relativedelta import relativedelta
 
 from celery import shared_task
 from django.core.mail import EmailMessage
@@ -17,18 +17,19 @@ from tools import dev_extreme, date
 @shared_task
 def send_acts(request_GET, mail):
     queryset = Notify.objects.all()
-    response = io.BytesIO()
-    zip_file = zipfile.ZipFile(response, "w")
+    # response = io.BytesIO()
+    zip_file = zipfile.ZipFile(os.path.join(settings.MEDIA_ROOT, 'temp', f'export_{mail}.zip'), "w")
     queryset, total_queryset, total_count = dev_extreme.filtered_query(request_GET, queryset)
 
     if datetime.now() < datetime(datetime.now().year, 3, 20):
-        month = 12
+        month = 1
+
     elif datetime.now() < datetime(datetime.now().year, 6, 20):
-        month = 3
+        month = 4
     elif datetime.now() < datetime(datetime.now().year, 9, 20):
-        month = 6
+        month = 7
     else:
-        month = 9
+        month = 10
 
     for org_id in total_queryset.order_by('organization').distinct('organization').values('organization__id'):
 
@@ -41,7 +42,7 @@ def send_acts(request_GET, mail):
             if notify.house is None or notify.organization is None:
                 continue
             contrib_info = notify.contributionsinformation_set.last()
-            if contrib_info is None or contrib_info.date < datetime(datetime.now().year, month, 1).date():
+            if contrib_info is None or contrib_info.date < (datetime(datetime.now().year, month, 1) + relativedelta(months=-1)).date():
                 mistakes.append(ContributionsInformationMistake.objects.get(id=3).full_text)
                 notifies.append(notify)
             else:
@@ -58,13 +59,13 @@ def send_acts(request_GET, mail):
             mistakes_text = mistakes_text + mistake + ', '
         mistakes_text = mistakes_text[0:-2] + '.'
         mistakes_text = mistakes_text.replace('{reporting_quarter_date}',
-                                              date.russian_date(datetime(datetime.now().year, month, 20)))
+                                              date.russian_date(datetime(datetime.now().year, month, 20) + relativedelta(months=-1)))
         mistakes_text = mistakes_text.replace('{last_reporting_date}',
-                                              date.russian_date(datetime(datetime.now().year, month + 1, 1)))
+                                              date.russian_date(datetime(datetime.now().year, month, 1)))
         doc = DocxTemplate(os.path.join(settings.MEDIA_ROOT, 'templates', 'act_backend.docx'))
         context = {'date': date.russian_date(datetime.now()),
                    'organization': org,
-                   'reporting_quarter_date': date.russian_date(datetime(datetime.now().year, month, 20)),
+                   'reporting_quarter_date': date.russian_date(datetime(datetime.now().year, month, 20) + relativedelta(months=-1)),
                    'year': datetime.now().year,
                    'notifies': notifies,
                    'paragraph': paragraph,
@@ -76,12 +77,12 @@ def send_acts(request_GET, mail):
     zip_file.close()
     email = EmailMessage(
         f'Акты',
-        '',
+        f'Ссылка на скачивание файла https://iggnpk.ru/media/temp/export_{mail}.zip',
         'noreply@iggnpk.ru',
         [mail],
         headers={'Reply-To': 'noreply@iggnpk.ru'}
     )
-    email.attach('archive.zip', response.getvalue(), 'application/zip')
+    #email.attach('archive.zip', response.getvalue(), 'application/zip')
     email.send()
 
     return 'Hello there!'

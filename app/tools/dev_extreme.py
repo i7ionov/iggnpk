@@ -12,7 +12,7 @@ def filtered_query(request_GET, query, distinct_field=None):
         end = int(request_GET['skip']) + int(request_GET['take'])
     else:
         end = query.count()
-    if 'filter' in request_GET:
+    if 'filter' in request_GET and request_GET['filter'] != 'undefined':
         """"[["id","=",1],"and",["!",["doc_number","=","+2664Л-1"]]]"""
         q = build_q_object(json.loads(request_GET['filter']))
         query = query.filter(q)
