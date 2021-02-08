@@ -45,6 +45,10 @@ class Organization(models.Model):
     ogrn = models.CharField(max_length=30, blank=True)
     name = models.CharField(max_length=100, blank=True)
     type = models.ForeignKey(OrganizationType, on_delete=models.SET_NULL, null=True, blank=True)
+    # информация о смене название
+    date_of_changind_name = models.DateField(blank=True, null=True)
+    old_name = models.CharField(max_length=100, blank=True)
+
     history = HistoricalRecords()
 
     def __str__(self):

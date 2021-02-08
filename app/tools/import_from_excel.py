@@ -151,8 +151,14 @@ def houses():
             inn = str(sheet.cell(rownum, 1).value).strip().replace('.0', '')
             name = sheet.cell(rownum, 2).value.strip()
             org, created = Organization.objects.get_or_create(inn=inn)
-            org.name = name
-            org.save()
+            if created:
+                org.name = name
+                org.save()
+            elif name != org.name:
+                org.old_name = org.name
+                org.date_of_changind_name = datetime.now().date()
+                org.name = name
+                org.save()
             house.organization = org
             house.save()
         else:
