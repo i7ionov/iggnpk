@@ -79,4 +79,8 @@ export class CapitalRepairNotifyService {
     return this.http.get<Notify>(`${environment.backend_url}${this.url}/generate_acts/${params}`)
   }
 
+  exportToExcel(params): Observable<any> {
+    return this.http.get<Notify>(`${environment.backend_url}${this.url}/export_to_excel/${params}`)
+  }
+
 }
