@@ -1,13 +1,8 @@
-from datetime import datetime
-
-from rest_framework.relations import PrimaryKeyRelatedField
-
-from dictionaries.models import File, Organization, House
 from .models import CreditOrganization, Branch, Notify, Status, ContributionsInformation, \
     ContributionsInformationMistake
 from tools.dynamic_fields_model_serializer import DynamicFieldsModelSerializer
 from dictionaries.serializers import OrganizationSerializer, HouseSerializer, FileSerializer
-from rest_framework import serializers
+
 
 
 class CreditOrganizationSerializer(DynamicFieldsModelSerializer):
@@ -70,8 +65,6 @@ class NotifySerializer(DynamicFieldsModelSerializer):
         if exclude is not None:
             for field in exclude:
                 self.fields.pop(field)
-
-
 
 
 class ContributionsInformationSerializer(DynamicFieldsModelSerializer):

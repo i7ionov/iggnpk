@@ -155,6 +155,12 @@ class NotifiesViewSet(DevExtremeViewSet):
         return Response({},
                         status=200)
 
+    @action(detail=False)
+    def get_history(self, request):
+        if request.user.is_staff is False:
+            return Response('У вас нет соответствующих прав', status=400)
+
+
 class ContributionsInformationViewSet(DevExtremeViewSet):
     queryset = ContributionsInformation.objects.all()
     serializer_class = ContributionsInformationSerializer
