@@ -83,6 +83,7 @@ class Notify(models.Model):
     def __str__(self):
         return f'{self.date}, № {self.id}'
 
+    @property
     def last_contrib(self):
         return self.contributionsinformation_set.last()
 

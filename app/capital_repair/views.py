@@ -15,6 +15,7 @@ from capital_repair.tasks import send_acts
 from dictionaries.serializers import UserSerializer
 from iggnpk import settings
 from tools import date
+from tools.export_to_excel import export_to_excel
 from tools.permissions import ModelPermissions
 from tools.serializer_tools import upd_foreign_key, upd_many_to_many
 from tools.viewsets import DevExtremeViewSet
@@ -145,6 +146,14 @@ class NotifiesViewSet(DevExtremeViewSet):
         return Response({},
                         status=200)
 
+    @action(detail=False)
+    def export_to_excel(self, request):
+        if request.user.is_staff is False:
+            return Response('У вас нет соответствующих прав', status=400)
+        user = UserSerializer(request.user)
+        export_to_excel(os.path.join(settings.MEDIA_ROOT, 'templates', 'inspections.xlsx'), self.queryset, user.data['email'])
+        return Response({},
+                        status=200)
 
 class ContributionsInformationViewSet(DevExtremeViewSet):
     queryset = ContributionsInformation.objects.all()
