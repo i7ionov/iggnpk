@@ -109,7 +109,16 @@ export class CapitalRepairNotifiesComponent implements OnInit {
         onClick: this.add.bind(this)
       }
     })
-
+    if (this.comment_visibility) {
+      e.toolbarOptions.items.unshift({
+        location: 'after',
+        widget: 'dxButton',
+        options: {
+          icon: 'xlsxfile',
+          onClick: this.exportToExcel.bind(this)
+        }
+      });
+    }
     e.toolbarOptions.items.unshift({
       location: 'after',
       widget: 'dxButton',
@@ -128,6 +137,7 @@ export class CapitalRepairNotifiesComponent implements OnInit {
         }
       });
     }
+
   }
 
   exportActs() {
@@ -136,7 +146,7 @@ export class CapitalRepairNotifiesComponent implements OnInit {
     //window.location.href= environment.backend_url + `/api/v1/cr/notifies/generate_acts/${params}`;
     this.notifyService.generateActs(params).subscribe(res => {
       let result = alert("<i>Задача на формирование актов поставлена в обработку.<br>" +
-        "Файл будет направлен по электронной почте</i>", "Формирование актов");
+        "Файл будет направлен по электронной почте.</i>", "Формирование актов");
       result.then((dialogResult) => {
 
       });
@@ -171,23 +181,23 @@ export class CapitalRepairNotifiesComponent implements OnInit {
 
 
   }
-
-  onExporting(e) {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Notifies');
-
-    exportDataGrid({
-      component: e.component,
-      worksheet: worksheet,
-      autoFilterEnabled: true
-    }).then(function () {
-      // https://github.com/exceljs/exceljs#writing-xlsx
-      workbook.xlsx.writeBuffer().then(function (buffer) {
-        saveAs(new Blob([buffer], {type: 'application/octet-stream'}), 'notifies.xlsx');
+  exportToExcel() {
+    let params = '?filter=' + JSON.stringify(this.dataGrid.instance.getCombinedFilter())
+    //window.location.href= environment.backend_url + `/api/v1/cr/notifies/export_to_excel/${params}`;
+    this.notifyService.exportToExcel(params).subscribe(res => {
+      let result = alert("<i>Задача на експорт в Эксель поставлена в обработку.<br>" +
+        "Файл будет направлен по электронной почте.</i>", "Формирование Эксель файла");
+      result.then((dialogResult) => {
       });
-    });
-    e.cancel = true;
+    }, error => {
+      let result = alert("<i>Задача на експорт в Эксель завершилась ошибкой. <br>" +
+        "Обратитесь к системному администратору.</i>", "Ошибка");
+      result.then((dialogResult) => {
+      });
+    })
+
   }
+
 
 }
 

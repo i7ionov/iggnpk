@@ -7,7 +7,6 @@
                 [dataSource]="dataSource"
                 [height]="height"
                 (onToolbarPreparing)="onToolbarPreparing($event)"
-                (onExporting)="onExporting($event)"
                 [allowColumnResizing]="true"
                 [allowColumnReordering]="true"
                 columnResizingMode="widget"
@@ -316,8 +315,6 @@
         summaryType="count">
       </dxi-total-item>
     </dxo-summary>
-
-    <dxo-export [enabled]="true"></dxo-export>
   </dx-data-grid>
 
 
