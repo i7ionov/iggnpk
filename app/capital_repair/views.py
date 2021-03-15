@@ -16,6 +16,7 @@ from dictionaries.serializers import UserSerializer
 from iggnpk import settings
 from tools import date
 from tools.export_to_excel import export_to_excel
+from tools.history_serializer import HistorySerializer
 from tools.permissions import ModelPermissions
 from tools.serializer_tools import upd_foreign_key, upd_many_to_many
 from tools.viewsets import DevExtremeViewSet
@@ -155,10 +156,12 @@ class NotifiesViewSet(DevExtremeViewSet):
         return Response({},
                         status=200)
 
-    @action(detail=False)
+    @action(detail=True)
     def get_history(self, request):
         if request.user.is_staff is False:
             return Response('У вас нет соответствующих прав', status=400)
+        serializer = HistorySerializer(instance=self.get_object())
+        return Response(serializer.data)
 
 
 class ContributionsInformationViewSet(DevExtremeViewSet):
