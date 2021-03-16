@@ -17,9 +17,10 @@ class HistorySerializer(serializers.Serializer):
         result = []
         if obj.prev_record:
             for change in obj.diff_against(obj.prev_record).changes:
-                result.append({
-                    'field':change.field,
-                    'field_verbose':self.model._meta.get_field(change.field).verbose_name,
-                    'new':change.new,
-                    'old':change.old})
+                if change.new or change.old:
+                    result.append({
+                        'field':change.field,
+                        'field_verbose':self.model._meta.get_field(change.field).verbose_name,
+                        'new':change.new,
+                        'old':change.old})
         return result
