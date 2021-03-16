@@ -132,7 +132,7 @@ export class CapitalRepairNotifyComponent implements OnInit {
     this.route.params.subscribe((params: Params) => {
 
       this.id = params.id;
-      if (this.id != '0') {
+      if (this.id !== '0') {
         this.notifyService.retrieve(this.id).subscribe(res => {
             this.notify = res;
             this.clean_notify = JSON.parse(JSON.stringify(res));
@@ -142,7 +142,6 @@ export class CapitalRepairNotifyComponent implements OnInit {
         if (this.auth.current_user.groups.indexOf(UserGroup.Admin) !== -1) {
           this.notifyService.getHistory(this.id).subscribe(res => {
             this.history = res;
-            console.log(this.history);
           });
         }
       } else {

@@ -86,4 +86,12 @@ export class ContributionsInformationService {
     return this.http.get<ContributionsInformation>(`${environment.backend_url}${this.url}/generate_act/${id}/`)
   }
 
+  exportToExcel(params): Observable<any> {
+    return this.http.get<ContributionsInformation>(`${environment.backend_url}${this.url}/export_to_excel/${params}`);
+  }
+
+  getHistory(params): Observable<any> {
+    return this.http.get<History>(`${environment.backend_url}${this.url}/${params}/get_history/`);
+  }
+
 }

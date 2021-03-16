@@ -194,6 +194,45 @@
       </div>
     </div>
 
+
+
+    <div *ngIf="comment_visibility">
+      <dx-accordion
+        #accordion
+        [selectedItems]="[]"
+        [collapsible]="true"
+      >
+
+        <dxi-item title="История">
+          <div>
+            <dx-accordion
+              #accordion
+              [dataSource]="history"
+              [collapsible]="true"
+              [animationDuration]="300">
+              <div *dxTemplate="let history of 'title'">
+                №{{history.pk}}, {{history.history_date | date: 'dd.MM.yyyyг. в HH:mm'}}, {{history.history_user}}
+              </div>
+              <div *dxTemplate="let history of 'item'">
+                <ul>
+                  <li *ngFor="let item of history.delta">
+                    <p><b>Поле:</b> {{item.field_verbose}};</p>
+                    <p><b>Было:</b> {{item.old}};</p>
+                    <p><b>Стало:</b> {{item.new}};</p>
+                  </li>
+                </ul>
+              </div>
+            </dx-accordion>
+          </div>
+
+        </dxi-item>
+
+      </dx-accordion>
+
+
+    </div>
+
+
     <div class="buttons-line">
       <dx-button *ngIf="saveButtonVisibility" type="success" text="Сохранить" [width]="150"
                  (onClick)="onFormSubmit(SubmitType.Saving)"></dx-button>

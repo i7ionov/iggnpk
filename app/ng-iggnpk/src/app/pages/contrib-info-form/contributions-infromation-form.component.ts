@@ -2,6 +2,7 @@ import {Component, ElementRef, NgModule, OnInit, ViewChild} from '@angular/core'
 import {ActivatedRoute, Params, Router, RouterModule, Routes} from "@angular/router";
 import {CommonModule, Location} from '@angular/common';
 import {
+  DxAccordionModule,
   DxButtonModule,
   DxDataGridModule,
   DxFileUploaderModule,
@@ -42,6 +43,7 @@ import saveAs from "file-saver"
 })
 export class ContributionsInfromationFormComponent implements OnInit {
   SubmitType = SubmitType;
+  history: any = {};
   @ViewChild("form", {static: false}) form: DxFormComponent;
   @ViewChild("mistakes", {static: false}) mistakes: DxSelectBoxComponent;
 
@@ -149,15 +151,20 @@ export class ContributionsInfromationFormComponent implements OnInit {
     this.route.params.subscribe((params: Params) => {
 
       this.id = params.id;
-      if (this.id != '0') {
+      if (this.id !== '0') {
         this.contribInfoService.retrieve(this.id).subscribe(res => {
             this.contrib_info = res;
             this.contrib_info = JSON.parse(JSON.stringify(res));
             this.setPermissions(this.auth.current_user);
           }
-        )
+        );
+        if (this.auth.current_user.groups.indexOf(UserGroup.Admin) !== -1) {
+          this.contribInfoService.getHistory(this.id).subscribe(res => {
+            this.history = res;
+          });
+        }
       } else {
-        let a = new Date();
+        const a = new Date();
         this.contrib_info.date = `${a.getFullYear()}-${a.getMonth() + 1}-${a.getDate()}`;
         this.sendForApprovalButtonVisibility = true;
         this.saveButtonVisibility = true;
@@ -366,6 +373,7 @@ const routes: Routes = [
     DxDataGridModule,
     DxFormModule,
     DxSelectBoxModule,
+    DxAccordionModule,
     ApplicationPipesModule
   ],
   declarations: [ContributionsInfromationFormComponent],
