@@ -1,25 +1,25 @@
 import {Component, NgModule, OnInit, ViewChild} from '@angular/core';
-import {DxCheckBoxModule} from "devextreme-angular/ui/check-box";
-import {DxTextBoxModule} from "devextreme-angular/ui/text-box";
-import {Router, RouterModule, Routes} from "@angular/router";
-import {CommonModule} from "@angular/common";
-import {DxValidatorModule} from "devextreme-angular/ui/validator";
-import {DxValidationGroupModule} from "devextreme-angular/ui/validation-group";
+import {DxCheckBoxModule} from 'devextreme-angular/ui/check-box';
+import {DxTextBoxModule} from 'devextreme-angular/ui/text-box';
+import {Router, RouterModule, Routes} from '@angular/router';
+import {CommonModule} from '@angular/common';
+import {DxValidatorModule} from 'devextreme-angular/ui/validator';
+import {DxValidationGroupModule} from 'devextreme-angular/ui/validation-group';
 import {DxPopupModule, DxButtonModule, DxTemplateModule, DxDataGridComponent} from 'devextreme-angular';
 
-import {CapitalRepairNotifyService, Notifies, Notify} from "../../shared/services/capital-repair-notify.service";
+import {CapitalRepairNotifyService, Notifies, Notify} from '../../shared/services/capital-repair-notify.service';
 import * as JSZip from 'jszip';
 import {DxDataGridModule} from 'devextreme-angular';
 import {exportDataGrid} from 'devextreme/excel_exporter';
 import CustomStore from 'devextreme/data/custom_store';
 import ExcelJS from 'exceljs';
 import saveAs from 'file-saver';
-import {AuthService} from "../../shared/services";
-import {getContent} from "../../shared/tools/contrib-info-act";
-import {environment} from "../../../environments/environment";
-import {generate} from "../../shared/tools/word";
-import {ContributionsInformationMistakeService} from "../../shared/services/contributions-information-mistake.service";
-import {alert} from "devextreme/ui/dialog";
+import {AuthService} from '../../shared/services';
+import {getContent} from '../../shared/tools/contrib-info-act';
+import {environment} from '../../../environments/environment';
+import {generate} from '../../shared/tools/word';
+import {ContributionsInformationMistakeService} from '../../shared/services/contributions-information-mistake.service';
+import {alert} from 'devextreme/ui/dialog';
 
 @Component({
   selector: 'app-capital-repair-notifies',
@@ -36,33 +36,37 @@ export class CapitalRepairNotifiesComponent implements OnInit {
   }
 
   get comment_visibility() {
-    return this.authService.current_user.permissions.findIndex(p => p.codename == 'view_comment2') > 0
+    return this.authService.current_user.permissions.findIndex(p => p.codename === 'view_comment2') > 0;
   }
 
-  constructor(private notifyService: CapitalRepairNotifyService, private router: Router, private authService: AuthService, private mistakeService: ContributionsInformationMistakeService) {
+  constructor(private notifyService: CapitalRepairNotifyService,
+              private router: Router,
+              private authService: AuthService,
+              private mistakeService: ContributionsInformationMistakeService) {
 
     function isNotEmpty(value) {
-      return value !== undefined && value !== null && value !== "";
+      return value !== undefined && value !== null && value !== '';
     }
 
     this.dataSource = new CustomStore({
-      key: "id",
-      totalCount: function () {
-        return 6
+      key: 'id',
+      totalCount() {
+        return 6;
       },
-      load: function (loadOptions) {
-        let params = "?";
+      load(loadOptions) {
+        let params = '?';
         [
-          "skip",
-          "take",
-          "sort",
-          "filter",
-          "totalSummary",
-          "group",
-          "groupSummary"
-        ].forEach(function (i) {
-          if (i in loadOptions && isNotEmpty(loadOptions[i]))
+          'skip',
+          'take',
+          'sort',
+          'filter',
+          'totalSummary',
+          'group',
+          'groupSummary'
+        ].forEach(i => {
+          if (i in loadOptions && isNotEmpty(loadOptions[i])) {
             params += `${i}=${JSON.stringify(loadOptions[i])}&`;
+          }
         });
         params = params.slice(0, -1);
         if (loadOptions.sort) {
@@ -80,10 +84,10 @@ export class CapitalRepairNotifiesComponent implements OnInit {
             };
           })
           .catch(error => {
-            throw 'Data Loading Error'
+            throw new Error('Data Loading Error');
           });
       }
-    })
+    });
 
   }
 
@@ -108,7 +112,7 @@ export class CapitalRepairNotifiesComponent implements OnInit {
         text: 'Новая запись',
         onClick: this.add.bind(this)
       }
-    })
+    });
     if (this.comment_visibility) {
       e.toolbarOptions.items.unshift({
         location: 'after',
@@ -126,7 +130,7 @@ export class CapitalRepairNotifiesComponent implements OnInit {
         icon: 'refresh',
         onClick: this.refreshDataGrid.bind(this)
       }
-    })
+    });
     if (this.comment_visibility) {
       e.toolbarOptions.items.unshift({
         location: 'after',
@@ -142,59 +146,30 @@ export class CapitalRepairNotifiesComponent implements OnInit {
 
   exportActs() {
 
-    let params = '?filter=' + JSON.stringify(this.dataGrid.instance.getCombinedFilter())
-    //window.location.href= environment.backend_url + `/api/v1/cr/notifies/generate_acts/${params}`;
+    const params = '?filter=' + JSON.stringify(this.dataGrid.instance.getCombinedFilter());
+    // window.location.href= environment.backend_url + `/api/v1/cr/notifies/generate_acts/${params}`;
     this.notifyService.generateActs(params).subscribe(res => {
-      let result = alert("<i>Задача на формирование актов поставлена в обработку.<br>" +
-        "Файл будет направлен по электронной почте.</i>", "Формирование актов");
+      const result = alert('<i>Задача на формирование актов поставлена в обработку.<br>' +
+        'Файл будет направлен по электронной почте.</i>', 'Формирование актов');
       result.then((dialogResult) => {
 
       });
-    })
+    });
   }
 
-  exportActs123() {
-    this.dataGrid.instance.beginCustomLoading('загрузка')
-    const mistake = this.mistakeService.retrieve('3').subscribe(m => {
-      let params = '?filter=' + JSON.stringify(this.dataGrid.instance.getCombinedFilter())
-      this.notifyService.getNotifies(params).toPromise()
-        .then((data: any) => {
 
-          const zip = new JSZip();
-          data.items.forEach(i => {
-
-            const file = generate(`${environment.backend_url}/media/templates/act.docx`, getContent(i, [m]))
-            const filename = `${i.house.address.city}, ${i.house.address.street}, ${i.house.number}.docx`.replace('\\', ' кор. ').replace('/', ' кор. ')
-            zip.file(filename, file);
-          })
-
-          zip.generateAsync({type: 'blob'}).then((content) => {
-
-            saveAs(content, 'example.zip');
-            this.dataGrid.instance.endCustomLoading()
-          });
-        })
-        .catch(error => {
-          throw 'Data Loading Error'
-        });
-    })
-
-
-  }
   exportToExcel() {
-    let params = '?filter=' + JSON.stringify(this.dataGrid.instance.getCombinedFilter())
-    //window.location.href= environment.backend_url + `/api/v1/cr/notifies/export_to_excel/${params}`;
+    const params = '?filter=' + JSON.stringify(this.dataGrid.instance.getCombinedFilter());
+    // window.location.href= environment.backend_url + `/api/v1/cr/notifies/export_to_excel/${params}`;
     this.notifyService.exportToExcel(params).subscribe(res => {
-      let result = alert("<i>Задача на експорт в Эксель поставлена в обработку.<br>" +
-        "Файл будет направлен по электронной почте.</i>", "Формирование Эксель файла");
-      result.then((dialogResult) => {
-      });
+      const result = alert('<i>Задача на експорт в Эксель поставлена в обработку.<br>' +
+        'Файл будет направлен по электронной почте.</i>', 'Формирование Эксель файла');
+      result.then(() => {});
     }, error => {
-      let result = alert("<i>Задача на експорт в Эксель завершилась ошибкой. <br>" +
-        "Обратитесь к системному администратору.</i>", "Ошибка");
-      result.then((dialogResult) => {
-      });
-    })
+      const result = alert('<i>Задача на експорт в Эксель завершилась ошибкой. <br>' +
+        'Обратитесь к системному администратору.</i>', 'Ошибка');
+      result.then(() => {});
+    });
 
   }
 
