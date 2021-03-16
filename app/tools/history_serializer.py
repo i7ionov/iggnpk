@@ -14,7 +14,6 @@ class HistorySerializer(serializers.Serializer):
 
     def get_delta(self, obj):
         result = []
-        print(obj.pk, obj)
         if obj.prev_record:
             for change in obj.diff_against(obj.prev_record).changes:
                 result.append({'field':change.field,
