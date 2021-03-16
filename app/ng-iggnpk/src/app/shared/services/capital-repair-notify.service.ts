@@ -1,16 +1,18 @@
-import {Injectable} from "@angular/core";
-import {Observable} from "rxjs";
-import {environment} from "../../../environments/environment";
-import {Router} from "@angular/router";
-import {HttpClient} from "@angular/common/http";
-import {House} from "./house.service";
-import {Organization} from "../interfaces/organization";
-import {CreditOrganization} from "./credit-organization.service";
-import {Organizations} from "./organization.service";
+// tslint:disable:variable-name
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {environment} from '../../../environments/environment';
+import {Router} from '@angular/router';
+import {HttpClient} from '@angular/common/http';
+import {House} from './house.service';
+import {Organization} from '../interfaces/organization';
+import {CreditOrganization} from './credit-organization.service';
+import {Organizations} from './organization.service';
 
 export class NotifyStatus {
   id: number;
   text?: string;
+
   constructor() {
     this.id = 0;
   }
@@ -29,7 +31,8 @@ export class Notify {
   protocol_details?: string;
   comment?: string;
   status?: NotifyStatus;
-  files?:any[];
+  files?: any[];
+
   constructor() {
     this.id = 0;
     this.house = new House();
@@ -42,7 +45,7 @@ export class Notify {
 
 export class Notifies {
   items: [];
-  totalCount: number
+  totalCount: number;
 }
 
 
@@ -56,31 +59,35 @@ export class CapitalRepairNotifyService {
   }
 
   getNotifies(params): Observable<Notifies> {
-    return this.http.get<Notifies>(`${environment.backend_url}${this.url}/${params}`)
+    return this.http.get<Notifies>(`${environment.backend_url}${this.url}/${params}`);
   }
 
   retrieve(id): Observable<Notify> {
-    return this.http.get<Notify>(`${environment.backend_url}${this.url}/${id}/`)
+    return this.http.get<Notify>(`${environment.backend_url}${this.url}/${id}/`);
   }
 
   update(id, notify: any): Observable<Notify> {
-    return this.http.patch<Notify>(`${environment.backend_url}${this.url}/${id}/`, notify)
+    return this.http.patch<Notify>(`${environment.backend_url}${this.url}/${id}/`, notify);
   }
 
   create(notify: Notify): Observable<Notify> {
-    return this.http.post<Notify>(`${environment.backend_url}${this.url}/`, notify)
+    return this.http.post<Notify>(`${environment.backend_url}${this.url}/`, notify);
   }
 
   search(params): Observable<Notify> {
-    return this.http.get<Notify>(`${environment.backend_url}${this.url}/${params}`)
+    return this.http.get<Notify>(`${environment.backend_url}${this.url}/${params}`);
   }
 
   generateActs(params): Observable<any> {
-    return this.http.get<Notify>(`${environment.backend_url}${this.url}/generate_acts/${params}`)
+    return this.http.get<Notify>(`${environment.backend_url}${this.url}/generate_acts/${params}`);
   }
 
   exportToExcel(params): Observable<any> {
-    return this.http.get<Notify>(`${environment.backend_url}${this.url}/export_to_excel/${params}`)
+    return this.http.get<Notify>(`${environment.backend_url}${this.url}/export_to_excel/${params}`);
+  }
+
+  getHistory(params): Observable<any> {
+    return this.http.get<History>(`${environment.backend_url}${this.url}/${params}/get_history/`);
   }
 
 }

@@ -1,33 +1,35 @@
 import {Component, ElementRef, NgModule, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Params, Router, RouterModule, Routes} from "@angular/router";
-import {CapitalRepairNotifyService, Notify} from "../../shared/services/capital-repair-notify.service";
+import {ActivatedRoute, Params, Router, RouterModule, Routes} from '@angular/router';
+import {CapitalRepairNotifyService, Notify} from '../../shared/services/capital-repair-notify.service';
 import {CommonModule, Location} from '@angular/common';
 import {
+  DxAccordionModule,
   DxButtonModule,
   DxDataGridModule,
   DxFileUploaderModule,
   DxFormComponent, DxFormModule,
   DxPopupModule,
   DxTemplateModule, DxTextAreaModule
-} from "devextreme-angular";
-import {getDifference} from "../../shared/diff";
+} from 'devextreme-angular';
+import {getDifference} from '../../shared/diff';
 import notify from 'devextreme/ui/notify';
-import {AuthService, UserGroup} from "../../shared/services";
+import {AuthService, UserGroup} from '../../shared/services';
+import {History} from '../../shared/interfaces/history';
 import {
   CreditOrganizationSelectComponent,
   CreditOrganizationSelectModule,
   OrganizationSelectComponent, OrganizationSelectModule
-} from "../../shared/components";
-import {HouseInputComponent, HouseInputModule} from "../../shared/components/house-input/house-input.component";
-import {environment} from "../../../environments/environment";
+} from '../../shared/components';
+import {HouseInputComponent, HouseInputModule} from '../../shared/components/house-input/house-input.component';
+import {environment} from '../../../environments/environment';
 import {confirm} from 'devextreme/ui/dialog';
-import {DxValidationGroupModule} from "devextreme-angular/ui/validation-group";
-import {DxValidatorModule} from "devextreme-angular/ui/validator";
-import {DxCheckBoxModule} from "devextreme-angular/ui/check-box";
-import {CapitalRepairNotifiesComponent} from "../capital-repair-notifies/capital-repair-notifies.component";
-import {DxTextBoxModule} from "devextreme-angular/ui/text-box";
-import {FileSizePipe} from "../../shared/pipes/filesize.pipe";
-import {ApplicationPipesModule} from "../../shared/pipes/app-pipes.module";
+import {DxValidationGroupModule} from 'devextreme-angular/ui/validation-group';
+import {DxValidatorModule} from 'devextreme-angular/ui/validator';
+import {DxCheckBoxModule} from 'devextreme-angular/ui/check-box';
+import {CapitalRepairNotifiesComponent} from '../capital-repair-notifies/capital-repair-notifies.component';
+import {DxTextBoxModule} from 'devextreme-angular/ui/text-box';
+import {FileSizePipe} from '../../shared/pipes/filesize.pipe';
+import {ApplicationPipesModule} from '../../shared/pipes/app-pipes.module';
 
 
 @Component({
@@ -37,17 +39,18 @@ import {ApplicationPipesModule} from "../../shared/pipes/app-pipes.module";
 })
 export class CapitalRepairNotifyComponent implements OnInit {
   SubmitType = SubmitType;
-  @ViewChild("form", {static: false}) form: DxFormComponent;
-  @ViewChild("credit_organization_select", {static: false}) credit_organization_select: CreditOrganizationSelectComponent;
-  @ViewChild("house_input", {static: false}) house_input: HouseInputComponent;
-  @ViewChild("organization_select", {static: false}) organization_select: OrganizationSelectComponent;
+  history: any = {};
+  @ViewChild('form', {static: false}) form: DxFormComponent;
+  @ViewChild('credit_organization_select', {static: false}) credit_organization_select: CreditOrganizationSelectComponent;
+  @ViewChild('house_input', {static: false}) house_input: HouseInputComponent;
+  @ViewChild('organization_select', {static: false}) organization_select: OrganizationSelectComponent;
 
   get uploadAuthorization() {
     return 'Token ' + this.auth.token;
-  };
+  }
 
   get uploadUrl() {
-    return `${environment.file_url}create/`
+    return `${environment.file_url}create/`;
   }
 
   excludeButtonVisibility = false;
@@ -62,19 +65,20 @@ export class CapitalRepairNotifyComponent implements OnInit {
   saveButtonVisibility = false;
 
   get comment_visibility() {
-    return this.auth.current_user.permissions.findIndex(p => p.codename == 'view_comment2') > 0
+    return this.auth.current_user.permissions.findIndex(p => p.codename == 'view_comment2') > 0;
   }
+
   get skip_verification() {
-    return this.auth.current_user.permissions.findIndex(p => p.codename == 'view_comment2') > 0
+    return this.auth.current_user.permissions.findIndex(p => p.codename == 'view_comment2') > 0;
   }
+
   get organizationSelectIsReadOnly() {
     if (this.auth.current_user) {
-      return this.auth.current_user.groups.indexOf(UserGroup.Admin) == -1
+      return this.auth.current_user.groups.indexOf(UserGroup.Admin) == -1;
+    } else {
+      return false;
     }
-    else {
-      return false
-    }
-  };
+  }
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -96,15 +100,13 @@ export class CapitalRepairNotifyComponent implements OnInit {
         if (user.groups.indexOf(UserGroup.Admin) != -1) {
           this.acceptButtonVisibility = true;
         }
-      }
-      else if (this.notify.status.id == NotifyStatus.Editing) {
+      } else if (this.notify.status.id == NotifyStatus.Editing) {
         this.saveButtonVisibility = true;
         this.sendForApprovalButtonVisibility = true;
         this.rejectButtonVisibility = false;
         this.acceptButtonVisibility = false;
         this.excludeButtonVisibility = false;
-      }
-      else if (this.notify.status.id == NotifyStatus.Approved) {
+      } else if (this.notify.status.id == NotifyStatus.Approved) {
         this.saveButtonVisibility = false;
         this.sendForApprovalButtonVisibility = false;
         this.rejectButtonVisibility = false;
@@ -115,8 +117,7 @@ export class CapitalRepairNotifyComponent implements OnInit {
           this.excludeButtonVisibility = true;
           this.saveButtonVisibility = true;
         }
-      }
-      else {
+      } else {
         this.sendForApprovalButtonVisibility = false;
         this.rejectButtonVisibility = false;
         this.acceptButtonVisibility = false;
@@ -137,24 +138,28 @@ export class CapitalRepairNotifyComponent implements OnInit {
             this.clean_notify = JSON.parse(JSON.stringify(res));
             this.setPermissions(this.auth.current_user);
           }
-        )
-      }
-      else {
-        let a = new Date();
+        );
+        if (this.auth.current_user.groups.indexOf(UserGroup.Admin) !== -1) {
+          this.notifyService.getHistory(this.id).subscribe(res => {
+            this.history = res;
+            console.log(this.history);
+          });
+        }
+      } else {
+        const a = new Date();
         this.notify.date = `${a.getFullYear()}-${a.getMonth() + 1}-${a.getDate()}`;
         this.sendForApprovalButtonVisibility = true;
         this.saveButtonVisibility = true;
       }
 
 
-    })
+    });
   }
 
   back() {
     if (this._location.getState()['navigationId'] > 1) {
       this._location.back();
-    }
-    else {
+    } else {
       this.router.navigate(['/pages/capital-repair-notifies']);
     }
 
@@ -187,7 +192,7 @@ export class CapitalRepairNotifyComponent implements OnInit {
           break;
         }
         case SubmitType.Saving: {
-          if (this.notify.status.id==0){
+          if (this.notify.status.id == 0) {
             this.notify.status.id = NotifyStatus.Editing;
           }
           break;
@@ -198,52 +203,49 @@ export class CapitalRepairNotifyComponent implements OnInit {
         }
       }
       if (this.id != '0') {
-        let n = getDifference(this.notify, this.clean_notify);
+        const n = getDifference(this.notify, this.clean_notify);
         if (n) {
           if (this.notify.files.length == 0) {
-            n[0].files = 'empty'
-          }
-          else {
-            n[0].files = this.notify.files
+            n[0].files = 'empty';
+          } else {
+            n[0].files = this.notify.files;
           }
           this.notifyService.update(this.id, n[0]).subscribe(res => {
               notify({
-                message: "Форма сохранена",
+                message: 'Форма сохранена',
                 position: {
-                  my: "center top",
-                  at: "center top"
+                  my: 'center top',
+                  at: 'center top'
                 }
-              }, "success", 3000);
+              }, 'success', 3000);
               this.setPermissions(this.auth.current_user);
               this.clean_notify = JSON.parse(JSON.stringify(res));
             }, error1 => {
-            console.log(error1);
-             notify({
-                message: "Форма не сохранена. " + error1.statusText,
+              console.log(error1);
+              notify({
+                message: 'Форма не сохранена. ' + error1.statusText,
                 position: {
-                  my: "center top",
-                  at: "center top"
+                  my: 'center top',
+                  at: 'center top'
                 }
-              }, "error", 3000);
+              }, 'error', 3000);
             }
           );
         }
-      }
-      else {
+      } else {
         this.notifyService.create(this.notify).subscribe(res => {
             this.router.navigate([`/pages/capital-repair-notify/${res.id}`]);
           }
         );
       }
-    }
-    else {
+    } else {
       notify({
-                message: "Форма не сохранена.",
-                position: {
-                  my: "center top",
-                  at: "center top"
-                }
-              }, "error", 3000);
+        message: 'Форма не сохранена.',
+        position: {
+          my: 'center top',
+          at: 'center top'
+        }
+      }, 'error', 3000);
     }
 
 
@@ -252,7 +254,7 @@ export class CapitalRepairNotifyComponent implements OnInit {
   onUploaded(e) {
     if (e.request.status == 201) {
       if (!this.notify.files) {
-        this.notify.files = []
+        this.notify.files = [];
       }
       const file = JSON.parse(e.request.response);
       console.log(file);
@@ -261,7 +263,7 @@ export class CapitalRepairNotifyComponent implements OnInit {
   }
 
   fileDelete(file) {
-    let result = confirm("<i>Удалить файл?</i>", "Подтверждение");
+    const result = confirm('<i>Удалить файл?</i>', 'Подтверждение');
     result.then((dialogResult) => {
       if (dialogResult) {
         const index = this.notify.files.findIndex(f => f.id == file.id);
@@ -314,6 +316,7 @@ const routes: Routes = [
     DxTemplateModule,
     DxDataGridModule,
     DxFormModule,
+    DxAccordionModule,
     ApplicationPipesModule
   ],
   declarations: [CapitalRepairNotifyComponent],
