@@ -1,4 +1,4 @@
-import datetime
+import time
 
 from django.test import override_settings
 
@@ -634,6 +634,39 @@ class NotifiesGenerateActsViewSetTest(BaseTest):
 
 class NotifiesGetHistoryViewSetTest(BaseTest):
     def test_response_200_object(self):
+        notify = mixer.blend(Notify, organization=self.uk.organization)
         client = APIClient(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
-        response = client.get(f'{endpoint_url}{notify.id}/', {})
+        response = client.get(f'{endpoint_url}{notify.id}/get_history/', {})
         self.assertEqual(response.status_code, 200)
+
+    def test_returns_list(self):
+        notify = mixer.blend(Notify, organization=self.uk.organization)
+        # между записями в базе должно пройти как минимум секунда, чтобы история корректно сохранилась
+        time.sleep(1)
+        client = APIClient(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
+        response = client.patch(f'{endpoint_url}{notify.id}/', {
+            "id": notify.id,
+            "comment": "test comment",
+        }, format='json')
+        time.sleep(1)
+        bank = mixer.blend(CreditOrganization)
+        notify.bank = bank
+        notify.save()
+        client = APIClient(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
+        response = client.get(f'{endpoint_url}{notify.id}/get_history/', {})
+
+        self.assertEqual(response.data[0]['delta'][0]['field'], 'bank')
+        self.assertEqual(response.data[0]['delta'][0]['field_verbose'], 'Кредитная организация')
+        self.assertEqual(response.data[0]['delta'][0]['new'], bank.id)
+        self.assertEqual(response.data[0]['delta'][0]['old'], None)
+        self.assertEqual(response.data[0]['history_type'], '~')
+
+        self.assertEqual(response.data[1]['delta'][0]['field'], 'comment')
+        self.assertEqual(response.data[1]['delta'][0]['field_verbose'], 'Комментарий')
+        self.assertEqual(response.data[1]['delta'][0]['new'], 'test comment')
+        self.assertEqual(response.data[1]['delta'][0]['old'], None)
+        self.assertEqual(response.data[1]['history_user'], 'admin')
+
+        self.assertEqual(len(response.data[2]['delta']), 0)
+        self.assertEqual(response.data[2]['history_type'], '+')
+

@@ -160,10 +160,10 @@ class NotifiesViewSet(DevExtremeViewSet):
                         status=200)
 
     @action(detail=True)
-    def get_history(self, request):
+    def get_history(self, request, pk=None):
         if request.user.is_staff is False:
             return Response('У вас нет соответствующих прав', status=400)
-        serializer = HistorySerializer(instance=self.get_object())
+        serializer = HistorySerializer(instance=self.get_object().history.all(), many=True)
         return Response(serializer.data)
 
 
