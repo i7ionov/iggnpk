@@ -152,7 +152,7 @@ class NotifiesViewSet(DevExtremeViewSet):
         if request.user.is_staff is False:
             return Response('У вас нет соответствующих прав', status=400)
         user = UserSerializer(request.user)
-        export_to_excel(os.path.join(settings.MEDIA_ROOT, 'templates', 'inspections.xlsx'),
+        export_to_excel(os.path.join(settings.MEDIA_ROOT, 'templates', 'notifies.xlsx'),
                         self.filter_queryset(self.queryset),
                         user.data['email'])
         return Response({},
