@@ -124,7 +124,7 @@ def houses():
     for rownum in range(6, sheet.nrows):
         if sheet.cell(rownum, 0).value == '':
             continue
-        print(sheet.cell(rownum, 0).value)
+        #print(sheet.cell(rownum, 0).value)
         # адрес дома
         number = normalize_number(str(sheet.cell(rownum, 6).value).strip().lower().replace('.0', ''))
         street, comm = cut_value(sheet.cell(rownum, 5).value, '')
@@ -141,7 +141,7 @@ def houses():
         if area == 'льская' and city == 'г. Березники':
             area = 'Березниковский городской округ'
 
-        print(f'{area} {city} {street} {number}')
+        #print(f'{area} {city} {street} {number}')
         addr = Address.objects.filter(area__contains=area, city=city, street=street).first()
         house, created = House.objects.get_or_create(address_id=addr.id, number=number)
         # организация
@@ -166,10 +166,10 @@ def houses():
         for n in Notify.objects.filter(house=house, status_id=3):
             if sheet.cell(rownum, 8).value == ' ' or sheet.cell(rownum, 8).value == '':
                 n.same_organization_in_license_registry = n.organization == org
-                n.save()
+                n.save_without_historical_record()
             else:
                 n.same_organization_in_license_registry = None
-                n.save()
+                n.save_without_historical_record()
 
 
 def houses_info():

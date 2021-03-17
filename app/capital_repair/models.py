@@ -83,6 +83,14 @@ class Notify(models.Model):
     def __str__(self):
         return f'{self.date}, № {self.id}'
 
+    def save_without_historical_record(self, *args, **kwargs):
+        self.skip_history_when_saving = True
+        try:
+            ret = self.save(*args, **kwargs)
+        finally:
+            del self.skip_history_when_saving
+        return ret
+
     @property
     def last_contrib(self):
         return self.contributionsinformation_set.last()
