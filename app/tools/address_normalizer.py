@@ -16,7 +16,8 @@ def normalize_city(city):
 
 def normalize_street(street):
     street = street.split('/')[0].strip() # отсекаем вторую часть улицы вида "ул. Большевистская /Матросова, 18"
-
+    street = street.replace('ул.', 'ул. ').replace('пер.', 'пер. ')
+    street = " ".join(street.split())
     street = street.replace('Максима ', '').replace('М.', '').replace('ул. Р. Люксембург', 'ул. Розы Люксембург') \
         .replace('К.Маркса', 'Карла Маркса').replace('К. Маркса', 'Карла Маркса') \
         .replace('Александра Матросова', 'Матросова').replace('А.Матросова', 'Матросова').replace('А. Матросова',

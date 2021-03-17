@@ -2,7 +2,7 @@ import tools.address_normalizer
 from iggnpk.tests.base import BaseTest
 
 
-class swapNumberInStreetTest(BaseTest):
+class normalizeStreetTest(BaseTest):
     def test_pass_invalid_values(self):
         self.assertEqual('ул. Ленина', tools.address_normalizer.swap_number_in_street('ул. Ленина'))
         self.assertEqual('ул. Ленина 1-я', tools.address_normalizer.swap_number_in_street('ул. Ленина 1-я'))
@@ -14,6 +14,10 @@ class swapNumberInStreetTest(BaseTest):
     def test_swap_number(self):
         self.assertEqual('ул. Ленина 1-я', tools.address_normalizer.swap_number_in_street('ул. 1-я Ленина'))
         self.assertEqual('пер. Ленина 1-й', tools.address_normalizer.swap_number_in_street('пер. 1-й Ленина'))
+
+    def test_add_missings_spaces(self):
+        self.assertEqual('ул. Ленина', tools.address_normalizer.normalize_street('ул.Ленина'))
+        self.assertEqual('пер. Ленина', tools.address_normalizer.normalize_street('пер.Ленина'))
 
 
 class normalizeNumberTest(BaseTest):
