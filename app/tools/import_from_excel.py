@@ -133,8 +133,6 @@ def houses():
             street = 'ул. Блочная'
         city = normalize_city(sheet.cell(rownum, 4).value.strip())
         city = city.replace('р.п.', 'п.')
-        if street == 'ул. К.Заслонова' and city == 'пгт. Широковский':
-            street = 'ул. К. Заслонова'
         if street == 'ул. Новоселовой':
             street = 'ул. Новоселова'
         if street == '' and city == 'г. Пермь':
