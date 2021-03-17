@@ -5,10 +5,12 @@ from rest_framework.parsers import FileUploadParser, MultiPartParser, FormParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
+
+from tools.viewsets import DevExtremeViewSet
 from .models import User, House, Address, Organization, File, OrganizationType
 from .serializers import UserSerializer, HouseSerializer, AddressSerializer, OrganizationSerializer, FileSerializer, \
     OrganizationTypeSerializer
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, action
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from tools import dev_extreme
@@ -90,44 +92,32 @@ class HouseViewSet(viewsets.ModelViewSet):
             Response({'message': 'Не предоставлены поля address_id и number'}, status=400)
 
 
-class OrganizationViewSet(viewsets.ModelViewSet):
-    permission_classes = []
+
+
+class OrganizationViewSet(DevExtremeViewSet):
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
+    lookup_fields = ['inn', 'name']
 
-    def list(self, request):
-        if 'group' in request.GET:
-            d, total_count = dev_extreme.populate_group_category(request.GET, self.queryset)
-            data = {"totalCount": total_count, "items": d}
+    def create(self, request, *args, **kwargs):
+        item = self.serializer_class(data=request.data)
+        item.is_valid()
+        if item.is_valid():
+            org_type = OrganizationType.objects.get(id=request.data['type']['id'])
+            item.save(type=org_type)
+            return Response(item.data)
         else:
-            queryset, total_queryset, total_count = dev_extreme.filtered_query(request.GET, self.queryset)
-            serializer = self.serializer_class(queryset, many=True, fields=['id', 'name', 'inn'])
-            data = {'items': serializer.data, 'totalCount': total_count}
-        return Response(data)
+            return Response(item.errors, status=400)
 
-    def retrieve(self, request, pk=None):
-        item = get_object_or_404(self.queryset, pk=pk)
-        serializer = self.serializer_class(item)
-        return Response(serializer.data)
-
-    def search(self, request):
-        if 'searchValue' in request.GET:
-            searchValue = request.GET['searchValue'].strip('"').replace(',', ' ').split(' ')
-            keywords = [x for x in searchValue if x]
-            queryset = self.queryset
-            for keyword in keywords:
-                queryset = queryset.filter(Q(inn__icontains=keyword) | Q(name__icontains=keyword))
-            queryset = queryset[:10]
-            serializer = self.serializer_class(queryset, many=True)
-            data = {'items': serializer.data}
-            return Response(data)
-        else:
-            return Response()
-
+    @action(detail=False)
     def types(self, request):
         data = OrganizationTypeSerializer(OrganizationType.objects.all(), many=True)
-
         return Response(data.data)
+
+
+
+
+
 
 
 class AddressViewSet(viewsets.ModelViewSet):

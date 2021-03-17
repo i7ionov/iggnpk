@@ -4,6 +4,7 @@ import {environment} from "../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {Service} from "./custom-store.service";
 import {Organization, OrganizationType} from "../interfaces/organization";
+import {Notify} from "./capital-repair-notify.service";
 
 export class Organizations {
   items: [];
@@ -24,7 +25,7 @@ export class OrganizationService implements Service{
   }
 
   search(params): Observable<Organizations> {
-    return this.http.get<Organizations>(`${environment.backend_url}${this.url}/search/${params}`)
+    return this.http.get<Organizations>(`${environment.backend_url}${this.url}/${params}`);
   }
 
   types(): Observable<OrganizationType> {

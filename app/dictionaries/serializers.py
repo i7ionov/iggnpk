@@ -13,7 +13,7 @@ class OrganizationTypeSerializer(DynamicFieldsModelSerializer):
 
 
 class OrganizationSerializer(DynamicFieldsModelSerializer):
-    type = OrganizationTypeSerializer(required=False)
+    type = OrganizationTypeSerializer(required=False, read_only=True)
     class Meta:
         model = Organization
         fields = '__all__'

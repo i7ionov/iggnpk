@@ -15,12 +15,19 @@ Including another URLconf
 """
 from . import views
 from django.urls import include, path
+from rest_framework.routers import SimpleRouter
+
+
+
+from rest_framework.routers import SimpleRouter
+
+from .models import User
+
+router = SimpleRouter(trailing_slash=True)
+router.register("organizations", views.OrganizationViewSet, basename=User)
+
 
 urlpatterns = [
-    path('organizations/', views.OrganizationViewSet.as_view({'get': 'list'})),
-    path('organizations/<int:pk>/', views.OrganizationViewSet.as_view({'get': 'retrieve'})),
-    path('organizations/search/', views.OrganizationViewSet.as_view({'get': 'search'})),
-    path('organizations/types/', views.OrganizationViewSet.as_view({'get': 'types'})),
     path('users/create/', views.create_user),
     path('org_users_count/', views.org_users_count),
     path('is_email_already_used/', views.is_email_already_used),
@@ -39,3 +46,4 @@ urlpatterns = [
     path('send_message/', views.send_message),
 
 ]
+urlpatterns += router.urls
