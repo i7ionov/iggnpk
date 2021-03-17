@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
 
+from tools.serializer_tools import upd_foreign_key
 from tools.viewsets import DevExtremeViewSet
 from .models import User, House, Address, Organization, File, OrganizationType
 from .serializers import UserSerializer, HouseSerializer, AddressSerializer, OrganizationSerializer, FileSerializer, \
@@ -108,6 +109,15 @@ class OrganizationViewSet(DevExtremeViewSet):
             return Response(item.data)
         else:
             return Response(item.errors, status=400)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        data = request.data
+        serializer = self.get_serializer_class()(instance=instance, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        org_type = upd_foreign_key('type', data, instance, OrganizationType)
+        serializer.save(type=org_type)
+        return Response(serializer.data)
 
     @action(detail=False)
     def types(self, request):

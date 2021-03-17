@@ -50,3 +50,23 @@ class OrganizationsCreateViewSetTest(BaseTest):
         self.assertEqual(org.ogrn, 'test ogrn')
         self.assertEqual(org.name, 'test name')
         self.assertEqual(org.type, org_type)
+
+class OrganizationsUpdateViewSetTest(BaseTest):
+    def test_updates_object(self):
+        org_type = mixer.blend(OrganizationType)
+        org_type2 = mixer.blend(OrganizationType)
+        org = mixer.blend(Organization, type=org_type)
+        client = APIClient(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
+        response = client.patch(f'{endpoint_url}{org.id}/', {
+            "id": org.id,
+            "inn": 'test inn',
+            "ogrn": 'test ogrn',
+            "name": 'test name',
+            "type": {"id": org_type2.id}
+        }, format='json')
+        org = Organization.objects.get(id=org.id)
+
+        self.assertEqual(org.inn, 'test inn')
+        self.assertEqual(org.ogrn, 'test ogrn')
+        self.assertEqual(org.name, 'test name')
+        self.assertEqual(org.type, org_type2)
