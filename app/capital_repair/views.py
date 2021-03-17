@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework import permissions, mixins
 from django.http import HttpResponse
 
-from capital_repair.tasks import send_acts
+from capital_repair.tasks import send_acts, generate_excel
 from dictionaries.serializers import UserSerializer
 from iggnpk import settings
 from tools import date
@@ -152,9 +152,8 @@ class NotifiesViewSet(DevExtremeViewSet):
         if request.user.is_staff is False:
             return Response('У вас нет соответствующих прав', status=400)
         user = UserSerializer(request.user)
-        export_to_excel(os.path.join(settings.MEDIA_ROOT, 'templates', 'inspections.xlsx'),
-                        self.filter_queryset(self.queryset),
-                        user.data['email'])
+        ids = self.filter_queryset(self.queryset).values_list('id', flat=True)
+        generate_excel.delay(request.GET, os.path.join(settings.MEDIA_ROOT, 'templates', 'notifies.xlsx'), list(ids), 'capital_repair.notify', user.data['email'])
         return Response({},
                         status=200)
 

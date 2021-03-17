@@ -61,13 +61,13 @@ def export_to_excel(template_path, query_set, email, output = None):
     file = save_virtual_workbook(wb)
     # wb.save('text.xlsx') # для теста
     email = EmailMessage(
-        f'Акты',
+        f'Выгрузка в iggnpk.ru',
         '',
         'noreply@iggnpk.ru',
         [email],
         headers={'Reply-To': 'noreply@iggnpk.ru'}
     )
-    email.attach('export.zip', file, 'application/xlsx')
+    email.attach('export.xlsx', file, 'application/xlsx')
     email.send()
 
     return 'Hello there!'

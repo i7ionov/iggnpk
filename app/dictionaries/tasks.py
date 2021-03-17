@@ -1,13 +1,9 @@
 from celery import shared_task
 from django.core.mail import send_mail
 
+from tools.import_from_excel import houses
+
+
 @shared_task
-def hello():
-    send_mail(
-        f'Тест',
-        f'Тест успешен',
-        'noreply@iggnpk.ru',
-        ['i7ionov@gmail.com'],
-        fail_silently=False,
-    )
-    return 'Hello there!'
+def import_houses_from_register_of_licenses():
+    houses()
