@@ -33,6 +33,16 @@ class OrganizationListViewSetTest(BaseTest):
         response = client.get(f'{endpoint_url}')
         self.assertEqual(response.status_code, 403)
 
+    def test_allow_search_by_defined_fields(self):
+        """Должен производиться поиск по следующим полям: inn, anme"""
+        org = mixer.blend(Organization)
+        client = APIClient(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
+        response = client.get(f'{endpoint_url}?searchValue=%22{org.name}%22&searchExpr=undefined')
+        self.assertEqual(response.data['items'][0]['id'], org.id)
+        response = client.get(f'{endpoint_url}?searchValue=%22{org.inn}%22&searchExpr=undefined')
+        self.assertEqual(response.data['items'][0]['id'], org.id)
+
+
 
 class OrganizationsCreateViewSetTest(BaseTest):
     def test_creates_object(self):
