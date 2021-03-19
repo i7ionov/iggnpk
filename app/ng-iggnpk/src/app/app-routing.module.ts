@@ -69,6 +69,12 @@ const routes: Routes = [
 
           },
           {
+            path: 'organizations',
+            loadChildren: () => import('./pages/organization-table/organization-table.component').then(m => m.OrganizationTableModule),
+            canLoad: [AuthGuardService]
+
+          },
+          {
             path: 'users',
             loadChildren: () => import('./pages/users/users.component').then(m => m.UsersModule),
             canLoad: [AuthGuardService]

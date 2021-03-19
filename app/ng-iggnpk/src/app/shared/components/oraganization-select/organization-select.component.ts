@@ -7,13 +7,13 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import {DxFormModule, DxSelectBoxModule} from "devextreme-angular";
-import CustomStore from "devextreme/data/custom_store";
-import {OrganizationService} from "../../services/organization.service";
-import {CommonModule} from "@angular/common";
-import {CustomStoreService} from "../../services/custom-store.service";
-import {HttpClient} from "@angular/common/http";
-import {Organization} from "../../interfaces/organization";
+import {DxFormModule, DxSelectBoxModule} from 'devextreme-angular';
+import CustomStore from 'devextreme/data/custom_store';
+import {OrganizationService} from '../../services/organization.service';
+import {CommonModule} from '@angular/common';
+import {CustomStoreService} from '../../services/custom-store.service';
+import {HttpClient} from '@angular/common/http';
+import {Organization} from '../../interfaces/organization';
 
 @Component({
   selector: 'app-organization-select',
@@ -26,17 +26,15 @@ export class OrganizationSelectComponent implements OnInit {
   @Input() value: Organization = new Organization();
   @Output() valueChange = new EventEmitter<Organization>();
   @Input() disabled  = false;
-
+  dataSource: any = {};
   displayExpr(item) {
     // "item" can be null
     return item && `${item.name} ИНН: ${item.inn}`;
   }
 
-  dataSource: any = {};
-
   constructor(private organizationService: OrganizationService, private customStoreService: CustomStoreService) {
 
-    this.dataSource = customStoreService.getSearchCustomStore(organizationService)
+    this.dataSource = customStoreService.getSearchCustomStore(organizationService);
 
   }
 

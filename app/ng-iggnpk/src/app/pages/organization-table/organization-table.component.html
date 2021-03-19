@@ -1,0 +1,103 @@
+<h6 class="content-block">Организации</h6>
+<div class="dx-card content-block responsive-paddings">
+
+
+  <dx-data-grid id="gridContainer"
+                [dataSource]="dataSource"
+                [height]="height"
+                (onToolbarPreparing)="onToolbarPreparing($event)"
+                [allowColumnResizing]="true"
+                [allowColumnReordering]="true"
+                columnResizingMode="widget"
+                [showBorders]="true"
+                [showColumnLines]="true"
+                [wordWrapEnabled]="true"
+  >
+    <dxo-state-storing [enabled]="true" type="localStorage" storageKey="organization-table-state"></dxo-state-storing>
+    <dxo-scrolling showScrollbar="always">
+
+    </dxo-scrolling>
+    <dxo-paging [pageSize]="20"></dxo-paging>
+    <dxo-column-chooser [enabled]="true" mode="dragAndDrop"></dxo-column-chooser>
+    <dxo-pager
+      [showPageSizeSelector]="true"
+      [allowedPageSizes]="[5, 10, 20, 50]"
+      [showInfo]="true">
+    </dxo-pager>
+    <dxo-remote-operations
+      [groupPaging]="true">
+    </dxo-remote-operations>
+    <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+    <dxo-filter-row
+      [visible]="true"
+      [applyFilter]="currentFilter"></dxo-filter-row>
+    <dxo-header-filter
+      [visible]="true" [allowSearch]="true"></dxo-header-filter>
+    <dxi-column
+      dataField="id"
+      [allowHiding]="false"
+      width="80"
+      dataType="number"
+      cellTemplate="idCellTemplate"
+      [fixed]="true"
+    >
+    </dxi-column>
+
+    <dxi-column
+
+      caption="Название организации"
+      dataField="name"
+      dataType="string">
+    </dxi-column>
+    <dxi-column
+
+      caption="ИНН организации"
+      dataField="inn"
+      dataType="string">
+    </dxi-column>
+    <dxi-column
+
+      caption="ОГРН организации"
+      dataField="ogrn"
+      dataType="string">
+    </dxi-column>
+    <dxi-column
+
+      caption="Дата смены наименования"
+      dataField="date_of_changind_name"
+      dataType="string">
+    </dxi-column>
+    <dxi-column
+
+      caption="Старое наименование"
+      dataField="old_name"
+      dataType="string">
+    </dxi-column>
+
+
+
+
+    <div *dxTemplate="let cell of 'idCellTemplate'">
+      <a [routerLink]="['/pages/organizations', cell.text]">{{ cell.text }}</a>
+    </div>
+    <div *dxTemplate="let cell of 'mistakesCellTemplate'">
+      <div>
+        <span *ngFor="let item of cell.value">
+          {{ item.text }}.
+        </span>
+      </div>
+
+    </div>
+    <dxo-filter-panel [visible]="true"></dxo-filter-panel>
+    <dxo-summary>
+      <dxi-total-item
+        column="name"
+        summaryType="count">
+      </dxi-total-item>
+    </dxo-summary>
+
+    <dxo-export [enabled]="true"></dxo-export>
+  </dx-data-grid>
+
+
+</div>
