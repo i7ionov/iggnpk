@@ -3,7 +3,7 @@ import datetime
 
 from django.test import override_settings
 
-from capital_repair.models import Notify, CreditOrganization
+from capital_repair.models import Notify, CreditOrganization, Status
 from capital_repair.views import NotifiesViewSet
 from dictionaries.models import User, Organization, House, Address, File
 from iggnpk.tests.base import BaseTest
@@ -21,6 +21,15 @@ class NotifiesListViewSetTest(BaseTest):
         self.assertTrue('items' in response.data)
         self.assertTrue('totalCount' in response.data)
         self.assertTrue('summary' in response.data)
+
+    def test_returns_filtered_result(self):
+        client = APIClient(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
+        true_status = mixer.blend(Status, id=9991, text='Согласовно')
+        false_status = mixer.blend(Status, id=9992, text='Не согласовно')
+        true_notify = mixer.blend(Notify, status=true_status)
+        false_notify = mixer.blend(Notify, status=false_status)
+        response = client.get(f'{endpoint_url}?filter=["status.id","=","9992"]')
+        self.assertEqual(response.data['totalCount'], 1)
 
     def test_uk_can_see_its_own_notifies(self):
         """Управляющие организации не должны видеть уведомления других"""
