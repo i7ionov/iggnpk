@@ -28,8 +28,8 @@ class NotifiesListViewSetTest(BaseTest):
         false_status = mixer.blend(Status, id=9992, text='Не согласовно')
         true_notify = mixer.blend(Notify, status=true_status)
         false_notify = mixer.blend(Notify, status=false_status)
-        response = client.get(f'{endpoint_url}?filter=["status.id","=","9992"]')
-        self.assertEqual(response.data['totalCount'], 1)
+        response = client.get(f'{endpoint_url}?searchValue=%{false_notify.id}%22&searchExpr=undefined&take=10&skip=0&filter=["status.id","=","{true_status.id}"]')
+        self.assertEqual(response.data['totalCount'], 0)
 
     def test_uk_can_see_its_own_notifies(self):
         """Управляющие организации не должны видеть уведомления других"""

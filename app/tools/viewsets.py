@@ -45,20 +45,18 @@ class DevExtremeViewSet(viewsets.ModelViewSet, mixins.ListModelMixin):
         if 'group' in self.request.GET:
             queryset = self.list_filter(queryset)
             queryset, self.totalCount = dev_extreme.populate_group_category(self.request.GET, queryset)
-        elif 'searchValue' in self.request.GET:
-            queryset = self.search_filter(queryset)
-            searchValue = self.request.GET['searchValue'].strip('"').replace(',', ' ').split(' ')
-            keywords = [x for x in searchValue if x]
-            for keyword in keywords:
-                q = Q()
-                for field in self.lookup_fields:
-                    q = q | Q(**{field + '__icontains': keyword})
-                queryset = queryset.filter(q)
-            self.totalCount = queryset.count()
-            queryset = queryset[:10]
-
         else:
-            queryset = self.list_filter(queryset)
+            if 'searchValue' in self.request.GET:
+                queryset = self.search_filter(queryset)
+                searchValue = self.request.GET['searchValue'].strip('"').replace(',', ' ').split(' ')
+                keywords = [x for x in searchValue if x]
+                for keyword in keywords:
+                    q = Q()
+                    for field in self.lookup_fields:
+                        q = q | Q(**{field + '__icontains': keyword})
+                    queryset = queryset.filter(q)
+            else:
+                queryset = self.list_filter(queryset)
             queryset, total_queryset, self.totalCount = dev_extreme.filtered_query(self.request.GET, queryset)
         return queryset
 
