@@ -35,7 +35,7 @@ export class ContributionsInformationTableComponent implements OnInit {
   mistakesDataSource: any = {};
 
   get height() {
-    return window.innerHeight / 1.25;
+    return window.innerHeight - 170;
   }
 
   get comment_visibility() {

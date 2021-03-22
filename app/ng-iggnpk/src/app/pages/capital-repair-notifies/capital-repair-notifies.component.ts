@@ -32,7 +32,7 @@ export class CapitalRepairNotifiesComponent implements OnInit {
   currentFilter: any;
 
   get height() {
-    return window.innerHeight / 1.35;
+    return window.innerHeight - 185;
   }
 
   get comment_visibility() {

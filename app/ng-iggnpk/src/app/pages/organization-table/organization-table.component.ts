@@ -28,7 +28,7 @@ export class OrganizationTableComponent implements OnInit {
   currentFilter: any;
 
   get height() {
-    return window.innerHeight / 1.25;
+    return window.innerHeight - 170;
   }
 
   constructor(private organizationService: OrganizationService, private router: Router, private authService: AuthService,
