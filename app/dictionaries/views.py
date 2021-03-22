@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
 
+from tools.replace_quotes import replace_quotes
 from tools.serializer_tools import upd_foreign_key
 from tools.viewsets import DevExtremeViewSet
 from .models import User, House, Address, Organization, File, OrganizationType
@@ -93,6 +94,10 @@ class HouseViewSet(viewsets.ModelViewSet):
             Response({'message': 'Не предоставлены поля address_id и number'}, status=400)
 
 
+class OrganizationTypeViewSet(DevExtremeViewSet):
+    queryset = OrganizationType.objects.all()
+    serializer_class = OrganizationTypeSerializer
+    lookup_fields = ['text']
 
 
 class OrganizationViewSet(DevExtremeViewSet):
@@ -105,7 +110,7 @@ class OrganizationViewSet(DevExtremeViewSet):
         item.is_valid()
         if item.is_valid():
             org_type = OrganizationType.objects.get(id=request.data['type']['id'])
-            item.save(type=org_type)
+            item.save(type=org_type, name=replace_quotes(request.data['name']))
             return Response(item.data)
         else:
             return Response(item.errors, status=400)
@@ -118,14 +123,6 @@ class OrganizationViewSet(DevExtremeViewSet):
         org_type = upd_foreign_key('type', data, instance, OrganizationType)
         serializer.save(type=org_type)
         return Response(serializer.data)
-
-    @action(detail=False)
-    def types(self, request):
-        data = OrganizationTypeSerializer(OrganizationType.objects.all(), many=True)
-        return Response(data.data)
-
-
-
 
 
 

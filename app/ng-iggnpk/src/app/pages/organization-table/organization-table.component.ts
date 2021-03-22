@@ -49,7 +49,7 @@ export class OrganizationTableComponent implements OnInit {
 
 
   add() {
-    this.router.navigate(['/pages/organization/0']);
+    this.router.navigate(['/pages/organizations/0']);
   }
 
   refreshDataGrid() {

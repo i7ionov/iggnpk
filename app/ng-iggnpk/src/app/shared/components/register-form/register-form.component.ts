@@ -12,6 +12,9 @@ import {Organization} from "../../interfaces/organization";
 import {OrganizationService} from "../../services/organization.service";
 import {DxSelectBoxModule} from "devextreme-angular";
 import {alert} from "devextreme/ui/dialog";
+import {OrganizationTypeService} from "../../services/organization-type.service";
+import {CustomStoreService} from "../../services/custom-store.service";
+
 
 
 @Component({
@@ -67,9 +70,13 @@ export class RegisterFormComponent implements OnInit {
     })
   }
 
-  constructor(private authService: AuthService, public appInfo: AppInfoService, private router: Router, private orgService: OrganizationService) {
+  constructor(private authService: AuthService, public appInfo: AppInfoService, private router: Router,
+              private orgService: OrganizationService,
+              private organizationTypeService: OrganizationTypeService,
+              private customStoreService: CustomStoreService) {
     this.orgUsersCount = this.orgUsersCount.bind(this);
     this.isEmailUsed = this.isEmailUsed.bind(this);
+    this.orgTypes = customStoreService.getSearchCustomStore(organizationTypeService);
   }
 
   onRegisterClick(args) {
@@ -95,9 +102,7 @@ export class RegisterFormComponent implements OnInit {
   ngOnInit(): void {
 
 
-    this.orgService.types().subscribe(res => {
-      this.orgTypes = res;
-    });
+
 
   }
 

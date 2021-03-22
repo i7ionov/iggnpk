@@ -52,13 +52,13 @@ class OrganizationsCreateViewSetTest(BaseTest):
             "id": 0,
             "inn": 'test inn',
             "ogrn": 'test ogrn',
-            "name": 'test name',
+            "name": 'test "name"',
             "type": {"id": org_type.id}
         }, format='json')
         org = Organization.objects.last()
         self.assertEqual(org.inn, 'test inn')
         self.assertEqual(org.ogrn, 'test ogrn')
-        self.assertEqual(org.name, 'test name')
+        self.assertEqual(org.name, 'test «name»')
         self.assertEqual(org.type, org_type)
 
 class OrganizationsUpdateViewSetTest(BaseTest):

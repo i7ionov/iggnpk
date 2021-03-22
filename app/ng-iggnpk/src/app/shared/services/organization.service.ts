@@ -4,7 +4,7 @@ import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {Service} from './custom-store.service';
 import {Organization, OrganizationType} from '../interfaces/organization';
-import {Notify} from './capital-repair-notify.service';
+
 
 export class Organizations {
   items: [];
@@ -25,15 +25,21 @@ export class OrganizationService implements Service {
     return this.http.get<Organization>(`${environment.backend_url}${this.url}/${id}/`);
   }
 
+  update(id, org: any): Observable<Organization> {
+    return this.http.patch<Organization>(`${environment.backend_url}${this.url}/${id}/`, org);
+  }
+
+  create(org: Organization): Observable<Organization> {
+    return this.http.post<Organization>(`${environment.backend_url}${this.url}/`, org);
+  }
+
   list(params): Observable<Organizations> {
     return this.http.get<Organizations>(`${environment.backend_url}${this.url}/${params}`);
   }
+
   search(params): Observable<Organizations> {
     return this.http.get<Organizations>(`${environment.backend_url}${this.url}/${params}`);
   }
 
-  types(): Observable<OrganizationType> {
-    return this.http.get<OrganizationType>(`${environment.backend_url}${this.url}/types/`);
-  }
 
 }

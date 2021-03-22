@@ -49,7 +49,7 @@ export class ContributionsInformation {
 
 export class ContributionsInformations {
   items: [];
-  totalCount: number
+  totalCount: number;
 }
 
 

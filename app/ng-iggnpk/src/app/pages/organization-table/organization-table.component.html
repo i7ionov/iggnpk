@@ -42,7 +42,12 @@
       [fixed]="true"
     >
     </dxi-column>
+    <dxi-column
 
+      caption="Тип организации"
+      dataField="type.text"
+      dataType="string">
+    </dxi-column>
     <dxi-column
 
       caption="Название организации"
@@ -73,8 +78,6 @@
       dataField="old_name"
       dataType="string">
     </dxi-column>
-
-
 
 
     <div *dxTemplate="let cell of 'idCellTemplate'">

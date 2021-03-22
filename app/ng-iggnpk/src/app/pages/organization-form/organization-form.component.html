@@ -1,0 +1,50 @@
+<h2 class="content-block"></h2>
+<div class="dx-card content-block responsive-paddings">
+  <a (click)="back()">Назад</a>
+  <form (submit)="onFormSubmit($event)" method="post" enctype="multipart/form-data">
+    <dx-form #form
+             id="form"
+             [(formData)]="org"
+    >
+
+      <dxi-item dataField="id" [editorOptions]="{ disabled: true }">
+        <dxo-label text="Номер">
+        </dxo-label>
+      </dxi-item>
+
+
+      <dxi-item
+        dataField="type"
+        editorType="dxSelectBox"
+        [editorOptions]="{ dataSource:orgTypeDataSource, displayExpr:displayExpr,
+        searchEnabled:true, placeholder: 'Тип организации',
+        showDataBeforeSearch:true}">
+        <dxo-label text="Тип организации">
+
+        </dxo-label>
+      </dxi-item>
+
+      <dxi-item dataField="name">
+        <dxo-label text="Наименование">
+        </dxo-label>
+      </dxi-item>
+
+      <dxi-item dataField="inn">
+        <dxo-label text="ИНН">
+        </dxo-label>
+      </dxi-item>
+
+      <dxi-item dataField="ogrn">
+        <dxo-label text="ОГРН">
+        </dxo-label>
+      </dxi-item>
+
+    </dx-form>
+
+    <div class="buttons-line">
+      <dx-button type="success" text="Сохранить" [width]="150"
+                 (onClick)="onFormSubmit($event)"></dx-button>
+
+    </div>
+  </form>
+</div>

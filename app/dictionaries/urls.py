@@ -25,7 +25,7 @@ from .models import User
 
 router = SimpleRouter(trailing_slash=True)
 router.register("organizations", views.OrganizationViewSet, basename=User)
-
+router.register("organization_types", views.OrganizationTypeViewSet, basename=User)
 
 urlpatterns = [
     path('users/create/', views.create_user),

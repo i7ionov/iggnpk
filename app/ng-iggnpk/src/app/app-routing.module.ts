@@ -75,6 +75,12 @@ const routes: Routes = [
 
           },
           {
+            path: 'organizations/:id',
+            loadChildren: () => import('./pages/organization-form/organization-form.component').then(m => m.OrganizationFormModule),
+            canLoad: [AuthGuardService]
+
+          },
+          {
             path: 'users',
             loadChildren: () => import('./pages/users/users.component').then(m => m.UsersModule),
             canLoad: [AuthGuardService]
