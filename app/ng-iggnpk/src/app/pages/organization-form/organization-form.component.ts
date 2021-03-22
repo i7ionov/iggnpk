@@ -107,6 +107,22 @@ export class OrganizationFormComponent implements OnInit {
       } else {
         this.organizationService.create(this.org).subscribe(res => {
           this.router.navigate([`/pages/organizations/${res.id}`]);
+          notify({
+            message: 'Форма сохранена',
+            position: {
+              my: 'center top',
+              at: 'center top'
+            }
+          }, 'success', 3000);
+        }, error1 => {
+          console.log(error1);
+          notify({
+            message: 'Форма не сохранена. ' + error1.statusText,
+            position: {
+              my: 'center top',
+              at: 'center top'
+            }
+          }, 'error', 3000);
         });
       }
 
