@@ -26,9 +26,18 @@ export class OrganizationTableComponent implements OnInit {
   @ViewChild(DxDataGridComponent, {static: false}) dataGrid: DxDataGridComponent;
   dataSource: any = {};
   currentFilter: any;
+  filter: any;
+  popupVisible = false;
 
   get height() {
-    return window.innerHeight - 170;
+    if (this.popupVisible)
+    {
+      return window.innerHeight - 50;
+    }
+    else {
+      return window.innerHeight - 170;
+    }
+
   }
 
   constructor(private organizationService: OrganizationService, private router: Router, private authService: AuthService,
@@ -77,10 +86,22 @@ export class OrganizationTableComponent implements OnInit {
       }
     })
 
+    e.toolbarOptions.items.unshift({
+      location: 'after',
+      widget: 'dxButton',
+      options: {
+        icon: 'fullscreen',
+        onClick: this.showPopup.bind(this)
+      }
+    })
+
   }
 
 
+  showPopup($event: any) {
+    this.popupVisible = !this.popupVisible;
 
+  }
 
 }
 
