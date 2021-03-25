@@ -34,6 +34,10 @@ export const navigation = [
         path: 'pages/houses'
       },
       {
+        text: 'Адреса',
+        path: 'pages/addresses'
+      },
+      {
         text: 'Организации',
         path: 'pages/organizations'
       }

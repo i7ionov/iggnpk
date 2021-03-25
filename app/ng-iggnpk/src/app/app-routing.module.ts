@@ -81,6 +81,18 @@ const routes: Routes = [
 
           },
           {
+            path: 'addresses',
+            loadChildren: () => import('./pages/address-table/address-table.component').then(m => m.AddressTableModule),
+            canLoad: [AuthGuardService]
+
+          },
+          {
+            path: 'addresses/:id',
+            loadChildren: () => import('./pages/address-form/address-form.component').then(m => m.AddressFormModule),
+            canLoad: [AuthGuardService]
+
+          },
+          {
             path: 'users',
             loadChildren: () => import('./pages/users/users.component').then(m => m.UsersModule),
             canLoad: [AuthGuardService]

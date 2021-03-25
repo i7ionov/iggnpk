@@ -14,15 +14,16 @@ import {AuthService} from '../../shared/services';
 import {CustomStoreService} from '../../shared/services/custom-store.service';
 
 import {environment} from '../../../environments/environment';
-import {OrganizationService} from '../../shared/services/organization.service';
+import {AddressService} from "../../shared/services/addresses.service";
+
 
 
 @Component({
-  selector: 'app-organization-table',
-  templateUrl: './organization-table.component.html',
-  styleUrls: ['./organization-table.component.scss']
+  selector: 'app-addresses-table',
+  templateUrl: './address-table.component.html',
+  styleUrls: ['./address-table.component.scss']
 })
-export class OrganizationTableComponent implements OnInit {
+export class AddressTableComponent implements OnInit {
   @ViewChild(DxDataGridComponent, {static: false}) dataGrid: DxDataGridComponent;
   dataSource: any = {};
   currentFilter: any;
@@ -40,14 +41,13 @@ export class OrganizationTableComponent implements OnInit {
 
   }
 
-  constructor(private organizationService: OrganizationService, private router: Router, private authService: AuthService,
+  constructor(private addressService: AddressService, private router: Router, private authService: AuthService,
               private customStoreService: CustomStoreService) {
 
     function isNotEmpty(value) {
       return value !== undefined && value !== null && value !== '';
     }
-
-    this.dataSource = customStoreService.getListCustomStore(organizationService);
+    this.dataSource = customStoreService.getListCustomStore(addressService);
 
   }
 
@@ -58,7 +58,7 @@ export class OrganizationTableComponent implements OnInit {
 
 
   add() {
-    this.router.navigate(['/pages/organizations/0']);
+    this.router.navigate(['/pages/addresses/0']);
   }
 
   refreshDataGrid() {
@@ -106,7 +106,7 @@ export class OrganizationTableComponent implements OnInit {
 }
 
 const routes: Routes = [
-  {path: '', component: OrganizationTableComponent}
+  {path: '', component: AddressTableComponent}
 ];
 
 @NgModule({
@@ -122,8 +122,8 @@ const routes: Routes = [
     DxTemplateModule,
     DxDataGridModule
   ],
-  declarations: [OrganizationTableComponent],
-  exports: [OrganizationTableComponent]
+  declarations: [AddressTableComponent],
+  exports: [AddressTableComponent]
 })
-export class OrganizationTableModule {
+export class AddressTableModule {
 }

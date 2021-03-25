@@ -1,0 +1,43 @@
+<h2 class="content-block"></h2>
+<div class="dx-card content-block responsive-paddings">
+  <a (click)="back()">Назад</a>
+  <form (submit)="onFormSubmit($event)" method="post" enctype="multipart/form-data">
+    <dx-form #form
+             id="form"
+             [(formData)]="addr"
+    >
+
+      <dxi-item dataField="id" [editorOptions]="{ disabled: true }">
+        <dxo-label text="Номер">
+        </dxo-label>
+      </dxi-item>
+
+      <dxi-item dataField="area">
+        <dxo-label text="Район">
+        </dxo-label>
+      </dxi-item>
+
+      <dxi-item dataField="place">
+        <dxo-label text="Муниципальное образование">
+        </dxo-label>
+      </dxi-item>
+
+      <dxi-item dataField="city">
+        <dxo-label text="Населенный пункт">
+        </dxo-label>
+      </dxi-item>
+
+      <dxi-item dataField="street">
+        <dxo-label text="Улица">
+        </dxo-label>
+      </dxi-item>
+
+    </dx-form>
+
+    <div class="buttons-line">
+      <dx-button type="success" text="Сохранить" [width]="150"
+                 (onClick)="onFormSubmit($event)"></dx-button>
+
+    </div>
+  </form>
+</div>

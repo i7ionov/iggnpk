@@ -22,59 +22,47 @@ import {DxCheckBoxModule} from 'devextreme-angular/ui/check-box';
 import {DxTextBoxModule} from 'devextreme-angular/ui/text-box';
 import {ApplicationPipesModule} from '../../shared/pipes/app-pipes.module';
 import {CustomStoreService} from '../../shared/services/custom-store.service';
-import {OrganizationService} from '../../shared/services/organization.service';
 
 
-import {Organization, OrganizationType} from '../../shared/interfaces/organization';
-import {OrganizationTypeService} from "../../shared/services/organization-type.service";
+import {Address, AddressService} from "../../shared/services/addresses.service";
 
 @Component({
-  selector: 'app-organization-form',
-  templateUrl: './organization-form.component.html',
-  styleUrls: ['./organization-form.component.scss']
+  selector: 'app-address-form',
+  templateUrl: './address-form.component.html',
+  styleUrls: ['./address-form.component.scss']
 })
-export class OrganizationFormComponent implements OnInit {
+export class AddressFormComponent implements OnInit {
   history: any = {};
   @ViewChild('form', {static: false}) form: DxFormComponent;
   id = '';
-  org: Organization = new Organization();
-  saveButtonVisibility = false;
-  orgTypeDataSource: any = {};
+  addr: Address = new Address();
 
   constructor(private route: ActivatedRoute,
               private router: Router,
-              private organizationService: OrganizationService,
-              private organizationTypeService: OrganizationTypeService,
+              private addressService: AddressService,
               private _location: Location,
               public auth: AuthService,
               private customStoreService: CustomStoreService) {
-    this.orgTypeDataSource = customStoreService.getSearchCustomStore(organizationTypeService);
   }
 
   ngOnInit() {
     this.route.params.subscribe((params: Params) => {
       this.id = params.id;
       if (this.id !== '0') {
-        this.organizationService.retrieve(this.id).subscribe(res => {
-            this.org = res;
+        this.addressService.retrieve(this.id).subscribe(res => {
+            this.addr = res;
           }
         );
       }
     });
   }
 
-  displayExpr(item) {
-
-    return item && `${item.text}`;
-
-
-  }
 
   back() {
     if (this._location.getState()['navigationId'] > 1) {
       this._location.back();
     } else {
-      this.router.navigate(['/pages/organizations']);
+      this.router.navigate(['/pages/addresses']);
     }
 
   }
@@ -85,7 +73,7 @@ export class OrganizationFormComponent implements OnInit {
 
     if (isFormValid) {
       if (this.id != '0') {
-        this.organizationService.update(this.id, this.org).subscribe(res => {
+        this.addressService.update(this.id, this.addr).subscribe(res => {
             notify({
               message: 'Форма сохранена',
               position: {
@@ -105,8 +93,8 @@ export class OrganizationFormComponent implements OnInit {
           }
         );
       } else {
-        this.organizationService.create(this.org).subscribe(res => {
-          this.router.navigate([`/pages/organizations/${res.id}`]);
+        this.addressService.create(this.addr).subscribe(res => {
+          this.router.navigate([`/pages/addresses/${res.id}`]);
           notify({
             message: 'Форма сохранена',
             position: {
@@ -141,7 +129,7 @@ export class OrganizationFormComponent implements OnInit {
 
 
 const routes: Routes = [
-  {path: '', component: OrganizationFormComponent}
+  {path: '', component: AddressFormComponent}
 ];
 
 @NgModule({
@@ -164,8 +152,8 @@ const routes: Routes = [
     DxAccordionModule,
     ApplicationPipesModule
   ],
-  declarations: [OrganizationFormComponent],
-  exports: [OrganizationFormComponent]
+  declarations: [AddressFormComponent],
+  exports: [AddressFormComponent]
 })
-export class OrganizationFormModule {
+export class AddressFormModule {
 }

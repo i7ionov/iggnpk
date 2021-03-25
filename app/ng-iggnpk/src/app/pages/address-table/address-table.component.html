@@ -1,0 +1,106 @@
+<h6 class="content-block">Адреса</h6>
+<div class="dx-card content-block responsive-paddings">
+
+  <dx-popup
+    width="100%"
+    height="100%"
+    [showTitle]="false"
+    title="Information"
+    [dragEnabled]="false"
+    [closeOnOutsideClick]="true"
+    [(visible)]="popupVisible">
+    <div *dxTemplate="let data of 'content'">
+      <div>
+        <ng-template *ngTemplateOutlet="table"></ng-template>
+      </div>
+    </div>
+  </dx-popup>
+  <div>
+    <ng-template *ngTemplateOutlet="table">
+    </ng-template>
+  </div>
+  <ng-template #table>
+        <dx-data-grid id="gridContainer"
+                      [(filterValue)]="filter"
+                      [dataSource]="dataSource"
+                      [height]="height"
+                      (onToolbarPreparing)="onToolbarPreparing($event)"
+                      [allowColumnResizing]="true"
+                      [allowColumnReordering]="true"
+                      columnResizingMode="widget"
+                      [showBorders]="true"
+                      [showColumnLines]="true"
+                      [wordWrapEnabled]="true"
+        >
+          <dxo-state-storing [enabled]="true" type="localStorage"
+                             storageKey="address-table-state"></dxo-state-storing>
+          <dxo-scrolling showScrollbar="always">
+
+          </dxo-scrolling>
+          <dxo-paging [pageSize]="20"></dxo-paging>
+          <dxo-column-chooser [enabled]="true" mode="dragAndDrop"></dxo-column-chooser>
+          <dxo-pager
+            [showPageSizeSelector]="true"
+            [allowedPageSizes]="[5, 10, 20, 50]"
+            [showInfo]="true">
+          </dxo-pager>
+          <dxo-remote-operations
+            [groupPaging]="true">
+          </dxo-remote-operations>
+          <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+          <dxo-filter-row
+            [visible]="true"
+            [applyFilter]="currentFilter"></dxo-filter-row>
+          <dxo-header-filter
+            [visible]="true" [allowSearch]="true"></dxo-header-filter>
+          <dxi-column
+            dataField="id"
+            [allowHiding]="false"
+            width="80"
+            dataType="number"
+            cellTemplate="idCellTemplate"
+            [fixed]="true"
+          >
+          </dxi-column>
+
+          <dxi-column
+            caption="Район"
+            dataField="area"
+            dataType="string">
+          </dxi-column>
+
+          <dxi-column
+            caption="Муниципальное образование"
+            dataField="place"
+            dataType="string">
+          </dxi-column>
+
+          <dxi-column
+            caption="Населенный пункт"
+            dataField="city"
+            dataType="string">
+          </dxi-column>
+
+          <dxi-column
+            caption="Улица"
+            dataField="street"
+            dataType="string">
+          </dxi-column>
+
+          <div *dxTemplate="let cell of 'idCellTemplate'">
+            <a [routerLink]="['/pages/addresses', cell.text]">{{ cell.text }}</a>
+          </div>
+          <dxo-filter-panel [visible]="true"></dxo-filter-panel>
+          <dxo-summary>
+            <dxi-total-item
+              column="area"
+              summaryType="count">
+            </dxi-total-item>
+          </dxo-summary>
+
+          <dxo-export [enabled]="true"></dxo-export>
+        </dx-data-grid>
+
+  </ng-template>
+
+</div>
