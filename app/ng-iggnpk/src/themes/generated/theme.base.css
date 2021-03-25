@@ -8512,8 +8512,8 @@
   padding: 14px 35px 14px 14px;
 }
 .dx-datagrid .dx-row > td {
-  padding-top: 14px;
-  padding-bottom: 14px;
+  padding-top: 3px;
+  padding-bottom: 3px;
   font-size: 14px;
   line-height: 20px;
 }
