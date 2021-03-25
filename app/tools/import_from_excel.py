@@ -58,7 +58,7 @@ def patch():
 def regional_program():
     f = open(os.path.join(settings.MEDIA_ROOT, 'temp', 'regional_program.xlsx'),
              "wb+")
-    ufr = requests.get("https://fond59.ru/upload/iblock/a47/a476b04ebb126fe72eac416ef34fd80c.xlsx")
+    ufr = requests.get("https://mgkhb.permkrai.ru/download.php?id=7506")
     f.write(ufr.content)
     f.close()
     for h in House.objects.all():
@@ -66,7 +66,7 @@ def regional_program():
         h.save()
 
     rb = xlrd.open_workbook(os.path.join(settings.MEDIA_ROOT, 'temp', 'regional_program.xlsx'))
-    sheet = rb.sheet_by_index(1)
+    sheet = rb.sheet_by_index(0)
     for rownum in range(3, sheet.nrows):
         if sheet.cell(rownum, 1).value == '':
             continue
