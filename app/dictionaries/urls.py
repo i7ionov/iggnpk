@@ -26,6 +26,7 @@ from .models import User
 router = SimpleRouter(trailing_slash=True)
 router.register("organizations", views.OrganizationViewSet, basename=User)
 router.register("organization_types", views.OrganizationTypeViewSet, basename=User)
+router.register("addresses", views.AddressViewSet, basename=User)
 
 urlpatterns = [
     path('users/create/', views.create_user),
@@ -34,9 +35,6 @@ urlpatterns = [
     path('houses/', views.HouseViewSet.as_view({'get': 'list'})),
     path('houses/<int:pk>/', views.HouseViewSet.as_view({'get': 'retrieve'})),
     path('houses/find/', views.HouseViewSet.as_view({'get': 'find'})),
-    path('addresses/', views.AddressViewSet.as_view({'get': 'list'})),
-    path('addresses/<int:pk>/', views.AddressViewSet.as_view({'get': 'retrieve'})),
-    path('addresses/search/', views.AddressViewSet.as_view({'get': 'search'})),
     path('users/', views.UserViewSet.as_view({'get': 'list'})),
     path('users/me/', views.UserViewSet.as_view({'get': 'me'})),
     path('users/<int:pk>/', views.UserViewSet.as_view({'get': 'retrieve'})),

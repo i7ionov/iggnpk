@@ -4,6 +4,7 @@ import {environment} from "../../../environments/environment";
 import {Router} from "@angular/router";
 import {HttpClient} from "@angular/common/http";
 import {Service} from "./custom-store.service";
+import {Organization} from "../interfaces/organization";
 
 export class Address {
   id: number;
@@ -34,7 +35,15 @@ export class AddressService implements Service {
   }
 
   search(params): Observable<Addresses> {
-    return this.http.get<Addresses>(`${environment.backend_url}${this.url}/search/${params}`)
+    return this.http.get<Addresses>(`${environment.backend_url}${this.url}/${params}`)
+  }
+
+  update(id, addr: any): Observable<Address> {
+    return this.http.patch<Address>(`${environment.backend_url}${this.url}/${id}/`, addr);
+  }
+
+  create(addr: Address): Observable<Address> {
+    return this.http.post<Address>(`${environment.backend_url}${this.url}/`, addr);
   }
 
 }

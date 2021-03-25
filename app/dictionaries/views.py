@@ -125,9 +125,29 @@ class OrganizationViewSet(DevExtremeViewSet):
         return Response(serializer.data)
 
 
+class AddressViewSet(DevExtremeViewSet):
+    queryset = Address.objects.all()
+    serializer_class = AddressSerializer
+    lookup_fields = ['area', 'city', 'street']
 
+    def create(self, request, *args, **kwargs):
+        item = self.serializer_class(data=request.data)
+        item.is_valid()
+        if item.is_valid():
+            item.save()
+            return Response(item.data)
+        else:
+            return Response(item.errors, status=400)
 
-class AddressViewSet(viewsets.ModelViewSet):
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        data = request.data
+        serializer = self.get_serializer_class()(instance=instance, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+class Address1111ViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, ]
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
