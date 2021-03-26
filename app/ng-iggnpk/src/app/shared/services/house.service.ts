@@ -6,6 +6,7 @@ import {HttpClient} from "@angular/common/http";
 import {Address, Addresses} from "./addresses.service";
 import {Service} from "./custom-store.service";
 import {Organization} from "../interfaces/organization";
+import {Notify} from "./capital-repair-notify.service";
 
 export class House {
   id: number;
@@ -55,5 +56,10 @@ export class HousesService implements Service {
   create(house: House): Observable<House> {
     return this.http.post<House>(`${environment.backend_url}${this.url}/`, house);
   }
+
+  exportFromRegProgram(params): Observable<House> {
+    return this.http.post<House>(`${environment.backend_url}${this.url}/export_from_reg_program/`, params);
+  }
+
 
 }

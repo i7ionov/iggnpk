@@ -2,6 +2,34 @@
 <div class="dx-card content-block responsive-paddings">
 
   <dx-popup
+    width="400"
+    height="400"
+    [showTitle]="true"
+    title="Загрузка файла"
+    [dragEnabled]="false"
+    [closeOnOutsideClick]="true"
+    [(visible)]="uploadPopupVisible">
+    <div *dxTemplate="let data of 'content'">
+      <div>
+
+        <p>Выберите загруженный файл реестра региональной программы</p>
+        <div id="fileuploader-container">
+          <dx-file-uploader
+            selectButtonText="Выберите файл"
+            labelText=""
+            [allowedFileExtensions]="['.xlsx']"
+            [uploadUrl]="uploadUrl"
+            [uploadHeaders]="{'Authorization': uploadAuthorization}"
+            (onUploaded)="onUploaded($event)"
+          >
+          </dx-file-uploader>
+        </div>
+      </div>
+
+    </div>
+  </dx-popup>
+
+  <dx-popup
     width="100%"
     height="100%"
     [showTitle]="false"

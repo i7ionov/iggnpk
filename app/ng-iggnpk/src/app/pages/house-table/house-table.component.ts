@@ -5,7 +5,13 @@ import {Router, RouterModule, Routes} from "@angular/router";
 import {CommonModule} from "@angular/common";
 import {DxValidatorModule} from "devextreme-angular/ui/validator";
 import {DxValidationGroupModule} from "devextreme-angular/ui/validation-group";
-import {DxPopupModule, DxButtonModule, DxTemplateModule, DxDataGridComponent} from 'devextreme-angular';
+import {
+  DxPopupModule,
+  DxButtonModule,
+  DxTemplateModule,
+  DxDataGridComponent,
+  DxFileUploaderModule
+} from 'devextreme-angular';
 
 import {DxDataGridModule} from 'devextreme-angular';
 
@@ -15,6 +21,10 @@ import CustomStore from 'devextreme/data/custom_store';
 import {confirm} from 'devextreme/ui/dialog';
 import {HousesService} from "../../shared/services/house.service";
 import {CustomStoreService} from "../../shared/services/custom-store.service";
+import {environment} from "../../../environments/environment";
+import {NgForm} from '@angular/forms';
+import notify from "devextreme/ui/notify";
+import {AuthService} from "../../shared/services";
 
 
 @Component({
@@ -24,11 +34,14 @@ import {CustomStoreService} from "../../shared/services/custom-store.service";
 })
 export class HouseTableComponent implements OnInit {
   @ViewChild(DxDataGridComponent, {static: false}) dataGrid: DxDataGridComponent;
+  @ViewChild('uploadForm') uploadForm: NgForm;
 
   dataSource: any = {};
   currentFilter: any;
   filter: any;
   popupVisible = false;
+  uploadPopupVisible = false;
+  uploadUrl: any;
 
   get height() {
     if (this.popupVisible) {
@@ -39,9 +52,12 @@ export class HouseTableComponent implements OnInit {
 
   }
 
-  constructor(private houseService: HousesService, private router: Router, private customStoreService: CustomStoreService) {
+  constructor(private houseService: HousesService,
+              private router: Router,
+              private customStoreService: CustomStoreService,
+              public auth: AuthService) {
     this.dataSource = customStoreService.getListCustomStore(houseService);
-
+    this.uploadUrl = `${environment.backend_url}${houseService.url}/export_from_reg_program/`
 
   }
 
@@ -64,6 +80,7 @@ export class HouseTableComponent implements OnInit {
       }
     })
 
+
     e.toolbarOptions.items.unshift({
       location: 'after',
       widget: 'dxButton',
@@ -81,6 +98,32 @@ export class HouseTableComponent implements OnInit {
         onClick: this.showPopup.bind(this)
       }
     })
+    e.toolbarOptions.items.unshift({
+      location: 'after',
+      widget: 'dxButton',
+      options: {
+        width: 200,
+        text: 'Импорт реестра РП',
+        onClick: this.showImportPopup.bind(this)
+      }
+    })
+  }
+
+  get uploadAuthorization() {
+    return 'Token ' + this.auth.token;
+  }
+
+  onUploaded(e) {
+    if (e.request.status == 200) {
+      notify('Задача на импорт данных из реестра поставлена. Отчет о результатах будет отправлен на электронную почту')
+    }
+    else {
+      notify('Возникла проблема с загрузкой реестра')
+    }
+  }
+
+  showImportPopup() {
+    this.uploadPopupVisible = !this.uploadPopupVisible;
   }
 
   add() {
@@ -104,6 +147,7 @@ const routes: Routes = [
     DxButtonModule,
     DxCheckBoxModule,
     DxTextBoxModule,
+    DxFileUploaderModule,
     DxValidatorModule,
     DxValidationGroupModule,
     DxPopupModule,
