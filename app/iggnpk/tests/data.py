@@ -4,7 +4,7 @@ from capital_repair.models import ContributionsInformationMistake, Contributions
 from dictionaries import models
 from mixer.backend.django import mixer
 
-from dictionaries.models import User
+from dictionaries.models import User, Address, House
 
 
 def populate_db():
@@ -51,3 +51,6 @@ def populate_db():
     c3 = mixer.blend(ContributionsInformation, notify=n3, mistakes=[mistake3], comment='c3')
     mixer.cycle(100).blend(Notify, organization=mixer.SELECT)
     mixer.cycle(25).blend(Notify, organization=uk.organization)
+
+    mixer.cycle(25).blend(Address)
+    mixer.cycle(25).blend(House, address=mixer.SELECT)

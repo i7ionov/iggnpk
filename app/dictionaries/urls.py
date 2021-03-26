@@ -27,6 +27,7 @@ router = SimpleRouter(trailing_slash=True)
 router.register("organizations", views.OrganizationViewSet, basename=User)
 router.register("organization_types", views.OrganizationTypeViewSet, basename=User)
 router.register("addresses", views.AddressViewSet, basename=User)
+router.register("houses", views.HouseViewSet, basename=User)
 
 urlpatterns = [
     path('users/create/', views.create_user),

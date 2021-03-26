@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
 
+from tools.address_normalizer import normalize_number
 from tools.replace_quotes import replace_quotes
 from tools.serializer_tools import upd_foreign_key
 from tools.viewsets import DevExtremeViewSet
@@ -62,7 +63,33 @@ def create_user(request):
         return Response(item.errors, status=400)
 
 
-class HouseViewSet(viewsets.ModelViewSet):
+class HouseViewSet(DevExtremeViewSet):
+    queryset = House.objects.all()
+    serializer_class = HouseSerializer
+    lookup_fields = ['number']
+
+    def create(self, request, *args, **kwargs):
+        item = self.serializer_class(data=request.data)
+        item.is_valid()
+        if item.is_valid():
+            addr = Address.objects.get(id=request.data['address']['id'])
+            item.save(address=addr, number=normalize_number(request.data['number']))
+            return Response(item.data)
+        else:
+            return Response(item.errors, status=400)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        data = request.data
+        serializer = self.get_serializer_class()(instance=instance, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        addr = upd_foreign_key('address', data, instance, Address)
+        serializer.save(address=addr, number=normalize_number(request.data['number']))
+        return Response(serializer.data)
+
+
+
+class HouseOldViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, ]
     queryset = House.objects.all()
     serializer_class = HouseSerializer
@@ -146,43 +173,6 @@ class AddressViewSet(DevExtremeViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
-
-class Address1111ViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated, ]
-    queryset = Address.objects.all()
-    serializer_class = AddressSerializer
-
-    def list(self, request):
-        if 'group' in request.GET:
-            d, total_count = dev_extreme.populate_group_category(request.GET, self.queryset)
-            data = {"totalCount": total_count, "items": d}
-        else:
-            queryset, total_queryset, total_count = dev_extreme.filtered_query(request.GET, self.queryset)
-            serializer = AddressSerializer(queryset, many=True)
-            data = {'items': serializer.data, 'totalCount': total_count}
-        return Response(data)
-
-    def retrieve(self, request, pk=None):
-        queryset = Address.objects.all()
-        item = get_object_or_404(queryset, pk=pk)
-        serializer = AddressSerializer(item)
-        return Response(serializer.data)
-
-    def search(self, request):
-        if 'searchValue' in request.GET:
-            searchValue = request.GET['searchValue'].strip('"').replace(',', ' ').split(' ')
-            keywords = [x for x in searchValue if x]
-            queryset = Address.objects.all()
-            for keyword in keywords:
-                queryset = queryset.filter(
-                    Q(area__icontains=keyword) | Q(city__icontains=keyword) | Q(street__icontains=keyword))
-            queryset = queryset[:10]
-            serializer = self.serializer_class(queryset, many=True)
-            data = {'items': serializer.data}
-            return Response(data)
-        else:
-            return Response()
-
 
 class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, ]
