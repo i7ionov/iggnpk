@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
 
-from tools.address_normalizer import normalize_number
+from tools.address_normalizer import normalize_number, normalize_street, normalize_city
 from tools.replace_quotes import replace_quotes
 from tools.serializer_tools import upd_foreign_key
 from tools.viewsets import DevExtremeViewSet
@@ -161,7 +161,8 @@ class AddressViewSet(DevExtremeViewSet):
         item = self.serializer_class(data=request.data)
         item.is_valid()
         if item.is_valid():
-            item.save()
+            item.save(street=normalize_street(request.data['street']),
+                        city=normalize_city(request.data['city']))
             return Response(item.data)
         else:
             return Response(item.errors, status=400)
@@ -171,7 +172,8 @@ class AddressViewSet(DevExtremeViewSet):
         data = request.data
         serializer = self.get_serializer_class()(instance=instance, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        serializer.save(street=normalize_street(request.data['street']),
+                        city=normalize_city(request.data['city']))
         return Response(serializer.data)
 
 class UserViewSet(viewsets.ModelViewSet):
