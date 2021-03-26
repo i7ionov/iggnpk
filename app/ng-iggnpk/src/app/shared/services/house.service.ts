@@ -10,6 +10,7 @@ import {Organization} from "../interfaces/organization";
 export class House {
   id: number;
   number?: string;
+  included_in_the_regional_program?: boolean;
   address?: Address;
   organization?:Organization;
   constructor() {
@@ -42,7 +43,7 @@ export class HousesService implements Service {
     return this.http.get<Houses>(`${environment.backend_url}${this.url}/${params}`)
   }
   search(params): Observable<Houses> {
-    return this.http.get<Houses>(`${environment.backend_url}${this.url}/search/${params}`)
+    return this.http.get<Houses>(`${environment.backend_url}${this.url}/${params}`)
   }
 
 }

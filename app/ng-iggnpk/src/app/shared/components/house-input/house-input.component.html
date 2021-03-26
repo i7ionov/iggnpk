@@ -1,35 +1,45 @@
-<dx-form #form>
-  <dxi-item
-    dataField="address"
-    [template]="'addressTemplate'">
-    <dxo-label text="Муниципальный район, город, улица">
+<div class="house">
+  <dx-form #form>
+    <dxi-item
+      dataField="address"
+      [template]="'addressTemplate'">
+      <dxo-label text="Муниципальный район, город, улица">
 
-    </dxo-label>
-    <dxi-validation-rule
-      type="custom"
-      [validationCallback]="isNotNull"
-      message="Адрес обязателен для заполнения">
-    </dxi-validation-rule>
-  </dxi-item>
-  <div *dxTemplate="let data of 'addressTemplate'">
-    <dx-select-box [dataSource]="addresses" [displayExpr]="displayExpr"
-                   searchEnabled="true" [value]="value.address" (valueChange)="addressChange($event)"></dx-select-box>
+      </dxo-label>
+      <dxi-validation-rule
+        type="custom"
+        [validationCallback]="isNotNull"
+        message="Адрес обязателен для заполнения">
+      </dxi-validation-rule>
+    </dxi-item>
+    <div *dxTemplate="let data of 'addressTemplate'">
+      <dx-select-box [dataSource]="addresses" [displayExpr]="displayExpr"
+                     searchEnabled="true" [value]="value.address" (valueChange)="addressChange($event)"></dx-select-box>
+    </div>
+
+    <dxi-item
+      dataField="number"
+      [template]="'numberTemplate'">
+      <dxo-label text="Номер дома">
+      </dxo-label>
+      <dxi-validation-rule
+        type="required"
+        message="Номер дома обязателен для заполнения">
+      </dxi-validation-rule>
+    </dxi-item>
+    <div *dxTemplate="let data of 'numberTemplate'">
+      <dx-autocomplete [dataSource]="houses" [value]="value.number" (valueChange)="houseChange($event)"
+                       (selectedItemChange)="houseSelect($event)"
+                       searchExpr="number" valueExpr="number"></dx-autocomplete>
+    </div>
+
+  </dx-form>
+
+  <div *ngIf="value.organization" class="org">
+    По информации из реестра лицензий домом управляет: {{ value.organization.name }}, {{ value.organization.inn }}
+    <br>
+    Включен в региональную программу: {{ value.included_in_the_regional_program | boolean }}
+
   </div>
 
-  <dxi-item
-    dataField="number"
-    [template]="'numberTemplate'">
-    <dxo-label text="Номер дома">
-    </dxo-label>
-    <dxi-validation-rule
-      type="required"
-      message="Номер дома обязателен для заполнения">
-    </dxi-validation-rule>
-  </dxi-item>
-  <div *dxTemplate="let data of 'numberTemplate'">
-    <dx-autocomplete [dataSource]="houses" [value]="value.number" (valueChange)="houseChange($event)"
-                     searchExpr="number" valueExpr="number"></dx-autocomplete>
-  </div>
-
-</dx-form>
-<pre *ngIf="value.organization" class="org">По информации из реестра лицензий домом управляет: {{ value.organization.name }}, {{ value.organization.inn }}</pre>
+</div>

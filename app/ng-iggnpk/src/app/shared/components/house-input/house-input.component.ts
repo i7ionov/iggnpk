@@ -27,6 +27,7 @@ import {CustomStoreService} from "../../services/custom-store.service";
 import {Organization} from "../../interfaces/organization";
 import {DxValidatorModule} from 'devextreme-angular/ui/validator';
 import DataSource from "devextreme/data/data_source";
+import {ApplicationPipesModule} from "../../pipes/app-pipes.module";
 
 @Component({
   selector: 'app-house-input',
@@ -100,13 +101,22 @@ export class HouseInputComponent implements OnInit {
 
   }
 
+  houseSelect(house){
+    console.log(house)
+    if (house){
+      this.value.organization=house.organization
+      this.value.included_in_the_regional_program=house.included_in_the_regional_program
+    }
+    else{
+      this.value.organization = null
+    }
+
+  }
+
   houseChange(house) {
     let temp = this.value;
     temp.number = house;
     this.value = temp;
-    this.houseService.find(this.value.address.id, house).subscribe(res=>{
-      this.value.organization=res.organization
-    })
   }
 
   public validate() {
@@ -121,7 +131,7 @@ export class HouseInputComponent implements OnInit {
 @NgModule({
   declarations: [HouseInputComponent],
   exports: [HouseInputComponent],
-  imports: [DxSelectBoxModule, DxFormModule, DxAutocompleteModule, CommonModule, DxValidatorModule]
+  imports: [DxSelectBoxModule, DxFormModule, DxAutocompleteModule, CommonModule, DxValidatorModule, ApplicationPipesModule]
 })
 export class HouseInputModule {
 }
