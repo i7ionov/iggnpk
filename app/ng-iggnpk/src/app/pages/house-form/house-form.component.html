@@ -1,0 +1,97 @@
+<h2 class="content-block"></h2>
+<div class="dx-card content-block responsive-paddings">
+  <a (click)="back()">Назад</a>
+  <form (submit)="onFormSubmit($event)" method="post" enctype="multipart/form-data">
+    <dx-form #form
+             id="form"
+             [(formData)]="house"
+    >
+
+      <dxi-item dataField="id" [editorOptions]="{ disabled: true }">
+        <dxo-label text="Номер">
+        </dxo-label>
+      </dxi-item>
+
+
+      <dxi-item
+        dataField="address"
+        editorType="dxSelectBox"
+        [editorOptions]="{ dataSource:addressDataSource, displayExpr:addressDisplayExpr,
+        searchEnabled:true, placeholder: 'Адрес',
+        showDataBeforeSearch:true}">
+        <dxo-label text="Адрес">
+
+        </dxo-label>
+      </dxi-item>
+
+      <dxi-item dataField="number">
+        <dxo-label text="Номер дома">
+        </dxo-label>
+      </dxi-item>
+
+      <dxi-item dataField="included_in_the_regional_program" editorType="dxCheckBox">
+        <dxo-label text="Включен в рег программу">
+        </dxo-label>
+      </dxi-item>
+
+      <dxi-item
+        dataField="organization"
+        editorType="dxSelectBox"
+        [editorOptions]="{ dataSource:organizationDataSource, displayExpr:orgDisplayExpr,
+        searchEnabled:true, placeholder: 'Управляющая организация',
+        showDataBeforeSearch:true}">
+        <dxo-label text="Управляющая организация">
+        </dxo-label>
+      </dxi-item>
+
+      <dxi-item dataField="date_of_inclusion" editorType="dxDateBox"
+                [editorOptions]="{width: 200, dateSerializationFormat: 'yyyy-MM-dd'}">
+        <dxo-label text="Дата включения в рег программу">
+        </dxo-label>
+      </dxi-item>
+
+      <dxi-item dataField="year_of_building" editorType="dxNumberBox">
+        <dxo-label text="Год постройки">
+        </dxo-label>
+      </dxi-item>
+
+      <dxi-item dataField="number_of_apartments" editorType="dxNumberBox">
+        <dxo-label text="Количество квартир">
+        </dxo-label>
+      </dxi-item>
+
+      <dxi-item dataField="total_area" editorType="dxNumberBox">
+        <dxo-label text="Общая площадь">
+        </dxo-label>
+      </dxi-item>
+
+      <dxi-item dataField="residential_premises_area" editorType="dxNumberBox">
+        <dxo-label text="Общая площадь жилых помещений">
+        </dxo-label>
+      </dxi-item>
+
+      <dxi-item dataField="nonresidential_premises_area" editorType="dxNumberBox">
+        <dxo-label text="Общая площадь нежилых помещений">
+        </dxo-label>
+      </dxi-item>
+    </dx-form>
+
+
+    <!--region Description
+    date_of_inclusion = models.DateField(
+        verbose_name='Дата включения МКД в Региональную программу капитального ремонта', null=True, blank=True)
+    year_of_building = models.IntegerField(verbose_name='Дата постройки', null=True, blank=True)
+    number_of_apartments = models.IntegerField(null=True, blank=True, verbose_name='Количество квартир')
+    total_area = models.FloatField(null=True, blank=True, verbose_name='Общая площадь')
+    residential_premises_area = models.FloatField(null=True, blank=True, verbose_name='Общая площадь жилых помещений')
+    nonresidential_premises_area = models.FloatField(null=True, blank=True, verbose_name='Общая площадь нежилых помещений')
+    -->
+
+
+    <div class="buttons-line">
+      <dx-button type="success" text="Сохранить" [width]="150"
+                 (onClick)="onFormSubmit($event)"></dx-button>
+
+    </div>
+  </form>
+</div>

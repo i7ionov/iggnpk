@@ -100,7 +100,13 @@ const routes: Routes = [
           },
           {
             path: 'houses',
-            loadChildren: () => import('./pages/houses/houses.component').then(m => m.HousesModule),
+            loadChildren: () => import('./pages/house-table/house-table.component').then(m => m.HouseTableModule),
+            canLoad: [AuthGuardService]
+
+          },
+          {
+            path: 'houses/:id',
+            loadChildren: () => import('./pages/house-form/house-form.component').then(m => m.HouseFormModule),
             canLoad: [AuthGuardService]
 
           },
