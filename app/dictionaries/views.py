@@ -88,39 +88,6 @@ class HouseViewSet(DevExtremeViewSet):
         return Response(serializer.data)
 
 
-
-class HouseOldViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated, ]
-    queryset = House.objects.all()
-    serializer_class = HouseSerializer
-
-    def list(self, request):
-        if 'group' in request.GET:
-            d, total_count = dev_extreme.populate_group_category(request.GET, self.queryset)
-            data = {"totalCount": total_count, "items": d}
-        else:
-            queryset, total_queryset, total_count = dev_extreme.filtered_query(request.GET, self.queryset)
-            queryset = queryset[:10]
-            serializer = HouseSerializer(queryset, many=True)
-            data = {'items': serializer.data, 'totalCount': total_count}
-        return Response(data)
-
-    def retrieve(self, request, pk=None):
-        queryset = House.objects.all()
-        item = get_object_or_404(queryset, pk=pk)
-        serializer = HouseSerializer(item)
-        return Response(serializer.data)
-
-    def find(self, request):
-        if 'address_id' in request.GET and 'number' in request.GET:
-            queryset = House.objects.all()
-            item = get_object_or_404(queryset, address__id=request.GET['address_id'], number=request.GET['number'])
-            serializer = HouseSerializer(item)
-            return Response(serializer.data)
-        else:
-            Response({'message': 'Не предоставлены поля address_id и number'}, status=400)
-
-
 class OrganizationTypeViewSet(DevExtremeViewSet):
     queryset = OrganizationType.objects.all()
     serializer_class = OrganizationTypeSerializer
