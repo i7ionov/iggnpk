@@ -1,4 +1,7 @@
+import os
+
 from django.contrib.auth.models import Group
+from django.core.files.storage import default_storage
 from django.db.models import Q
 from rest_framework.exceptions import ParseError
 from rest_framework.parsers import FileUploadParser, MultiPartParser, FormParser
@@ -6,6 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
 
+from iggnpk import settings
 from tools.address_normalizer import normalize_number, normalize_street, normalize_city
 from tools.replace_quotes import replace_quotes
 from tools.serializer_tools import upd_foreign_key
@@ -18,6 +22,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from tools import dev_extreme
 from django.core.mail import send_mail
+
+from .tasks import import_houses_from_register_of_KR
 
 
 @api_view()
@@ -67,6 +73,7 @@ class HouseViewSet(DevExtremeViewSet):
     queryset = House.objects.all()
     serializer_class = HouseSerializer
     lookup_fields = ['number']
+    parser_class = (FileUploadParser, MultiPartParser, FormParser,)
 
     def create(self, request, *args, **kwargs):
         item = self.serializer_class(data=request.data)
@@ -86,6 +93,18 @@ class HouseViewSet(DevExtremeViewSet):
         addr = upd_foreign_key('address', data, instance, Address)
         serializer.save(address=addr, number=normalize_number(request.data['number']))
         return Response(serializer.data)
+
+    @action(detail=False, methods=['post'])
+    def export_from_reg_program(self, request, *args, **kwargs):
+        if 'files[]' not in request.data:
+            raise ParseError("Empty content")
+
+        f = request.data['files[]']
+        path = default_storage.save('temp/kr.xlsx', f.file)
+        path = os.path.join(settings.MEDIA_ROOT, path)
+        user = UserSerializer(request.user)
+        import_houses_from_register_of_KR.delay(path, user.data['email'])
+        return Response({}, status=200)
 
 
 class OrganizationTypeViewSet(DevExtremeViewSet):

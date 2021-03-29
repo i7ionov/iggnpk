@@ -55,18 +55,13 @@ def patch():
 
 
 
-def regional_program():
-    f = open(os.path.join(settings.MEDIA_ROOT, 'temp', 'regional_program.xlsx'),
-             "wb+")
-    ufr = requests.get("https://mgkhb.permkrai.ru/download.php?id=7506")
-    f.write(ufr.content)
-    f.close()
+def regional_program(path):
     for h in House.objects.all():
         h.included_in_the_regional_program = False
         h.save()
-
-    rb = xlrd.open_workbook(os.path.join(settings.MEDIA_ROOT, 'temp', 'regional_program.xlsx'))
+    rb = xlrd.open_workbook(path)
     sheet = rb.sheet_by_index(0)
+    errors=[]
     for rownum in range(3, sheet.nrows):
         if sheet.cell(rownum, 1).value == '':
             continue
@@ -106,12 +101,12 @@ def regional_program():
             house.included_in_the_regional_program = True
             house.save()
         except (Address.DoesNotExist, Address.MultipleObjectsReturned):
-            print(f'Not Founded {rownum} {area} {city} {street}')
+            errors += [f'Не найдена улица {area}, {city}, {street} в строке {rownum+1}']
         except House.DoesNotExist:
-            print(f'Not Founded {rownum} {area} {city} {street} {number}')
+            errors += [f'Не найден дом {area}, {city}, {street}, {number} в строке {rownum+1}']
         except House.MultipleObjectsReturned:
-            print(f'Multiple Founded {rownum} {area} {city} {street} {number}')
-
+            errors += [f'Найдено несколько домов {area}, {city}, {street}, {number}']
+    return errors
 
 def houses():
     f = open(os.path.join(settings.MEDIA_ROOT, 'temp', 'reestr_licensing.xlsx'),
