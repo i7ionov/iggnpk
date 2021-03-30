@@ -100,7 +100,8 @@ export class ContributionsInfromationFormComponent implements OnInit {
               private customStoreService: CustomStoreService) {
     this.contribInfoDataSource = customStoreService.getSearchCustomStore(notifyService);
     this.contribInfoDataSource.pageSize(10);
-    this.contribInfoDataSource.filter(["status.id", "=", '3']);
+    //отображаются только согласованые уведомления, у которых не указана ороанизация Фонд кап. ремонта ПК(5902990563)
+    this.contribInfoDataSource.filter([["status.id", "=", '3'],'and', ["organization.inn", "<>", '5902990563']]);
     this.mistakesDataSource = customStoreService.getSearchCustomStore(contribInfoMistakesService);
   }
 
