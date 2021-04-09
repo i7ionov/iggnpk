@@ -199,7 +199,7 @@ class ContributionsInformationViewSet(DevExtremeViewSet):
                 mistakes = upd_many_to_many('mistakes', request, None, ContributionsInformationMistake)
             else:
                 mistakes = []
-            item.save(date=datetime.today().date(), status=status, files=files, notify=notify, mistakes=mistakes)
+            item.save(date=datetime.today().date(), status=status, files=files, notify=notify, last_notify=notify, mistakes=mistakes)
             return Response(item.data)
         else:
             return Response(item.errors, status=400)
@@ -241,11 +241,7 @@ class ContributionsInformationViewSet(DevExtremeViewSet):
             mistakes = upd_many_to_many('mistakes', request, instance, ContributionsInformationMistake)
         else:
             mistakes = instance.mistakes.all()
-
-        if status.id == 3:
-            notify.latest_contrib_date = datetime.now().date()
-            notify.save()
-        serializer.save(files=files, status=status, notify=notify, mistakes=mistakes, date=date)
+        serializer.save(files=files, status=status, notify=notify, last_notify=notify, mistakes=mistakes, date=date)
         return Response(serializer.data)
 
     @action(detail=True)

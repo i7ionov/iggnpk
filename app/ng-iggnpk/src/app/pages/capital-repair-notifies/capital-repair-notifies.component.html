@@ -191,12 +191,6 @@
     </dxi-column>
     <dxi-column
       width="200"
-      caption="Дата последней подачи сведений о взносах"
-      dataField="latest_contrib_date"
-      dataType="date">
-    </dxi-column>
-    <dxi-column
-      width="200"
       caption="Комментарий"
       dataField="comment"
       dataType="string">
@@ -236,18 +230,28 @@
     </dxi-column>
 
     <dxi-column caption="Сведения о последнем поступлении взносов">
+      <dxi-column
+        width="150"
+        caption="Дата последней подачи"
+        dataField="last_contrib.date"
+        dataType="date">
+      </dxi-column>
+      <dxi-column
+        width="170"
+        caption="Статус"
+        dataField="last_contrib.status.text"
+        dataType="string">
+      </dxi-column>
       <dxi-column caption="Начислено взносов (без учета пеней), рублей">
         <dxi-column
           width="150"
           caption="всего"
-          [allowFiltering]="false"
           dataField="last_contrib.assessed_contributions_total"
           dataType="number">
         </dxi-column>
         <dxi-column
           width="150"
           caption="из них за отчетный период"
-          [allowFiltering]="false"
           dataField="last_contrib.assessed_contributions_current"
           dataType="number">
         </dxi-column>
@@ -256,52 +260,52 @@
         <dxi-column
           width="150"
           caption="всего"
-          [allowFiltering]="false"
           dataField="last_contrib.received_contributions_total"
           dataType="number">
         </dxi-column>
         <dxi-column
           width="150"
           caption="из них за отчетный период"
-          [allowFiltering]="false"
           dataField="last_contrib.received_contributions_current"
           dataType="number">
         </dxi-column>
       </dxi-column>
       <dxi-column
         width="150"
-        [allowFiltering]="false"
         caption="Задолженность (+), переплата (-) по уплате собственниками помещений взносов на капитальный ремонт на конец отчетного периода, рублей"
         dataField="last_contrib.delta_total"
         dataType="number">
       </dxi-column>
       <dxi-column
         width="150"
-        [allowFiltering]="false"
         caption="Сведения о размере израсходованных средств на капитальный ремонт со специального счета, рублей"
         dataField="last_contrib.funds_spent"
         dataType="number">
       </dxi-column>
       <dxi-column
         width="200"
-        [allowFiltering]="false"
         caption="Сведения о заключении договора займа и (или) кредитного договора на проведение капитального ремонта (номер договора, наименование кредитной организации, сумма кредита (займа), рублей"
         dataField="last_contrib.credit"
         dataType="number">
       </dxi-column>
       <dxi-column
         width="150"
-        [allowFiltering]="false"
         caption="Сведения о размере средств, находящихся на специальном депозите, рублей"
         dataField="last_contrib.funds_on_special_deposit"
         dataType="number">
       </dxi-column>
       <dxi-column
         width="150"
-        [allowFiltering]="false"
         caption="Остаток средств фонда капитального ремонта на специальном счете на конец отчетного периода (с учетом ДЕПОЗИТА), рублей"
         dataField="last_contrib.fund_balance"
         dataType="number">
+      </dxi-column>
+      <dxi-column
+        width="200"
+        caption="Ошибки"
+        dataField="last_contrib.mistakes.text"
+        [calculateCellValue]="fullNameColumn_calculateCellValue"
+        dataType="string">
       </dxi-column>
     </dxi-column>
 

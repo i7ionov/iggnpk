@@ -327,21 +327,6 @@ class ContribInfoUpdateViewSetTest(BaseTest):
         self.assertTrue(response.status_code, 400)
         self.assertEqual(contrib.delta_total, None)
 
-    def test_setting_status_3_updates_latest_contrib_date_in_notify(self):
-        notify = mixer.blend(Notify, organization=self.uk.organization)
-        contrib = mixer.blend(ContributionsInformation, notify=notify, status_id=2)
-        client = APIClient(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
-        json_data = {
-            "id": 0,
-            "notify": {"id": notify.id},
-            "status": {"id": 3},
-            "files": [],
-            "mistakes": [],
-        }
-        response = client.patch(f'{endpoint_url}{contrib.id}/', json_data, format='json')
-        notify = Notify.objects.get(id=notify.id)
-        self.assertEqual(notify.latest_contrib_date, datetime.datetime.now().date())
-
     def test_needs_authentification(self):
         client = APIClient()
         notify = mixer.blend(Notify, organization=self.uk.organization)

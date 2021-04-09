@@ -92,7 +92,7 @@ class Notify(models.Model):
         return ret
 
     @property
-    def last_contrib(self):
+    def last_contrib2(self):
         return self.contributionsinformation_set.last()
 
     class Meta:
@@ -103,6 +103,8 @@ class ContributionsInformation(models.Model):
     date = models.DateField(verbose_name='Дата внесения записи', null=True, blank=True, default=None)
     notify = models.ForeignKey(Notify, on_delete=models.SET_NULL, null=True, verbose_name='Уведомление',
                                      blank=True, default=None)
+    last_notify = models.OneToOneField(Notify, on_delete=models.SET_NULL, null=True, verbose_name='Уведомление',
+                                     blank=True, default=None, related_name='last_contrib')
     assessed_contributions_total = models.DecimalField(null=True, blank=True, verbose_name='Начислено взносов, всего', max_digits=15, decimal_places=2)
     assessed_contributions_current = models.DecimalField(null=True, blank=True, verbose_name='Начислено взносов, за текущий период', max_digits=15, decimal_places=2)
     received_contributions_total = models.DecimalField(null=True, blank=True, verbose_name='Поступило взносов, всего', max_digits=15, decimal_places=2)

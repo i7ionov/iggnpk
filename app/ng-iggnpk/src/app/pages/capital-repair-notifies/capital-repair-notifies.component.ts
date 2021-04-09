@@ -157,6 +157,16 @@ export class CapitalRepairNotifiesComponent implements OnInit {
     });
   }
 
+  fullNameColumn_calculateCellValue(rowData) {
+    let text = '';
+    if (rowData.last_contrib) {
+      rowData.last_contrib.mistakes.forEach(function (m) {
+        text = text + m.text + '. '
+      });
+    }
+
+    return text;
+  }
 
   exportToExcel() {
     const params = '?filter=' + JSON.stringify(this.dataGrid.instance.getCombinedFilter());
@@ -164,11 +174,13 @@ export class CapitalRepairNotifiesComponent implements OnInit {
     this.notifyService.exportToExcel(params).subscribe(res => {
       const result = alert('<i>Задача на експорт в Эксель поставлена в обработку.<br>' +
         'Файл будет направлен по электронной почте.</i>', 'Формирование Эксель файла');
-      result.then(() => {});
+      result.then(() => {
+      });
     }, error => {
       const result = alert('<i>Задача на експорт в Эксель завершилась ошибкой. <br>' +
         'Обратитесь к системному администратору.</i>', 'Ошибка');
-      result.then(() => {});
+      result.then(() => {
+      });
     });
 
   }

@@ -24,23 +24,11 @@ class ContributionsInformationMistakeSerializer(DynamicFieldsModelSerializer):
 
 
 class ContributionsInformationMinimalSerializer(DynamicFieldsModelSerializer):
-
     mistakes = ContributionsInformationMistakeSerializer(required=False, read_only=True, many=True)
-
+    status = StatusSerializer(required=False, read_only=True)
     class Meta:
         model = ContributionsInformation
         fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        # Don't pass the 'fields' arg up to the superclass
-        exclude = kwargs.pop('exclude', None)
-
-        # Instantiate the superclass normally
-        super(DynamicFieldsModelSerializer, self).__init__(*args, **kwargs)
-
-        if exclude is not None:
-            for field in exclude:
-                self.fields.pop(field)
 
 
 class NotifySerializer(DynamicFieldsModelSerializer):
@@ -49,7 +37,7 @@ class NotifySerializer(DynamicFieldsModelSerializer):
     house = HouseSerializer(partial=True, read_only=True)
     files = FileSerializer(partial=True, many=True, read_only=True)
     status = StatusSerializer(partial=True, read_only=True)
-    last_contrib = ContributionsInformationMinimalSerializer(read_only=True)
+    last_contrib = ContributionsInformationMinimalSerializer(partial=True, read_only=True)
 
     class Meta:
         model = Notify
