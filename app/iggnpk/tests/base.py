@@ -15,3 +15,4 @@ class BaseTest(TestCase):
         self.admin_token, created = Token.objects.get_or_create(user=self.admin)
         self.uk = authenticate(username='uk', password='123')
         self.uk_token, created = Token.objects.get_or_create(user=self.uk)
+        settings.EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'

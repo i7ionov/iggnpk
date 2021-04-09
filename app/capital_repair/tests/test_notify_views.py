@@ -1,5 +1,6 @@
 import time
 import datetime
+from unittest.mock import patch
 
 from django.test import override_settings
 
@@ -619,7 +620,8 @@ class NotifiesGenerateActsViewSetTest(BaseTest):
     @override_settings(CELERY_EAGER_PROPAGATES_EXCEPTIONS=True,
                        CELERY_ALWAYS_EAGER=True,
                        BROKER_BACKEND='memory')
-    def test_response_200_object(self):
+    @patch('capital_repair.acts.Act.zip_acts')
+    def test_response_200_object(self, mock):
         client = APIClient(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
         response = client.get(f'{endpoint_url}generate_acts/', {})
         self.assertEqual(response.status_code, 200)
