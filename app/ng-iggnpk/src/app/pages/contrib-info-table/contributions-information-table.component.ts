@@ -139,16 +139,7 @@ export class ContributionsInformationTableComponent implements OnInit {
         onClick: this.refreshDataGrid.bind(this)
       }
     })
-    if (this.comment_visibility) {
-      e.toolbarOptions.items.unshift({
-        location: 'after',
-        widget: 'dxButton',
-        options: {
-          text: 'Акты',
-          onClick: this.exportActs.bind(this)
-        }
-      });
-    }
+
   }
 
   exportActs() {
