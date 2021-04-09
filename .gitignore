@@ -4,4 +4,4 @@ app/venv/
 app/ng-iggnpk/node_modules/
 app/iggnpk/local_settings.py
 **/migrations/
-
+app/static/admin/

@@ -1,5 +1,6 @@
 from datetime import datetime, date
-def get_value(item, field):
+
+def get_value(item, field, to_string=True, separator='.'):
     """
     Метод позволяет получить строковое значение у объекта item, хранящееся в поле field.
     :param item: Объект
@@ -7,14 +8,22 @@ def get_value(item, field):
     :return: Строковое значение поля
     """
     val = item
-    for p in str(field).split('.'):
+    for p in str(field).split(separator):
         if val is None:
             continue
         # print("От %s берем %s" % (val, p))
-        val = val.__getattribute__(p)
+        if hasattr(val, p):
+            val = val.__getattribute__(p)
+        else:
+            return None
     if val is None:
         return None
-    return datetime_handler(val)
+    if to_string:
+        return datetime_handler(val)
+    else:
+        return val
+
+
 
 
 def datetime_handler(obj):

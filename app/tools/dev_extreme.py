@@ -2,6 +2,8 @@ import simplejson as json
 from datetime import datetime
 from django.db.models import Q
 
+from tools.get_value import get_value
+
 
 def filtered_query(request_GET, query, distinct_field=None):
     if 'skip' in request_GET:
@@ -140,24 +142,25 @@ def populate_group_category(request_GET, queryset):
             for item in items:
                 year = -1
                 month = -1
-                if hasattr(item, selector) and item.__getattribute__(selector):
+                if get_value(item, selector, False, '__'):
+                    value = get_value(item, selector, False, '__')
                     for y in range(0, len(result)):
-                        if result[y]['key'] == item.__getattribute__(selector).year:
+                        if result[y]['key'] == value.year:
                             year = y
                             break
                     if year == -1:
                         year = len(result)
-                        result.append({'key': item.__getattribute__(selector).year, 'items': []})
+                        result.append({'key': value.year, 'items': []})
                     for m in range(0, len(result[year]['items'])):
-                        if result[year]['items'][m]['key'] == item.__getattribute__(selector).month:
+                        if result[year]['items'][m]['key'] == value.month:
                             month = m
                             break
                     if month == -1:
                         month = len(result[year]['items'])
-                        result[year]['items'].append({'key': item.__getattribute__(selector).month, 'items': []})
+                        result[year]['items'].append({'key': value.month, 'items': []})
 
                     result[year]['items'][month]['items'].append(
-                        {'key': item.__getattribute__(selector).day, 'items': None})
+                        {'key': value.day, 'items': None})
     else:
         for item in items.values(selector):
             result.append({'key': item[selector], 'items': None, 'count': 1})
