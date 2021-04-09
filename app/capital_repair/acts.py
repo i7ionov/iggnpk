@@ -67,15 +67,15 @@ class Act:
                         mistakes.append(mistake.full_text)
                     if contrib_info.mistakes.count() > 0:
                         notifies.append(notify)
-                mistakes = set(mistakes)
-                if len(mistakes) == 0:
-                    continue
-                mistakes_text = ', '.join(mistakes) + '.'
-                mistakes_text = mistakes_text.replace('{reporting_quarter_date}',
+            mistakes = set(mistakes)
+            if len(mistakes) == 0:
+                continue
+            mistakes_text = ', '.join(mistakes) + '.'
+            mistakes_text = mistakes_text.replace('{reporting_quarter_date}',
                                                       date.russian_date(Act.reporting_quarter_date()))
-                mistakes_text = mistakes_text.replace('{last_reporting_date}',
-                                                      date.russian_date(Act.last_reporting_date))
-                contexts.append({'date': date.russian_date(datetime.now()),
+            mistakes_text = mistakes_text.replace('{last_reporting_date}',
+                                                      date.russian_date(Act.last_reporting_date()))
+            contexts.append({'date': date.russian_date(datetime.now()),
                        'organization': org,
                        'reporting_quarter_date': date.russian_date(Act.reporting_quarter_date()),
                        'year': datetime.now().year,
