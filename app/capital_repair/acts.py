@@ -27,7 +27,7 @@ class Act:
     def is_not_in_reporting_period(date):
         """Определяет, относится ли эта дата к отчетному периоду. True - не относится"""
         month = Act.report_month()
-        return date < (datetime(datetime.now().year, month, 1) + relativedelta(months=-1)).date()
+        return date < (datetime(datetime.now().year, month, 1) + relativedelta(months=-1))
 
     @staticmethod
     def reporting_quarter_date():

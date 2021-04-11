@@ -188,6 +188,21 @@ class ContribInfoCreateViewSetTest(BaseTest):
         self.assertTrue(response.status_code, 200)
         self.assertTrue(response.data['id'], ContributionsInformation.objects.last())
 
+    def test_sets_as_last_contrib_in_notify(self):
+        notify = mixer.blend(Notify, organization=self.uk.organization)
+        old_contrib = mixer.blend(ContributionsInformation, notify=notify, last_notify=notify)
+        client = APIClient(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
+        json_data = {
+            "id": 0,
+            "notify": {"id": notify.id},
+            "status": {"id": 1},
+            "files": [],
+            "mistakes": []
+        }
+        response = client.post(f'{endpoint_url}', json_data, format='json')
+        notify = Notify.objects.get(pk=notify.pk)
+        self.assertEqual(notify.last_contrib.pk, response.data['id'])
+
     def test_needs_authentification(self):
         client = APIClient()
         response = client.post(f'{endpoint_url}', {})

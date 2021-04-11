@@ -191,6 +191,12 @@ class ContributionsInformationViewSet(DevExtremeViewSet):
                 return Response('Неправильный статус', status=400)
             status = Status.objects.get(id=request.data['status']['id'])
             notify = Notify.objects.get(id=request.data['notify']['id'])
+            try:
+                last_contrib = notify.last_contrib
+                last_contrib.last_notify = None
+                last_contrib.save()
+            except ContributionsInformation.DoesNotExist:
+                pass
             if notify.organization.id != request.user.organization.id and not request.user.is_staff:
                 return Response({'Организация, указанная в уведомлениии, не соответствует организации пользователя'},
                                 status=400)
