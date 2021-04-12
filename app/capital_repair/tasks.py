@@ -13,7 +13,7 @@ from capital_repair.acts import Act
 from capital_repair.models import Notify, ContributionsInformationMistake
 from dictionaries.models import Organization
 from iggnpk import settings
-from tools import dev_extreme, date, export_to_excel
+from tools import dev_extreme, date_tools, export_to_excel
 
 
 @shared_task

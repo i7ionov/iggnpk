@@ -14,7 +14,7 @@ from django.http import HttpResponse
 from capital_repair.tasks import send_acts, generate_excel
 from dictionaries.serializers import UserSerializer
 from iggnpk import settings
-from tools import date
+from tools import date_tools
 from tools.export_to_excel import export_to_excel
 from tools.history_serializer import HistorySerializer
 from tools.permissions import ModelPermissions

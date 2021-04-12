@@ -1,8 +1,8 @@
-from datetime import datetime
+from datetime import date
 from dateutil.relativedelta import relativedelta
 from capital_repair.models import Notify, ContributionsInformationMistake, ContributionsInformation
 from dictionaries.models import Organization
-from tools import dev_extreme, date
+from tools import dev_extreme, date_tools
 from iggnpk import settings
 from docxtpl import DocxTemplate
 import io
@@ -13,36 +13,37 @@ class Act:
     @staticmethod
     def report_month():
         """Возвращает месяц, до начала которого должны были подать отчет о взносах: январь, апрель, июль или октябрь"""
-        if datetime.now() < datetime(datetime.now().year, 3, 20):
+        if date.today() < date(date.today().year, 3, 20):
             month = 1
-        elif datetime.now() < datetime(datetime.now().year, 6, 20):
+        elif date.today() < date(date.today().year, 6, 20):
             month = 4
-        elif datetime.now() < datetime(datetime.now().year, 9, 20):
+        elif date.today() < date(date.today().year, 9, 20):
             month = 7
         else:
             month = 10
         return month
 
     @staticmethod
-    def is_not_in_reporting_period(date):
+    def is_not_in_reporting_period(d):
         """Определяет, относится ли эта дата к отчетному периоду. True - не относится"""
         month = Act.report_month()
-        return date < (datetime(datetime.now().year, month, 1) + relativedelta(months=-1))
+        return d < (date(date.today().year, month, 1) + relativedelta(months=-1))
 
     @staticmethod
     def reporting_quarter_date():
         """Возвращает дату начала отчетного периода"""
         month = Act.report_month()
-        return datetime(datetime.now().year, month, 20) + relativedelta(months=-1)
+        return date(date.today().year, month, 20) + relativedelta(months=-1)
 
     @staticmethod
     def last_reporting_date():
         """Возвращает дату окончания отчетного периода"""
         month = Act.report_month()
-        return datetime(datetime.now().year, month, 1)
+        return date(date.today().year, month, 1)
 
     @staticmethod
-    def generate_acts_by_notifies(request_GET):
+    def generate_act_contexts(request_GET):
+        """Создает массив данных (контекстов) для последующей подстановки в темплейты актов"""
         contexts = []
         queryset = Notify.objects.all()
         queryset, total_queryset, total_count = dev_extreme.filtered_query(request_GET, queryset)
@@ -72,13 +73,13 @@ class Act:
                 continue
             mistakes_text = ', '.join(mistakes) + '.'
             mistakes_text = mistakes_text.replace('{reporting_quarter_date}',
-                                                      date.russian_date(Act.reporting_quarter_date()))
+                                                  date_tools.russian_date(Act.reporting_quarter_date()))
             mistakes_text = mistakes_text.replace('{last_reporting_date}',
-                                                      date.russian_date(Act.last_reporting_date()))
-            contexts.append({'date': date.russian_date(datetime.now()),
+                                                  date_tools.russian_date(Act.last_reporting_date()))
+            contexts.append({'date': date_tools.russian_date(date.today()),
                        'organization': org,
-                       'reporting_quarter_date': date.russian_date(Act.reporting_quarter_date()),
-                       'year': datetime.now().year,
+                       'reporting_quarter_date': date_tools.russian_date(Act.reporting_quarter_date()),
+                       'year': date.today().year,
                        'notifies': notifies,
                        'paragraph': paragraph,
                        'mistakes_text': mistakes_text})
@@ -87,9 +88,8 @@ class Act:
 
     @staticmethod
     def zip_acts(request_GET, mail):
-        print('called')
         zip_file = zipfile.ZipFile(os.path.join(settings.MEDIA_ROOT, 'temp', f'export_{mail}.zip'), "w")
-        contexts = Act.generate_acts_by_notifies(request_GET)
+        contexts = Act.generate_act_contexts(request_GET)
         for context in contexts:
             doc = DocxTemplate(os.path.join(settings.MEDIA_ROOT, 'templates', 'act_backend.docx'))
             doc.render(context)
