@@ -14,3 +14,4 @@ xlrd==1.2.0
 mixer
 openpyxl==3.0.5
 freezegun
+sentry-sdk==1.0.0
