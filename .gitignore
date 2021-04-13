@@ -3,5 +3,6 @@ app/media/
 app/venv/
 app/ng-iggnpk/node_modules/
 app/iggnpk/local_settings.py
+app/iggnpk/prod_settings.py
 **/migrations/
 app/static/admin/
