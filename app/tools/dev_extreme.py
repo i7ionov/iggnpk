@@ -2,6 +2,7 @@ import simplejson as json
 from datetime import datetime
 from django.db.models import Q
 
+from tools.date_tools import normalize_date
 from tools.get_value import get_value
 
 
@@ -45,7 +46,6 @@ def filtered_query(request_GET, query, distinct_field=None):
 
 def build_q_object(filter_request):
     """
-    :param query: QuerySet
     :param filter_request: [
                             ["id","=",1],
                             "and",
@@ -90,22 +90,9 @@ def build_q_object(filter_request):
         else:
             if type(a) is str:
                 a = a.replace('.', '__')
-                try:
-                    temp = datetime.strptime(str(temp), '%Y/%m/%d').strftime('%Y-%m-%d')
-                except ValueError:
-                    pass
-                if operator == 'contains':
-                    a = a + '__icontains'
-                elif operator == '<':
-                    a = a + '__lt'
-                elif operator == '<=':
-                    a = a + '__lte'
-                elif operator == '>':
-                    a = a + '__gt'
-                elif operator == '>=':
-                    a = a + '__gte'
-                elif operator == '<>':
-                    a = a + '__ne'
+                temp = normalize_date(temp)
+                a = add_operator(a, operator)
+
                 return Q(**{a: temp})
             else:
                 if operator == 'and':
@@ -114,6 +101,13 @@ def build_q_object(filter_request):
                     result = result | temp
                 operator = None
     return result
+
+
+def add_operator(field, operator):
+    operators = {'contains': '__icontains', '<': '__lt', '<=': '__lte', '>': '__gt', '>=': '__gte', '<>': '__ne' }
+    if operator in operators.keys():
+        return field + operators[operator]
+    else: return field
 
 
 def populate_group_category(request_GET, queryset):

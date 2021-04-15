@@ -1,10 +1,12 @@
-from django.db.models import Avg
+from django.db.models import Avg, Q
+from mixer.backend.django import mixer
 
 from dictionaries.models import Organization
 from capital_repair.models import ContributionsInformation, Notify
 
 from iggnpk.tests.base import BaseTest
 from tools import dev_extreme
+from tools.dev_extreme import build_q_object
 
 
 class FilteredQueryTest(BaseTest):
@@ -30,6 +32,73 @@ class FilteredQueryTest(BaseTest):
         full_query.aggregate(Avg('received_contributions_total'))
 
     def test_distincted_by_id(self):
-        request = self.factory.get('/?filter=[["mistakes__text","contains","Ошибка 1"], "or", ["mistakes__text","contains","Ошибка 2"]]')
+        request = self.factory.get(
+            '/?filter=[["mistakes__text","contains","Ошибка 1"], "or", ["mistakes__text","contains","Ошибка 2"]]')
         paged_qury, full_query, count = dev_extreme.filtered_query(request.GET, ContributionsInformation.objects.all())
         self.assertEqual(full_query.count(), 2)
+
+    def test_cut_dates_with_time(self):
+        contrib = mixer.blend(ContributionsInformation, date='2020-01-01')
+        request = self.factory.get('/?filter=["date","=","2020-01-01T19:00:00.000Z"]')
+        paged_qury, full_query, count = dev_extreme.filtered_query(request.GET, ContributionsInformation.objects.all())
+        self.assertGreater(full_query.count(), 0)
+
+
+class BuildQObjectTest(BaseTest):
+    def test_accept_contains(self):
+        filter_request = ["id", "=", 1]
+        self.assertEqual(Q(**{'id': 1}), build_q_object(filter_request))
+
+    def test_accept_lt(self):
+        filter_request = ["id", "<", 1]
+        self.assertEqual(Q(**{'id__lt': 1}), build_q_object(filter_request))
+
+    def test_accept_lte(self):
+        filter_request = ["id", "<=", 1]
+        self.assertEqual(Q(**{'id__lte': 1}), build_q_object(filter_request))
+
+    def test_accept_gt(self):
+        filter_request = ["id", ">", 1]
+        self.assertEqual(Q(**{'id__gt': 1}), build_q_object(filter_request))
+
+    def test_accept_gte(self):
+        filter_request = ["id", ">=", 1]
+        self.assertEqual(Q(**{'id__gte': 1}), build_q_object(filter_request))
+
+    def test_accept_ne(self):
+        filter_request = ["id", "<>", 1]
+        self.assertEqual(Q(**{'id__ne': 1}), build_q_object(filter_request))
+
+    def test_accept_complicated_filter(self):
+        filter_request = [
+            ["id", "=", 1],
+            "and",
+            ["!", ["doc_number", "=", "2664Л-1"]],
+            "and",
+            [
+                [
+                    ["doc_date", ">=", "2015/09/29"],
+                    "and",
+                    ["doc_date", "<", "2015/09/30"]
+                ],
+                "or",
+                [
+                    ["doc_date", ">=", "2017/01/01"],
+                    "and",
+                    ["doc_date", "<", "2018/01/01"]
+                ]
+            ]
+        ]
+        q = Q(**{'id': 1}) & \
+            ~Q(**{'doc_number': '2664Л-1'}) & \
+            (
+                (
+                        Q(**{'doc_date__gte': '2015-09-29'}) &
+                        Q(**{'doc_date__lt': '2015-09-30'})
+                ) |
+                (
+                        Q(**{'doc_date__gte': '2017-01-01'}) &
+                        Q(**{'doc_date__lt': '2018-01-01'})
+                )
+            )
+        self.assertEqual(q, build_q_object(filter_request))
