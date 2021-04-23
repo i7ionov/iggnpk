@@ -24,7 +24,18 @@ def get_value(item, field, to_string=True, separator='.'):
         return val
 
 
-
+def set_value(item, field, value, separator='.'):
+    val = item
+    for p in str(field).split(separator):
+        if val is None:
+            continue
+        if hasattr(val, p):
+            val = val.__getattribute__(p)
+        else:
+            return None
+    if val is None:
+        return None
+    val.__setattr__(p, value)
 
 def datetime_handler(obj):
     """Приводит дату в формат %d.%m.%Y"""

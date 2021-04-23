@@ -1,28 +1,31 @@
 import os
+from datetime import date
 
 import openpyxl
 from django.db.models import Sum
 
 from capital_repair.models import ContributionsInformation
 from iggnpk import settings
+from tools.date_tools import normalize_date
+from tools.get_value import get_value
 
 
 class CrReportItem:
-    fields = ['total',
-              'tsj',
-              'jk',
-              'uk',
-              'ro']
+    fields = {'total': None,
+              'tsj': ['ТСЖ', 'ТСН'],
+              'jk': ['ЖК', 'ЖСК'],
+              'uk': ['УК', 'ИП'],
+              'ro': ['РО']}
 
     def __init__(self, **params):
-        for field in self.fields:
+        for field in self.fields.keys():
             if field in params and params[field]:
                 self.__setattr__(field, params[field])
             else:
                 self.__setattr__(field, 0)
 
     def __sub__(self, other):
-        for field in self.fields:
+        for field in self.fields.keys():
             if self.__getattribute__(field) is None:
                 self.__setattr__(field, 0)
 
@@ -46,24 +49,40 @@ class CrReport:
               'credit',
               'funds_on_special_deposit',
               'fund_balance']
-    assessed_contributions_total = CrReportItem()
-    assessed_contributions_current = CrReportItem()
-    received_contributions_total = CrReportItem()
-    received_contributions_current = CrReportItem()
-    delta_total = CrReportItem()
-    funds_spent = CrReportItem()
-    credit = CrReportItem()
-    funds_on_special_deposit = CrReportItem()
-    fund_balance = CrReportItem()
+    item_fields = {'total': None,
+              'tsj': ['ТСЖ', 'ТСН'],
+              'jk': ['ЖК', 'ЖСК'],
+              'uk': ['УК', 'ИП'],
+              'ro': ['РО']}
+    assessed_contributions_total = {}
+    assessed_contributions_current = {}
+    received_contributions_total = {}
+    received_contributions_current = {}
+    delta_total = {}
+    funds_spent = {}
+    funds_spent_in_last_year = {}
+    credit = {}
+    funds_on_special_deposit = {}
+    fund_balance = {}
+
+    def __init__(self):
+        for field in self.fields:
+            for item_field in self.item_fields:
+                self.__getattribute__(field)[item_field] = 0
 
 
-def create_report():
+def create_report(date_start, date_end):
+    date_start = normalize_date(date_start)
+    date_end = normalize_date(date_end)
     report = CrReport()
-    wb = openpyxl.load_workbook(os.path.join(settings.MEDIA_ROOT, 'templates', 'cr_report.xlsx'))
-    ws = wb.worksheets[0]
-    query = ContributionsInformation.objects.filter(date__range=('2020-09-01', '2020-12-31'), status_id=3) # TODO: тут выбор даты должен быть
+    query = ContributionsInformation.objects.filter(date__range=(date_start, date_end), status_id=3)
     for field in CrReport.fields:
-        report.__getattribute__(field).total = query.aggregate(Sum(field))[field+'__sum']
+        for item_field, value in CrReport.item_fields.items():
+            if value:
+                report.__getattribute__(field)[item_field] = query.filter(notify__organization__type__text__in=value) \
+                    .aggregate(Sum(field))[field + '__sum']
+            else:
+            report.__getattribute__(field)[''] = query.aggregate(Sum(field))[field+'__sum']
         report.__getattribute__(field).tsj = query.filter(notify__organization__type__text__in=['ТСЖ', 'ТСН'])\
             .aggregate(Sum(field))[field+'__sum']
         report.__getattribute__(field).jk = query.filter(notify__organization__type__text__in=['ЖК', 'ЖСК']) \
@@ -72,7 +91,26 @@ def create_report():
             .aggregate(Sum(field))[field+'__sum']
         report.__getattribute__(field).ro = query.filter(notify__organization__type__text__in=['РО']) \
             .aggregate(Sum(field))[field+'__sum']
+    date_start = date(date.today().year-1, 1, 1)
+    date_end = date(date.today().year-1, 12, 31)
+    query = ContributionsInformation.objects.filter(date__range=(date_start, date_end), status_id=3)
 
+    report.__getattribute__(field).total = query.aggregate(Sum(field))[field + '__sum']
+    report.__getattribute__(field).tsj = query.filter(notify__organization__type__text__in=['ТСЖ', 'ТСН']) \
+        .aggregate(Sum(field))[field + '__sum']
+    report.__getattribute__(field).jk = query.filter(notify__organization__type__text__in=['ЖК', 'ЖСК']) \
+        .aggregate(Sum(field))[field + '__sum']
+    report.__getattribute__(field).uk = query.filter(notify__organization__type__text__in=['УК', 'ИП']) \
+        .aggregate(Sum(field))[field + '__sum']
+    report.__getattribute__(field).ro = query.filter(notify__organization__type__text__in=['РО']) \
+        .aggregate(Sum(field))[field + '__sum']
+
+    return report
+
+
+def report_to_excel(report):
+    wb = openpyxl.load_workbook(os.path.join(settings.MEDIA_ROOT, 'templates', 'cr_report.xlsx'))
+    ws = wb.worksheets[0]
     a = report.assessed_contributions_total
     b = report.assessed_contributions_current
     c = report.received_contributions_total

@@ -263,3 +263,8 @@ class ContributionsInformationMistakeViewSet(DevExtremeViewSet):
     queryset = ContributionsInformationMistake.objects.all()
     serializer_class = ContributionsInformationMistakeSerializer
     lookup_fields = ['text']
+
+
+class DashboardViewSet(viewsets.ViewSet):
+    def general(self, request):
+        pass
