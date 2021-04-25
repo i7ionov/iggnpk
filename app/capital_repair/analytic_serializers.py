@@ -21,3 +21,4 @@ class CrReportSerializer(serializers.Serializer):
     fund_balance_total = serializers.DictField()
     fund_balance_total_and_current = serializers.DictField()
 
+

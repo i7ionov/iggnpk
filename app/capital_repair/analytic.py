@@ -14,6 +14,11 @@ from tools.get_value import get_value
 def to_fixed(numObj, digits=0):
     return f"{numObj:.{digits}f}"
 
+class CrReportItem:
+    def __init__(self, id, verbose_name, value):
+        self.id = id
+        self.verbose_name = verbose_name
+        self.value = value
 
 class CrReport:
     _fields = ['assessed_contributions_total',
@@ -42,8 +47,8 @@ class CrReport:
            по начало отчетного периода"""
         result = {}
         for sub_field in self._sub_fields:
-            total = self._report['assessed_contributions_total'][sub_field]
-            current = self._report['assessed_contributions_current'][sub_field]
+            total = self._report['assessed_contributions_total'][sub_field] or 0
+            current = self._report['assessed_contributions_current'][sub_field] or 0
             result[sub_field] = (total - current) / 1000000
         return result
 
@@ -53,8 +58,8 @@ class CrReport:
            капитального ремонта по начало отчетного периода"""
         result = {}
         for sub_field in self._sub_fields:
-            total = self._report['received_contributions_total'][sub_field]
-            current = self._report['received_contributions_current'][sub_field]
+            total = self._report['received_contributions_total'][sub_field] or 0
+            current = self._report['received_contributions_current'][sub_field] or 0
             result[sub_field] = (total - current) / 1000000
         return result
 
@@ -64,8 +69,8 @@ class CrReport:
            по начало отчетного периода"""
         result = {}
         for sub_field in self._sub_fields:
-            assessed = self.assessed_contributions_total[sub_field]
-            received = self.received_contributions_total[sub_field]
+            assessed = self.assessed_contributions_total[sub_field] or 1
+            received = self.received_contributions_total[sub_field] or 0
             result[sub_field] = (received * 100) / assessed
         return result
 
@@ -74,7 +79,7 @@ class CrReport:
         """Начислено взносов на капитальный ремонт с начала отчетного периода"""
         result = {}
         for sub_field in self._sub_fields:
-            current = self._report['assessed_contributions_current'][sub_field]
+            current = self._report['assessed_contributions_current'][sub_field] or 0
             result[sub_field] = current / 1000000
         return result
 
@@ -83,7 +88,7 @@ class CrReport:
         """Собрано средств по взносам на капитальный ремонт с начала отчетного периода"""
         result = {}
         for sub_field in self._sub_fields:
-            current = self._report['received_contributions_current'][sub_field]
+            current = self._report['received_contributions_current'][sub_field] or 0
             result[sub_field] = current / 1000000
         return result
 
@@ -92,8 +97,8 @@ class CrReport:
         """Уровень собираемости средств собственников с начала отчетного периода"""
         result = {}
         for sub_field in self._sub_fields:
-            assessed = self.assessed_contributions_current[sub_field]
-            received = self.received_contributions_current[sub_field]
+            assessed = self.assessed_contributions_current[sub_field] or 1
+            received = self.received_contributions_current[sub_field] or 0
             result[sub_field] = (received * 100) / assessed
         return result
 
@@ -102,9 +107,9 @@ class CrReport:
         """Совокупная задолженность собственников по уплате взносов на капитальный ремонт на отчетную дату"""
         result = {}
         for sub_field in self._sub_fields:
-            assessed = self.assessed_contributions_total[sub_field]
-            fund_balance = self._report['fund_balance'][sub_field]
-            last_year_funds_spent = self.last_year_funds_spent[sub_field]
+            assessed = self.assessed_contributions_total[sub_field] or 0
+            fund_balance = self._report['fund_balance'][sub_field] or 0
+            last_year_funds_spent = self.last_year_funds_spent[sub_field] or 0
             result[sub_field] = (assessed - fund_balance - last_year_funds_spent) / 1000000
         return result
 
@@ -113,9 +118,9 @@ class CrReport:
         """Остаток денежных средств на начало отчетного периода"""
         result = {}
         for sub_field in self._sub_fields:
-            received = self.received_contributions_current[sub_field]
-            fund_balance = self._report['fund_balance'][sub_field]
-            last_year_funds_spent = self.last_year_funds_spent[sub_field]
+            received = self.received_contributions_current[sub_field] or 0
+            fund_balance = self._report['fund_balance'][sub_field] or 0
+            last_year_funds_spent = self.last_year_funds_spent[sub_field] or 0
             result[sub_field] = (fund_balance - received + last_year_funds_spent) / 1000000
         return result
 
@@ -124,7 +129,7 @@ class CrReport:
         """Остаток денежных средств на начало отчетного периода"""
         result = {}
         for sub_field in self._sub_fields:
-            fund_balance = self._report['fund_balance'][sub_field]
+            fund_balance = self._report['fund_balance'][sub_field] or 0
             result[sub_field] = fund_balance / 1000000
         return result
 
@@ -179,6 +184,19 @@ class CrReport:
         date_end = date(date.today().year - 1, 12, 31)
         query = ContributionsInformation.objects.filter(date__range=(date_start, date_end), status_id=3)
         self._populate_last_year_funds_spent_dict(query)
+
+    def __iter__(self):
+        for f in dir(self):
+            if f.startswith('_'):
+                continue
+            value = self.__getattribute__(f)
+            if type(value) == dict:
+                for k, v in value.items():
+                    yield CrReportItem(f'{f}__{k}', f'field {f}__{k}', v)
+                    # yield {'name': f'{f}__{k}', 'verbose_name:': f'field {f}__{k}', 'value': v}
+
+
+
 
 
 

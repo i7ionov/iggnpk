@@ -1,6 +1,898 @@
 <script src="home.component.ts"></script><h2 class="content-block">Главная</h2>
 <div class="content-block">
   <div class="dx-card responsive-paddings">
+    <div class="dx-fieldset" style="width: 200px">
+      <div>Период</div>
+      <div class="dx-field">
+        <div class="dx-field-label">С</div>
+        <div class="dx-field-value">
+          <dx-date-box
+            [value]="date_start"
+            (onValueChanged)="update()"
+            type="date">
+          </dx-date-box>
+        </div>
+      </div>
+      <div class="dx-field">
+        <div class="dx-field-label">По</div>
+        <div class="dx-field-value">
+          <dx-date-box
+            [(value)]="date_end"
+            (onValueChanged)="update()"
+            type="date">
+          </dx-date-box>
+        </div>
+      </div>
+    </div>
+    <table border=1 cellpadding=2 cellspacing=0
+    >
+      <col width=64>
+      <col width=301>
+      <col width=164>
+      <col>
+      <col width=100>
+      <col width=100>
+      <tr>
+        <td colspan=4 width=919>I. Сведения о МКД, включенных в региональную программу
+          капитального ремонта общего имущества МКД
+        </td>
+        <td width=100><span
+        > </span>-
+        </td>
+        <td width=100>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td rowspan=9 width=301>Многоквартирные дома, включенные в региональную
+          программу капитального ремонта
+        </td>
+        <td colspan=2 width=554>На
+          счете (счетах) регионального оператора
+        </td>
+        <td>ед.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td colspan=2 width=554>На
+          специальных счетах, всего
+        </td>
+        <td>ед.</td>
+        <td>{{dataSource.mkd_in_reg_program.total}}</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td rowspan=4 width=164>Из них на специальных счетах, владельцем которых
+          является:
+        </td>
+        <td>Региональный оператор
+        </td>
+        <td>ед.</td>
+        <td>{{dataSource.mkd_in_reg_program.ro}}</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Товарищество собственников жилья
+        </td>
+        <td>ед.</td>
+        <td>{{dataSource.mkd_in_reg_program.tsj}}</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Жилищный кооператив
+        </td>
+        <td>ед.</td>
+        <td>{{dataSource.mkd_in_reg_program.jk}}</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>Управляющая организация
+        </td>
+        <td>ед.</td>
+        <td>{{dataSource.mkd_in_reg_program.uk}}</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td colspan=2 width=554>Не
+          выбран или не реализован способ формирования ФКР
+        </td>
+        <td>ед.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td rowspan=2 width=164>В
+          том числе в отношении которых:
+        </td>
+        <td>ОГЖН проинформировали ОМС и РО
+        </td>
+        <td>ед.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>не наступил срок выбора способа формирования ФКР
+        </td>
+        <td>ед.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td rowspan=9 width=301>Общая площадь многоквартирных домов, включенных
+          в региональную программу капитального ремонта
+        </td>
+        <td colspan=2 width=554>На
+          счете (счетах) регионального оператора
+        </td>
+        <td>тыс. кв. м.</td>
+        <td>{{dataSource.total_area.total}}</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td colspan=2 width=554>На
+          специальных счетах, всего
+        </td>
+        <td>тыс. кв. м.</td>
+        <td>{{dataSource.total_area.total}}</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td rowspan=4 width=164>Из них на специальных счетах, владельцем которых
+          является:
+        </td>
+        <td>Региональный оператор
+        </td>
+        <td>тыс. кв. м.</td>
+        <td>{{dataSource.total_area.ro}}</td>
+      </tr>
+      <tr>
+        <td>13</td>
+        <td>Товарищество собственников жилья
+        </td>
+        <td>тыс. кв. м.</td>
+        <td>{{dataSource.total_area.tsj}}</td>
+      </tr>
+      <tr>
+        <td>14</td>
+        <td>Жилищный кооператив
+        </td>
+        <td>тыс. кв. м.</td>
+        <td>{{dataSource.total_area.jk}}</td>
+      </tr>
+      <tr>
+        <td>15</td>
+        <td>Управляющая организация
+        </td>
+        <td>тыс. кв. м.</td>
+        <td>{{dataSource.total_area.uk}}</td>
+      </tr>
+      <tr>
+        <td>16</td>
+        <td colspan=2 width=554>Не
+          выбран или не реализован способ формирования ФКР
+        </td>
+        <td>тыс. кв. м.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>17</td>
+        <td rowspan=2 width=164>В том числе в отношении которых:
+        </td>
+        <td>ОГЖН проинформировали ОМС и РО
+        </td>
+        <td>тыс. кв. м.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr height=42>
+        <td height=42>18</td>
+        <td>Не наступил срок выбора способа формирования ФКР
+        </td>
+        <td>тыс. кв. м.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan=4>II. Сведения о
+          собираемости средств собственников
+        </td>
+        <td><span
+        > </span>-
+        </td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td rowspan=6 width=301>Начислено
+          взносов на капитальный ремонт с начала действия региональной программы
+          капитального ремонта по начало отчетного периода
+        </td>
+        <td colspan=2>Всего</td>
+        <td>млн руб.</td>
+        <td>{{dataSource.assessed_contributions_total.total  | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td colspan=2>В том числе по счетам
+          регионального оператора
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.assessed_contributions_total.total  | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td rowspan=4 width=164>В
+          том числе по специальным счетам, владельцем которых является:
+        </td>
+        <td>Региональный оператор
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.assessed_contributions_total.ro  | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Товарищество собственников жилья
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.assessed_contributions_total.tsj  | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Жилищный кооператив
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.assessed_contributions_total.jk  | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>Управляющая организация
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.assessed_contributions_total.uk  | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td rowspan=6 width=301>Собрано
+          средств по взносам на капитальный ремонт с начала действия региональной
+          программы капитального ремонта по начало отчетного периода
+        </td>
+        <td colspan=2>Всего</td>
+        <td>млн руб.</td>
+        <td>{{dataSource.received_contributions_total.total | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td colspan=2>В том числе по счетам
+          регионального оператора
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.received_contributions_total.total | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td rowspan=4 width=164>В
+          том числе по специальным счетам, владельцем которых является:
+        </td>
+        <td>Региональный оператор
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.received_contributions_total.ro | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td>Товарищество собственников жилья
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.received_contributions_total.tsj | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td>Жилищный кооператив
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.received_contributions_total.jk | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td>Управляющая организация
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.received_contributions_total.uk | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>13</td>
+        <td rowspan=6 width=301>Уровень
+          собираемости средств собственников с начала действия региональной программы
+          капитального ремонта по начало отчетного периода
+        </td>
+        <td colspan=2>Всего</td>
+        <td>%</td>
+        <td>{{dataSource.level_of_fundraising_total.total | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>14</td>
+        <td colspan=2>В том числе по счетам
+          регионального оператора
+        </td>
+        <td>%</td>
+        <td>{{dataSource.level_of_fundraising_total.total | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>15</td>
+        <td rowspan=4 width=164>В
+          том числе по специальным счетам, владельцем которого является:
+        </td>
+        <td>Региональный оператор
+        </td>
+        <td>%</td>
+        <td>{{dataSource.level_of_fundraising_total.total | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>16</td>
+        <td>Товарищество собственников жилья
+        </td>
+        <td>%</td>
+        <td>{{dataSource.level_of_fundraising_total.tsj | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>17</td>
+        <td>Жилищный кооператив
+        </td>
+        <td>%</td>
+        <td>{{dataSource.level_of_fundraising_total.jk | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>18</td>
+        <td>Управляющая организация
+        </td>
+        <td>%</td>
+        <td>{{dataSource.level_of_fundraising_total.uk | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>19</td>
+        <td rowspan=6 width=301>Начислено
+          взносов на капитальный ремонт с начала отчетного периода
+        </td>
+        <td colspan=2>Всего</td>
+        <td>млн руб.</td>
+        <td>{{dataSource.assessed_contributions_current.total | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>20</td>
+        <td colspan=2>В том числе по счетам
+          регионального оператора
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.assessed_contributions_current.total | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>21</td>
+        <td rowspan=4 width=164>В
+          том числе по специальным счетам, владельцем которых является:
+        </td>
+        <td>Региональный оператор
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.assessed_contributions_current.ro | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>22</td>
+        <td>Товарищество собственников жилья
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.assessed_contributions_current.tsj | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>23</td>
+        <td>Жилищный кооператив
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.assessed_contributions_current.jk | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>24</td>
+        <td>Управляющая организация
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.assessed_contributions_current.uk | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>25</td>
+        <td rowspan=6 width=301>Собрано
+          средств по взносам на капитальный ремонт с начала отчетного периода
+        </td>
+        <td colspan=2>Всего</td>
+        <td>млн руб.</td>
+        <td>{{dataSource.received_contributions_current.total | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>26</td>
+        <td colspan=2>В том числе по счетам
+          регионального оператора
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.received_contributions_current.total | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>27</td>
+        <td rowspan=4 width=164>В
+          том числе по специальным счетам, владельцем которых является:
+        </td>
+        <td>Региональный оператор
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.received_contributions_current.ro | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>28</td>
+        <td>Товарищество собственников жилья
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.received_contributions_current.tsj | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>29</td>
+        <td>Жилищный кооператив
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.received_contributions_current.jk | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>30</td>
+        <td>Управляющая организация
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.received_contributions_current.uk | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>31</td>
+        <td rowspan=6 width=301>Уровень
+          собираемости средств собственников с начала отчетного периода
+        </td>
+        <td colspan=2>Всего</td>
+        <td>%</td>
+        <td>{{dataSource.level_of_fundraising_current.total | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>32</td>
+        <td colspan=2>В том числе по счетам
+          регионального оператора
+        </td>
+        <td>%</td>
+        <td>{{dataSource.level_of_fundraising_current.total | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>33</td>
+        <td rowspan=4 width=164>В
+          том числе по специальным счетам, владельцем которого является:
+        </td>
+        <td>Региональный оператор
+        </td>
+        <td>%</td>
+        <td>{{dataSource.level_of_fundraising_current.ro | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>34</td>
+        <td>Товарищество собственников жилья
+        </td>
+        <td>%</td>
+        <td>{{dataSource.level_of_fundraising_current.tsj | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>35</td>
+        <td>Жилищный кооператив
+        </td>
+        <td>%</td>
+        <td>{{dataSource.level_of_fundraising_current.jk | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>36</td>
+        <td>Управляющая организация
+        </td>
+        <td>%</td>
+        <td>{{dataSource.level_of_fundraising_current.uk | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td colspan=4>III. Сведения
+          о задолженности собственников по уплате взносов на капитальный ремонт
+        </td>
+        <td><span
+        > </span>-
+        </td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td rowspan=6 width=301>Совокупная
+          задолженность собственников по уплате взносов на капитальный ремонт на
+          отчетную дату
+        </td>
+        <td colspan=2>Всего</td>
+        <td>млн руб.</td>
+        <td>{{dataSource.total_debt.total | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td colspan=2>В том числе по счетам
+          регионального оператора
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.total_debt.total | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td rowspan=4 width=164>В
+          том числе по специальным счетам, владельцем которых является:
+        </td>
+        <td>Региональный оператор
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.total_debt.ro | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Товарищество собственников жилья
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.total_debt.tsj | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Жилищный кооператив
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.total_debt.jk | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>Управляющая организация
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.total_debt.uk | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td colspan=4>IV. Движение
+          денежных средств по специальным счетам
+        </td>
+        <td><span
+        > </span>-
+        </td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td rowspan=5 width=301>Остаток денежных средств на начало отчетного
+          периода
+        </td>
+        <td colspan=2>Всего</td>
+        <td>млн руб.</td>
+        <td>{{dataSource.fund_balance_total.total | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td rowspan=4 width=164>В
+          том числе по специальным счетам, владельцем которых является:
+        </td>
+        <td>Региональный оператор
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.fund_balance_total.ro | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Товарищество собственников жилья
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.fund_balance_total.tsj | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Жилищный кооператив
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.fund_balance_total.jk | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Управляющая организация
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.fund_balance_total.uk | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td rowspan=5 width=301>Поступление денежных средств в отчетном периоде
+        </td>
+        <td colspan=2>Всего</td>
+        <td>млн руб.</td>
+        <td>{{dataSource.fund_balance_total_and_current.total | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td rowspan=4 width=164>В том числе по специальным счетам, владельцем
+          которого является:
+        </td>
+        <td>Региональный оператор
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.fund_balance_total_and_current.ro | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td>Товарищество собственников жилья
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.fund_balance_total_and_current.tsj | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>Жилищный кооператив
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.fund_balance_total_and_current.jk | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td>Управляющая организация
+        </td>
+        <td>млн руб.</td>
+        <td>{{dataSource.fund_balance_total_and_current.uk | currency:'RUB':'':'.2-2':'ru'}}</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td rowspan=10 width=301>Сумма списанных денежных средств в отчетном
+          периоде
+        </td>
+        <td colspan=2>Всего, на проведение
+          капитального ремонта
+        </td>
+        <td>млн руб.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td rowspan=4 width=164>В
+          том числе по специальным счетам, владельцем которых является:
+        </td>
+        <td>Региональный оператор
+        </td>
+        <td>млн руб.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>13</td>
+        <td>Товарищество собственников жилья
+        </td>
+        <td>млн руб.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>14</td>
+        <td>Жилищный кооператив
+        </td>
+        <td>млн руб.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>15</td>
+        <td>Управляющая организация
+        </td>
+        <td>млн руб.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>16</td>
+        <td colspan=2>Иное</td>
+        <td>млн руб.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>17</td>
+        <td rowspan=4 width=164>В
+          том числе по специальным счетам, владельцем которых является:
+        </td>
+        <td>Региональный оператор
+        </td>
+        <td>млн руб.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>18</td>
+        <td>Товарищество собственников жилья
+        </td>
+        <td>млн руб.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>19</td>
+        <td>Жилищный кооператив
+        </td>
+        <td>млн руб.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>20</td>
+        <td>Управляющая организация
+        </td>
+        <td>млн руб.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>21</td>
+        <td rowspan=5 width=301>Остаток денежных средств на отчетную дату
+        </td>
+        <td colspan=2>Всего</td>
+        <td>млн руб.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>22</td>
+        <td rowspan=4 width=164>В
+          том числе по специальным счетам, владельцем которых является:
+        </td>
+        <td>Региональный оператор
+        </td>
+        <td>млн руб.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>23</td>
+        <td>Товарищество собственников жилья
+        </td>
+        <td>млн руб.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>24</td>
+        <td>Жилищный кооператив
+        </td>
+        <td>млн руб.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>25</td>
+        <td>Управляющая компания
+        </td>
+        <td>млн руб.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan=4>V. Сведения о
+          привлечении кредитов (займов) на проведение капитального ремонта
+        </td>
+        <td><span
+        > </span>-
+        </td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td rowspan=5 width=301>Сумма задолженности по кредитным договорам и
+          (или) договорам займа на проведение капитального ремонта в МКД
+        </td>
+        <td colspan=2>Всего по специальным
+          счетам
+        </td>
+        <td>млн руб.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td rowspan=4 width=164>В
+          том числе по специальным счетам, владельцем которых является:
+        </td>
+        <td>Региональный оператор
+        </td>
+        <td>млн руб.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Товарищество собственников жилья
+        </td>
+        <td>млн руб.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Жилищный кооператив
+        </td>
+        <td>млн руб.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Управляющая организация
+        </td>
+        <td>млн руб.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td rowspan=5 width=301>Количество МКД, по которым имеется задолженность
+          по кредитным договорам и (или) договорам займа на проведение капитального
+          ремонта в МКД
+        </td>
+        <td colspan=2>Всего по специальным
+          счетам
+        </td>
+        <td>ед.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td rowspan=4 width=164>В
+          том числе по специальным счетам, владельцем которых является:
+        </td>
+        <td>Региональный оператор
+        </td>
+        <td>ед.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td>Товарищество собственников жилья
+        </td>
+        <td>ед.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>Жилищный кооператив
+        </td>
+        <td>ед.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td>Управляющая организация
+        </td>
+        <td>ед.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td rowspan=5 width=301>Общая площадь МКД, по которым имеется
+          задолженность по кредитным договорам и (или) договорам займа на проведение
+          капитального ремонта в МКД
+        </td>
+        <td colspan=2>Всего по специальным
+          счетам
+        </td>
+        <td>тыс. кв. м.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td rowspan=4 width=164>В
+          том числе по специальным счетам, владельцем которых является:
+        </td>
+        <td>Региональный оператор
+        </td>
+        <td>тыс. кв. м.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>13</td>
+        <td>Товарищество собственников жилья
+        </td>
+        <td>тыс. кв. м.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>14</td>
+        <td>Жилищный кооператив
+        </td>
+        <td>тыс. кв. м.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>15</td>
+        <td>Управляющая организация
+        </td>
+        <td>тыс. кв. м.</td>
+        <td>&nbsp;</td>
+      </tr>
+
+    </table>
 
   </div>
 </div>

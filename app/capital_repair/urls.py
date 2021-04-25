@@ -23,7 +23,7 @@ router.register("notifies", views.NotifiesViewSet, basename=User)
 router.register("credit_organizations", views.CreditOrganizationsViewSet, basename=User)
 router.register("contrib_info", views.ContributionsInformationViewSet, basename=User)
 router.register("contrib_info_mistake", views.ContributionsInformationMistakeViewSet, basename=User)
-
+router.register('dashboard', views.DashboardViewSet, basename=User)
 urlpatterns = [
 
 ]

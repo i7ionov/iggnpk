@@ -1,6 +1,6 @@
 import io
 import os
-from datetime import datetime
+from datetime import datetime, date
 from io import BytesIO
 from django.contrib.auth.decorators import permission_required
 from django.db.models import Avg, Sum
@@ -20,6 +20,9 @@ from tools.history_serializer import HistorySerializer
 from tools.permissions import ModelPermissions
 from tools.serializer_tools import upd_foreign_key, upd_many_to_many
 from tools.viewsets import DevExtremeViewSet
+from .acts import Act
+from .analytic import CrReport
+from .analytic_serializers import CrReportSerializer
 from .models import CreditOrganization, Branch, Notify, Status, ContributionsInformation, ContributionsInformationMistake
 from dictionaries.models import Organization, House, File
 from .serializers import NotifySerializer, \
@@ -266,5 +269,14 @@ class ContributionsInformationMistakeViewSet(DevExtremeViewSet):
 
 
 class DashboardViewSet(viewsets.ViewSet):
-    def general(self, request):
-        pass
+    @action(detail=False)
+    def cr_report(self, request):
+        date_start = date(date.today().year, Act.report_month(), 1)
+        date_end = date.today()
+        if 'date_start' in request.GET and 'date_end' in request.GET:
+            date_start = request.GET['date_start']
+            date_end = request.GET['date_end']
+        print(date_start, date_end)
+        report = CrReport(date_start, date_end)
+        serializer = CrReportSerializer(report)
+        return Response(serializer.data)
