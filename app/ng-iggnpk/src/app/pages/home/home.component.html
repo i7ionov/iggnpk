@@ -1,10 +1,17 @@
 <script src="home.component.ts"></script><h2 class="content-block">Главная</h2>
 <div class="content-block">
   <div class="dx-card responsive-paddings">
-    <div class="dx-fieldset" style="width: 200px">
+     <dx-button
+                        stylingMode="contained"
+                        text="В Excel"
+                        type="normal"
+                        [width]="120"
+                        (onClick)="tableToExcel('reportTable', 'name', 'report.xls')">
+                    </dx-button>
+
       <div>Период</div>
-      <div class="dx-field">
-        <div class="dx-field-label">С</div>
+      <div class="dx-field" style="width: 500px">
+        <div class="dx-field-label" style="width: 30px">С</div>
         <div class="dx-field-value">
           <dx-date-box
             [value]="date_start"
@@ -12,9 +19,7 @@
             type="date">
           </dx-date-box>
         </div>
-      </div>
-      <div class="dx-field">
-        <div class="dx-field-label">По</div>
+        <div class="dx-field-label" style="width: 40px">По</div>
         <div class="dx-field-value">
           <dx-date-box
             [(value)]="date_end"
@@ -22,9 +27,9 @@
             type="date">
           </dx-date-box>
         </div>
-      </div>
+
     </div>
-    <table border=1 cellpadding=2 cellspacing=0
+    <table border=1 cellpadding=2 cellspacing=0 id="reportTable"
     >
       <col width=64>
       <col width=301>
