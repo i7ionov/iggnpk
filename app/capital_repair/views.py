@@ -260,6 +260,17 @@ class ContributionsInformationViewSet(DevExtremeViewSet):
         serializer = HistorySerializer(instance=self.get_object().history.all(), many=True)
         return Response(serializer.data)
 
+    @action(detail=False)
+    def export_to_excel(self, request):
+        if request.user.is_staff is False:
+            return Response('У вас нет соответствующих прав', status=400)
+        user = UserSerializer(request.user)
+        ids = self.filter_queryset(self.queryset).values_list('id', flat=True)
+        generate_excel.delay(request.GET, os.path.join(settings.MEDIA_ROOT, 'templates', 'contributions.xlsx'), list(ids),
+                             'capital_repair.contributionsinformation', user.data['email'])
+        return Response({},
+                        status=200)
+
 
 class ContributionsInformationMistakeViewSet(DevExtremeViewSet):
     permission_classes = [permissions.IsAuthenticated, ]

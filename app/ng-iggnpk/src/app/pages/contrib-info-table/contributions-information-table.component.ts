@@ -22,6 +22,7 @@ import {ContributionsInformationMistakeService} from "../../shared/services/cont
 import {getContent} from "../../shared/tools/contrib-info-act";
 import {environment} from "../../../environments/environment";
 import {generate} from "../../shared/tools/word";
+import {alert} from "devextreme/ui/dialog";
 
 @Component({
   selector: 'app-contributions-information-table',
@@ -130,7 +131,16 @@ export class ContributionsInformationTableComponent implements OnInit {
         onClick: this.add.bind(this)
       }
     })
-
+    if (this.comment_visibility) {
+      e.toolbarOptions.items.unshift({
+        location: 'after',
+        widget: 'dxButton',
+        options: {
+          icon: 'xlsxfile',
+          onClick: this.exportToExcel.bind(this)
+        }
+      });
+    }
     e.toolbarOptions.items.unshift({
       location: 'after',
       widget: 'dxButton',
@@ -141,7 +151,22 @@ export class ContributionsInformationTableComponent implements OnInit {
     })
 
   }
+  exportToExcel() {
+    const params = '?filter=' + JSON.stringify(this.dataGrid.instance.getCombinedFilter());
+    // window.location.href= environment.backend_url + `/api/v1/cr/notifies/export_to_excel/${params}`;
+    this.contribInfoService.exportToExcel(params).subscribe(res => {
+      const result = alert('<i>Задача на експорт в Эксель поставлена в обработку.<br>' +
+        'Файл будет направлен по электронной почте.</i>', 'Формирование Эксель файла');
+      result.then(() => {
+      });
+    }, error => {
+      const result = alert('<i>Задача на експорт в Эксель завершилась ошибкой. <br>' +
+        'Обратитесь к системному администратору.</i>', 'Ошибка');
+      result.then(() => {
+      });
+    });
 
+  }
   exportActs() {
     this.dataGrid.instance.beginCustomLoading('загрузка')
     let params = '?filter=' + JSON.stringify(this.dataGrid.instance.getCombinedFilter())
