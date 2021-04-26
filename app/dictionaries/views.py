@@ -108,6 +108,7 @@ class HouseViewSet(DevExtremeViewSet):
 
 
 class OrganizationTypeViewSet(DevExtremeViewSet):
+    permission_classes = []
     queryset = OrganizationType.objects.all()
     serializer_class = OrganizationTypeSerializer
     lookup_fields = ['text']

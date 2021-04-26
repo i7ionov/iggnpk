@@ -93,7 +93,7 @@
   </div>
   <div class="dx-field">
     <div class="dx-field-label">Тип организации</div>
-    <dx-select-box [(value)]="user.organization.type" placeholder="тип организации" [items]="orgTypes"
+    <dx-select-box [(value)]="user.organization.type" placeholder="тип организации" [dataSource]="orgTypes"
                    displayExpr="text"
                    width="100%">
       <dx-validator>
