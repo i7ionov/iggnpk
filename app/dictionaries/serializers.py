@@ -28,6 +28,7 @@ class AddressSerializer(DynamicFieldsModelSerializer):
 class HouseSerializer(DynamicFieldsModelSerializer):
     address = AddressSerializer(read_only=True)
     organization = OrganizationSerializer(required=False, read_only=True)
+    license_registry_organization = OrganizationSerializer(required=False, read_only=True)
 
     class Meta:
         model = House

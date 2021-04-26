@@ -35,8 +35,8 @@
 
   </dx-form>
 
-  <div *ngIf="value.organization" class="org">
-    По информации из реестра лицензий домом управляет: {{ value.organization.name }}, {{ value.organization.inn }}
+  <div *ngIf="value.license_registry_organization" class="org">
+    По информации из реестра лицензий домом управляет: {{ value.license_registry_organization.name }}, {{ value.license_registry_organization.inn }}
     <br>
     Включен в региональную программу: {{ value.included_in_the_regional_program | boolean }}
 
