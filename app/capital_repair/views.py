@@ -127,6 +127,8 @@ class NotifiesViewSet(DevExtremeViewSet):
                 if status.text == 'Согласовано':
                     Notify.objects.filter(house_id=house.id, status_id=3).update(status_id=4,
                                                                                  date_of_exclusion=datetime.now())
+                    house.organization = org
+                    house.save()
         else:
             status = instance.status
 

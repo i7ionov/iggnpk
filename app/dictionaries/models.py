@@ -119,6 +119,9 @@ class House(models.Model):
     address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, verbose_name='Адрес')
     organization = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True, verbose_name='Организация',
                                      blank=True)
+    license_registry_organization = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True,
+                                                      verbose_name='Организация, управляющая согласно реестру лицензий',
+                                                      blank=True, related_name='license_registry_house')
     included_in_the_regional_program = models.BooleanField(null=True, blank=True)
     date_of_inclusion = models.DateField(
         verbose_name='Дата включения МКД в Региональную программу капитального ремонта', null=True, blank=True)
@@ -126,7 +129,8 @@ class House(models.Model):
     number_of_apartments = models.IntegerField(null=True, blank=True, verbose_name='Количество квартир')
     total_area = models.FloatField(null=True, blank=True, verbose_name='Общая площадь')
     residential_premises_area = models.FloatField(null=True, blank=True, verbose_name='Общая площадь жилых помещений')
-    nonresidential_premises_area = models.FloatField(null=True, blank=True, verbose_name='Общая площадь нежилых помещений')
+    nonresidential_premises_area = models.FloatField(null=True, blank=True,
+                                                     verbose_name='Общая площадь нежилых помещений')
 
     history = HistoricalRecords()
     objects = HouseManager()

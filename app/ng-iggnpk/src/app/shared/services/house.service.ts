@@ -14,7 +14,7 @@ export class House {
   included_in_the_regional_program?: boolean;
   address?: Address;
   organization?: Organization;
-
+  license_registry_organization?: Organization;
   constructor() {
     this.id = 0;
     this.address = new Address();

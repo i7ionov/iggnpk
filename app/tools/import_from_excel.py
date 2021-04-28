@@ -108,7 +108,9 @@ def regional_program(path):
             errors += [f'Найдено несколько домов {area}, {city}, {street}, {number}']
     return errors
 
+
 def houses():
+    """Выгрузка информации из реестра лицензий"""
     f = open(os.path.join(settings.MEDIA_ROOT, 'temp', 'reestr_licensing.xlsx'),
              "wb+")  # открываем файл для записи, в режиме wb
     ufr = requests.get("https://iggn.permkrai.ru/download.php?id=1621")  # делаем запрос
@@ -136,8 +138,11 @@ def houses():
         if area == 'льская' and city == 'г. Березники':
             area = 'Березниковский городской округ'
 
-        #print(f'{area} {city} {street} {number}')
+        # print(f'{area} {city} {street} {number}')
         addr = Address.objects.filter(area__contains=area, city=city, street=street).first()
+        if addr is None:
+            print(f'Не найден адрес {area}, {city}, {street} в строке {rownum}')
+            continue
         house, created = House.objects.get_or_create(address_id=addr.id, number=number)
         # организация
         if sheet.cell(rownum, 8).value == ' ' or sheet.cell(rownum, 8).value == '':
@@ -152,10 +157,10 @@ def houses():
                 org.date_of_changind_name = datetime.now().date()
                 org.name = name
                 org.save()
-            house.organization = org
+            house.license_registry_organization = org
             house.save()
         else:
-            house.organization = None
+            house.license_registry_organization = None
             house.save()
 
         for n in Notify.objects.filter(house=house, status_id=3):
