@@ -123,6 +123,10 @@ export class CapitalRepairNotifyComponent implements OnInit {
         this.acceptButtonVisibility = false;
         this.saveButtonVisibility = false;
         this.excludeButtonVisibility = false;
+        if (user.groups.indexOf(UserGroup.Admin) != -1) {
+          this.acceptButtonVisibility = true;
+          this.saveButtonVisibility = true;
+        }
       }
     }
   }
