@@ -59,6 +59,11 @@ export class ProfileComponent implements OnInit {
           }
         );
       }
+      else {
+        console.log(this.user)
+        this.user.groups = []
+        this.old_is_active = false
+      }
     });
   }
 

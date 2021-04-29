@@ -156,21 +156,28 @@ class UserViewSet(DevExtremeViewSet):
 
     def create(self, request, *args, **kwargs):
         item = self.serializer_class(data=request.data)
-        item.is_valid(raise_exception=True)
-
+        item.is_valid()
         if item.is_valid():
             if request.data['password'] != request.data['re_password']:
                 return Response({'password': 'Пароли не совпадают'}, status=400)
             org, created = Organization.objects.get_or_create(inn=request.data['organization']['inn'])
+            groups = upd_many_to_many('groups', request, None, Group)
+            if 'is_active' not in request.data:
+                is_active = False
+            else:
+                is_active = request.data['is_active']
+            if len(groups) == 0:
+                groups.append(Group.objects.get(name='Управляющие организации'))
             if created:
                 org.name = request.data['organization']['name']
                 org.ogrn = request.data['organization']['ogrn']
                 org.type = OrganizationType.objects.get(id=request.data['organization']['type']['id'])
                 org.save()
-            User.objects.create_user(username=request.data['username'], organization=org,
-                                     password=request.data['password'], email=request.data['email']) \
-                .groups.add(Group.objects.get(name='Управляющие организации'))
-            return Response(status=200)
+            item.save(organization=org, groups=groups, is_active=is_active)
+            user = User.objects.get(id=item.instance.id)
+            user.set_password(request.data['password'])
+            user.save()
+            return Response(item.data)
         else:
             return Response(item.errors, status=400)
 

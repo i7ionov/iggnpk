@@ -49,6 +49,7 @@ class GroupSerializer(DynamicFieldsModelSerializer):
 
 class UserSerializer(DynamicFieldsModelSerializer):
     """Сериализация пользователя"""
+    #groups = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     organization = OrganizationSerializer(read_only=True)
     permissions = PermissionSerializer(many=True, read_only=True)
     groups = GroupSerializer(many=True, read_only=True)

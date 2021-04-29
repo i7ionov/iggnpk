@@ -13,7 +13,7 @@ import CustomStore from 'devextreme/data/custom_store';
 
 import {UserService} from "../../shared/services/user.service";
 import {User} from 'src/app/shared/interfaces/user';
-import { confirm } from 'devextreme/ui/dialog';
+import {confirm} from 'devextreme/ui/dialog';
 import {CapitalRepairNotifyComponent} from "../capital-repair-notify/capital-repair-notify.component";
 import {CustomStoreService} from "../../shared/services/custom-store.service";
 
@@ -23,7 +23,7 @@ import {CustomStoreService} from "../../shared/services/custom-store.service";
   styleUrls: ['./users.component.scss']
 })
 export class UsersComponent implements OnInit {
-  @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+  @ViewChild(DxDataGridComponent, {static: false}) dataGrid: DxDataGridComponent;
   dataSource: any = {};
   currentFilter: any;
 
@@ -35,33 +35,51 @@ export class UsersComponent implements OnInit {
 
   }
 
-  refreshDataGrid(){
+  refreshDataGrid() {
     this.dataGrid.instance.refresh();
   }
 
   onToolbarPreparing(e) {
-    e.toolbarOptions.items.unshift( {
+    e.toolbarOptions.items.unshift({
+      location: 'before',
+      widget: 'dxButton',
+      options: {
+        width: 200,
+        text: 'Новая запись',
+        onClick: this.add.bind(this)
+      }
+    })
+
+    e.toolbarOptions.items.unshift({
       location: 'after',
       widget: 'dxButton',
       options: {
         icon: 'refresh',
         onClick: this.refreshDataGrid.bind(this)
       }
-    });
+    })
+
+
+  }
+
+  add() {
+    this.router.navigate(['/pages/users/0']);
   }
 
   userActivityChange($event: boolean, cell: any) {
     let result = confirm("<i>Отправить электронное письмо об активации/деактивации учетной записи?</i>", "Уведомление");
-        result.then((dialogResult) => {
-            this.userService.update(cell.key, {id:cell.key, is_active: $event}, dialogResult).subscribe();
-        });
+    result.then((dialogResult) => {
+      this.userService.update(cell.key, {id: cell.key, is_active: $event}, dialogResult).subscribe();
+    });
 
   }
 
 }
+
 const routes: Routes = [
-  { path: '', component: UsersComponent}
+  {path: '', component: UsersComponent}
 ];
+
 @NgModule({
   imports: [
     CommonModule,
