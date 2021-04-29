@@ -26,49 +26,6 @@ from django.core.mail import send_mail
 from .tasks import import_houses_from_register_of_KR
 
 
-@api_view()
-def org_users_count(request):
-    if 'inn' in request.GET:
-        try:
-            org = Organization.objects.get(inn=request.GET['inn'])
-            return Response({"count": org.user_set.count()})
-        except Organization.DoesNotExist:
-            pass
-    return Response({"count": 0})
-
-
-@api_view()
-def is_email_already_used(request):
-    if 'email' in request.GET:
-        try:
-            return Response({"result": User.objects.filter(email=request.GET['email']).count() > 0})
-        except Organization.DoesNotExist:
-            pass
-    return Response({"result": False})
-
-
-@api_view(['POST'])
-def create_user(request):
-    item = UserSerializer(data=request.data)
-    item.is_valid(raise_exception=True)
-
-    if item.is_valid():
-        if request.data['password'] != request.data['re_password']:
-            return Response({'password': 'Пароли не совпадают'}, status=400)
-        org, created = Organization.objects.get_or_create(inn=request.data['organization']['inn'])
-        if created:
-            org.name = request.data['organization']['name']
-            org.ogrn = request.data['organization']['ogrn']
-            org.type = OrganizationType.objects.get(id=request.data['organization']['type']['id'])
-            org.save()
-        User.objects.create_user(username=request.data['username'], organization=org,
-                                 password=request.data['password'], email=request.data['email'])\
-            .groups.add(Group.objects.get(name='Управляющие организации'))
-        return Response(status=200)
-    else:
-        return Response(item.errors, status=400)
-
-
 class HouseViewSet(DevExtremeViewSet):
     queryset = House.objects.all()
     serializer_class = HouseSerializer
@@ -163,40 +120,62 @@ class AddressViewSet(DevExtremeViewSet):
                         city=normalize_city(request.data['city']))
         return Response(serializer.data)
 
-class UserViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated, ]
+
+class UserViewSet(DevExtremeViewSet):
+    permission_classes = []
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-    def list(self, request):
-        if 'group' in request.GET:
-            d, total_count = dev_extreme.populate_group_category(request.GET, self.queryset)
-            data = {"totalCount": total_count, "items": d}
-        else:
-            queryset, total_queryset, total_count = dev_extreme.filtered_query(request.GET, self.queryset)
-            serializer = self.serializer_class(queryset, many=True)
-            data = {'items': serializer.data, 'totalCount': total_count}
-        return Response(data)
-
-    def retrieve(self, request, pk=None):
-        item = get_object_or_404(self.queryset, pk=pk)
-        serializer = self.serializer_class(item)
-        return Response(serializer.data)
-
-    def me(self, request, pk=None):
+    @action(detail=False)
+    def me(self, request):
         me = request.user
         serializer = self.serializer_class(me)
         return Response(serializer.data)
 
-    def update(self, request, pk=None):
-        if (request.data['id'] != 1 and (request.user.has_perm('dictionaries.change_user') or request.user.id == request.data['id'])):
+    @action(detail=False)
+    def org_users_count(self, request):
+        if 'inn' in request.GET:
+            try:
+                org = Organization.objects.get(inn=request.GET['inn'])
+                return Response({"count": org.user_set.count()})
+            except Organization.DoesNotExist:
+                pass
+        return Response({"count": 0})
+
+    @action(detail=False)
+    def is_email_already_used(self, request):
+        if 'email' in request.GET:
+            return Response({"result": User.objects.filter(email=request.GET['email']).count() > 0})
+        return Response({"result": False})
+
+    def create(self, request, *args, **kwargs):
+        item = self.serializer_class(data=request.data)
+        item.is_valid(raise_exception=True)
+
+        if item.is_valid():
+            if request.data['password'] != request.data['re_password']:
+                return Response({'password': 'Пароли не совпадают'}, status=400)
+            org, created = Organization.objects.get_or_create(inn=request.data['organization']['inn'])
+            if created:
+                org.name = request.data['organization']['name']
+                org.ogrn = request.data['organization']['ogrn']
+                org.type = OrganizationType.objects.get(id=request.data['organization']['type']['id'])
+                org.save()
+            User.objects.create_user(username=request.data['username'], organization=org,
+                                     password=request.data['password'], email=request.data['email']) \
+                .groups.add(Group.objects.get(name='Управляющие организации'))
+            return Response(status=200)
+        else:
+            return Response(item.errors, status=400)
+
+    def update(self, request, *args, **kwargs):
+        if request.data['id'] != 1 and request.user.has_perm('dictionaries.change_user'):
             data = request.data
             instance = self.get_object()
             serializer = self.serializer_class(instance=instance, data=data, partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             if 'sendmail' in request.GET and request.GET['sendmail'] == 'true':
-                print(request.GET['sendmail'])
                 if serializer.data['is_active']:
                     message = 'активировна'
                 else:

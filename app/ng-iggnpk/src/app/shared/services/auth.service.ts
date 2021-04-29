@@ -33,17 +33,7 @@ export class AuthService {
     })
   }
 
-  createUser(user: User): Observable<User> {
-    return this.http.post<any>(`${environment.backend_url}/api/v1/dict/users/create/`, user)
-  }
 
-  getOrgUserCount(inn): Observable<any> {
-    return this.http.get<any>(`${environment.backend_url}/api/v1/dict/org_users_count/?inn=${inn}`)
-  }
-
-  getEmailIsUsed(email): Observable<any> {
-    return this.http.get<any>(`${environment.backend_url}/api/v1/dict/is_email_already_used/?email=${email}`)
-  }
 
   getUserInfo(): Observable<any> {
     return this.http.get<any>(`${environment.backend_url}/api/v1/dict/users/me/`)
@@ -62,14 +52,16 @@ export class AuthGuardService implements CanActivate, CanLoad {
         resolve(true);
       }
       else {
+
         this.authService.getUserInfo().subscribe(user => {
+
           if (user.id) {
             this.authService.current_user = user;
             resolve(true);
           }
           else {
             resolve(false);
-            return localStorage.removeItem('token');
+            localStorage.removeItem('token');
             this.router.navigate(['auth/login-form']);
           }
         }, error1 => {

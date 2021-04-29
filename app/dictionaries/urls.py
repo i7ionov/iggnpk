@@ -28,18 +28,10 @@ router.register("organizations", views.OrganizationViewSet, basename=User)
 router.register("organization_types", views.OrganizationTypeViewSet, basename=User)
 router.register("addresses", views.AddressViewSet, basename=User)
 router.register("houses", views.HouseViewSet, basename=User)
+router.register("users", views.UserViewSet, basename=User)
 
 urlpatterns = [
-    path('users/create/', views.create_user),
-    path('org_users_count/', views.org_users_count),
-    path('is_email_already_used/', views.is_email_already_used),
-    path('users/', views.UserViewSet.as_view({'get': 'list'})),
-    path('users/me/', views.UserViewSet.as_view({'get': 'me'})),
-    path('users/<int:pk>/', views.UserViewSet.as_view({'get': 'retrieve'})),
-    path('users/save/<int:pk>/', views.UserViewSet.as_view({'post': 'update'})),
     path('files/create/', views.FileViewSet.as_view({'post': 'upload'})),
-
     path('send_message/', views.send_message),
-
 ]
 urlpatterns += router.urls

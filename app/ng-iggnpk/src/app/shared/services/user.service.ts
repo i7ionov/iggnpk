@@ -4,6 +4,8 @@ import {environment} from "../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {User} from "../interfaces/user";
 import {Notify} from "./capital-repair-notify.service";
+import {Organization} from "../interfaces/organization";
+import {Organizations} from "./organization.service";
 
 
 export class Users {
@@ -21,16 +23,35 @@ export class UserService {
   constructor(private http: HttpClient) {
   }
 
-  getUsers(params): Observable<Users> {
-    return this.http.get<Users>(`${environment.backend_url}${this.url}${params}/`)
-  }
-
   retrieve(id): Observable<User> {
-    return this.http.get<User>(`${environment.backend_url}${this.url}/${id}/`)
+    return this.http.get<User>(`${environment.backend_url}${this.url}/${id}/`);
   }
 
+  create(org: User): Observable<User> {
+    return this.http.post<User>(`${environment.backend_url}${this.url}/`, org);
+  }
+
+  list(params): Observable<User> {
+    return this.http.get<User>(`${environment.backend_url}${this.url}/${params}`);
+  }
+
+  search(params): Observable<User> {
+    return this.http.get<User>(`${environment.backend_url}${this.url}/${params}`);
+  }
+
+  me(params): Observable<User> {
+    return this.http.get<User>(`${environment.backend_url}${this.url}/me/`);
+  }
   update(id, user: any, sendmail = false): Observable<User> {
-    return this.http.post<User>(`${environment.backend_url}${this.url}/save/${id}/?sendmail=${sendmail}`, user)
+    return this.http.patch<User>(`${environment.backend_url}${this.url}/${id}/?sendmail=${sendmail}`, user)
+  }
+
+  getOrgUserCount(inn): Observable<any> {
+    return this.http.get<any>(`${environment.backend_url}${this.url}/org_users_count/?inn=${inn}`)
+  }
+
+  getEmailIsUsed(email): Observable<any> {
+    return this.http.get<any>(`${environment.backend_url}${this.url}/is_email_already_used/?email=${email}`)
   }
 
 

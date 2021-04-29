@@ -14,6 +14,7 @@ import {DxSelectBoxModule} from "devextreme-angular";
 import {alert} from "devextreme/ui/dialog";
 import {OrganizationTypeService} from "../../services/organization-type.service";
 import {CustomStoreService} from "../../services/custom-store.service";
+import {UserService} from "../../services/user.service";
 
 
 
@@ -42,7 +43,8 @@ export class RegisterFormComponent implements OnInit {
 
   orgUsersCount(params) {
     return new Promise((resolve, reject) => {
-      this.authService.getOrgUserCount(params.value)
+
+      this.userService.getOrgUserCount(params.value)
         .toPromise()
         .then((res: any) => {
           resolve(res.count < 1);
@@ -57,7 +59,7 @@ export class RegisterFormComponent implements OnInit {
 
   isEmailUsed(params) {
     return new Promise((resolve, reject) => {
-      this.authService.getEmailIsUsed(params.value)
+      this.userService.getEmailIsUsed(params.value)
         .toPromise()
         .then((res: any) => {
           resolve(!res.result);
@@ -72,6 +74,7 @@ export class RegisterFormComponent implements OnInit {
 
   constructor(private authService: AuthService, public appInfo: AppInfoService, private router: Router,
               private orgService: OrganizationService,
+              private userService: UserService,
               private organizationTypeService: OrganizationTypeService,
               private customStoreService: CustomStoreService) {
     this.orgUsersCount = this.orgUsersCount.bind(this);
@@ -84,7 +87,7 @@ export class RegisterFormComponent implements OnInit {
     if (!args.validationGroup.validate().isValid) {
       return;
     }
-    this.authService.createUser(this.user).subscribe(res => {
+    this.userService.create(this.user).subscribe(res => {
 
       let result = alert("<i>Регистрация учетной записи произведена успешно.<br>" +
         "Ожидайте активации учетной записи сотрудником Инспекции.<br>" +

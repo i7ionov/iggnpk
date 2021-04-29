@@ -15,6 +15,7 @@ import {UserService} from "../../shared/services/user.service";
 import {User} from 'src/app/shared/interfaces/user';
 import { confirm } from 'devextreme/ui/dialog';
 import {CapitalRepairNotifyComponent} from "../capital-repair-notify/capital-repair-notify.component";
+import {CustomStoreService} from "../../shared/services/custom-store.service";
 
 @Component({
   selector: 'app-users',
@@ -26,51 +27,8 @@ export class UsersComponent implements OnInit {
   dataSource: any = {};
   currentFilter: any;
 
-  constructor(private userService: UserService, private router: Router) {
-    function isNotEmpty(value) {
-      return value !== undefined && value !== null && value !== "";
-    }
-
-    this.dataSource = new CustomStore({
-      key: "id",
-      totalCount: function () {
-        return 6
-      },
-      load: function (loadOptions) {
-        let params = "?";
-        [
-          "skip",
-          "take",
-
-          "sort",
-          "filter",
-          "totalSummary",
-          "group",
-          "groupSummary"
-        ].forEach(function (i) {
-          if (i in loadOptions && isNotEmpty(loadOptions[i]))
-            params += `${i}=${JSON.stringify(loadOptions[i])}&`;
-        });
-        params = params.slice(0, -1);
-        if (loadOptions.sort) {
-          params += `&orderby=${loadOptions.sort[0].selector}`;
-          if (loadOptions.sort[0].desc) {
-            params += ' desc';
-          }
-        }
-        return userService.getUsers(params).toPromise()
-          .then((data: any) => {
-            return {
-              data: data.items,
-              totalCount: data.totalCount
-            };
-          })
-          .catch(error => {
-            throw 'Data Loading Error'
-          });
-      }
-    })
-
+  constructor(private userService: UserService, private router: Router, private customStoreService: CustomStoreService) {
+    this.dataSource = customStoreService.getListCustomStore(userService);
   }
 
   ngOnInit() {
@@ -95,7 +53,6 @@ export class UsersComponent implements OnInit {
   userActivityChange($event: boolean, cell: any) {
     let result = confirm("<i>Отправить электронное письмо об активации/деактивации учетной записи?</i>", "Уведомление");
         result.then((dialogResult) => {
-
             this.userService.update(cell.key, {id:cell.key, is_active: $event}, dialogResult).subscribe();
         });
 
