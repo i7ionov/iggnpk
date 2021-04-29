@@ -3,9 +3,9 @@
 
 
   <dx-data-grid id="gridContainer"
-    [dataSource]="dataSource"
-    (onToolbarPreparing)="onToolbarPreparing($event)"
-    [filterValue]='["is_active", "=", false]'
+                [dataSource]="dataSource"
+                (onToolbarPreparing)="onToolbarPreparing($event)"
+                [filterValue]='["is_active", "=", false]'
   >
     <dxo-filter-row
       [visible]="true"
@@ -16,6 +16,7 @@
     <dxi-column
       dataField="id"
       width="100"
+      cellTemplate="idCellTemplate"
       dataType="number"
     >
     </dxi-column>
@@ -68,6 +69,9 @@
         dataType="string"
       ></dxi-column>
     </dxi-column>
+    <div *dxTemplate="let cell of 'idCellTemplate'">
+      <a [routerLink]="['/pages/users', cell.text]">{{ cell.text }}</a>
+    </div>
     <div *dxTemplate="let cell of 'isActiveCellTemplate'">
       <dx-check-box [value]="cell.value" (valueChange)="userActivityChange($event, cell)"></dx-check-box>
     </div>

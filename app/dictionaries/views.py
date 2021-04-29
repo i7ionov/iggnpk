@@ -12,11 +12,11 @@ from rest_framework import permissions, status
 from iggnpk import settings
 from tools.address_normalizer import normalize_number, normalize_street, normalize_city
 from tools.replace_quotes import replace_quotes
-from tools.serializer_tools import upd_foreign_key
+from tools.serializer_tools import upd_foreign_key, upd_many_to_many
 from tools.viewsets import DevExtremeViewSet
 from .models import User, House, Address, Organization, File, OrganizationType
 from .serializers import UserSerializer, HouseSerializer, AddressSerializer, OrganizationSerializer, FileSerializer, \
-    OrganizationTypeSerializer
+    OrganizationTypeSerializer, GroupSerializer
 from rest_framework.decorators import api_view, action
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
@@ -121,6 +121,12 @@ class AddressViewSet(DevExtremeViewSet):
         return Response(serializer.data)
 
 
+class GroupViewSet(DevExtremeViewSet):
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+
+
 class UserViewSet(DevExtremeViewSet):
     permission_classes = []
     queryset = User.objects.all()
@@ -172,9 +178,12 @@ class UserViewSet(DevExtremeViewSet):
         if request.data['id'] != 1 and request.user.has_perm('dictionaries.change_user'):
             data = request.data
             instance = self.get_object()
+            print(request.data['groups'])
             serializer = self.serializer_class(instance=instance, data=data, partial=True)
             serializer.is_valid(raise_exception=True)
-            serializer.save()
+            org = upd_foreign_key('organization', data, instance, Organization)
+            groups = upd_many_to_many('groups', request, None, Group)
+            serializer.save(organization=org, groups=groups)
             if 'sendmail' in request.GET and request.GET['sendmail'] == 'true':
                 if serializer.data['is_active']:
                     message = 'активировна'

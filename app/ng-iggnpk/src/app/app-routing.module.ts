@@ -99,6 +99,12 @@ const routes: Routes = [
 
           },
           {
+            path: 'users/:id',
+            loadChildren: () => import('./pages/profile/profile.component').then(m => m.ProfileModule),
+            canLoad: [AuthGuardService]
+
+          },
+          {
             path: 'houses',
             loadChildren: () => import('./pages/house-table/house-table.component').then(m => m.HouseTableModule),
             canLoad: [AuthGuardService]
@@ -151,7 +157,7 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes, {preloadingStrategy: PreloadAllModules}), DxDataGridModule, DxFormModule, DxButtonModule, DxValidatorModule, DxFileUploaderModule, HouseInputModule, FormsModule, CommonModule, OrganizationSelectModule, CreditOrganizationSelectModule],
   providers: [AuthGuardService],
   exports: [RouterModule],
-  declarations: [ProfileComponent, DisplayDataComponent, RootLayoutComponent]
+  declarations: [DisplayDataComponent, RootLayoutComponent]
 })
 export class AppRoutingModule {
 }
