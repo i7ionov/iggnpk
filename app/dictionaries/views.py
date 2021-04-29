@@ -178,7 +178,6 @@ class UserViewSet(DevExtremeViewSet):
         if request.data['id'] != 1 and request.user.has_perm('dictionaries.change_user'):
             data = request.data
             instance = self.get_object()
-            print(request.data['groups'])
             serializer = self.serializer_class(instance=instance, data=data, partial=True)
             serializer.is_valid(raise_exception=True)
             org = upd_foreign_key('organization', data, instance, Organization)

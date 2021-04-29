@@ -23,6 +23,7 @@ import {DxValidationGroupModule} from "devextreme-angular/ui/validation-group";
 import {ApplicationPipesModule} from "../../shared/pipes/app-pipes.module";
 import {OrganizationSelectModule} from "../../shared/components";
 import {DxiItemComponent, DxiItemModule} from "devextreme-angular/ui/nested";
+import {confirm} from "devextreme/ui/dialog";
 
 @Component({
   selector: 'app-profile',
@@ -34,6 +35,7 @@ export class ProfileComponent implements OnInit {
   @ViewChild('form', {static: false}) form: DxFormComponent;
   user: User = new User();
   id = '';
+  old_is_active;
   groupsDataSource: any = {};
 
 
@@ -53,6 +55,7 @@ export class ProfileComponent implements OnInit {
       if (this.id !== '0') {
         this.userService.retrieve(this.id).subscribe(res => {
             this.user = res;
+            this.old_is_active = this.user.is_active
           }
         );
       }
@@ -69,10 +72,22 @@ export class ProfileComponent implements OnInit {
   }
 
   onFormSubmit(e) {
+    if (this.user.is_active !== this.old_is_active) {
+      let result = confirm("<i>Отправить электронное письмо об активации/деактивации учетной записи?</i>", "Уведомление");
+      result.then((dialogResult) => {
+        this.save(dialogResult)
+        this.old_is_active = this.user.is_active
+      });
+    } else {
+      this.save(false)
+    }
+  }
+
+  save(sendEmail) {
     const isFormValid = this.form.instance.validate().isValid;
     if (isFormValid) {
       if (this.id != '0') {
-        this.userService.update(this.id, this.user).subscribe(res => {
+        this.userService.update(this.id, this.user, sendEmail).subscribe(res => {
             notify({
               message: 'Форма сохранена',
               position: {
