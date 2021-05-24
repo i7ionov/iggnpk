@@ -128,7 +128,6 @@ class GroupViewSet(DevExtremeViewSet):
 
 
 class UserViewSet(DevExtremeViewSet):
-    permission_classes = []
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -160,7 +159,10 @@ class UserViewSet(DevExtremeViewSet):
         if item.is_valid():
             if request.data['password'] != request.data['re_password']:
                 return Response({'password': 'Пароли не совпадают'}, status=400)
-            org, created = Organization.objects.get_or_create(inn=request.data['organization']['inn'])
+            if 'organization' not in request.data or 'id' not in request.data['organization']:
+                return Response({'organization': 'Не выбрана организация'}, status=400)
+
+            org = Organization.objects.get(id=request.data['organization']['id'])
             groups = upd_many_to_many('groups', request, None, Group)
             if 'is_active' not in request.data:
                 is_active = False
@@ -168,11 +170,6 @@ class UserViewSet(DevExtremeViewSet):
                 is_active = request.data['is_active']
             if len(groups) == 0:
                 groups.append(Group.objects.get(name='Управляющие организации'))
-            if created:
-                org.name = request.data['organization']['name']
-                org.ogrn = request.data['organization']['ogrn']
-                org.type = OrganizationType.objects.get(id=request.data['organization']['type']['id'])
-                org.save()
             item.save(organization=org, groups=groups, is_active=is_active)
             user = User.objects.get(id=item.instance.id)
             user.set_password(request.data['password'])
@@ -187,6 +184,10 @@ class UserViewSet(DevExtremeViewSet):
             instance = self.get_object()
             serializer = self.serializer_class(instance=instance, data=data, partial=True)
             serializer.is_valid(raise_exception=True)
+            if 'password' in request.data:
+                if request.data['password'] != request.data['re_password']:
+                    return Response({'password': 'Пароли не совпадают'}, status=400)
+                instance.set_password(request.data['password'])
             org = upd_foreign_key('organization', data, instance, Organization)
             groups = upd_many_to_many('groups', request, None, Group)
             serializer.save(organization=org, groups=groups)

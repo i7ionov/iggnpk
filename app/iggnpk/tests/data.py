@@ -8,9 +8,9 @@ from dictionaries.models import User, Address, House
 
 
 def populate_db():
-    admin_group = mixer.blend(Group)
+    admin_group = mixer.blend(Group, name='Администраторы')
     admin_group.permissions.set(Permission.objects.all())
-    uk_group = mixer.blend(Group)
+    uk_group = mixer.blend(Group, name='Управляющие организации')
     uk_group.permissions.set(
         [Permission.objects.get(codename='view_notify'),
          Permission.objects.get(codename='change_notify'),
