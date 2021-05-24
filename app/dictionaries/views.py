@@ -127,31 +127,73 @@ class GroupViewSet(DevExtremeViewSet):
     serializer_class = GroupSerializer
 
 
+
+@api_view(['GET'])
+def me(request):
+    me = request.user
+    serializer = UserSerializer(me)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def org_users_count(request):
+    if 'inn' in request.GET:
+        try:
+            org = Organization.objects.get(inn=request.GET['inn'])
+            return Response({"count": org.user_set.count()})
+        except Organization.DoesNotExist:
+            pass
+    return Response({"count": 0})
+
+
+@api_view(['GET'])
+def is_email_already_used(request):
+    if 'email' in request.GET:
+        return Response({"result": User.objects.filter(email=request.GET['email']).count() > 0})
+    return Response({"result": False})
+
+
+@api_view(['GET'])
+def is_username_already_used(request):
+    if 'username' in request.GET:
+        return Response({"result": User.objects.filter(username=request.GET['username']).count() > 0})
+    return Response({"result": False})
+
+
+@api_view(['POST'])
+def register(request):
+    item = UserSerializer(data=request.data)
+    item.is_valid(raise_exception=True)
+    if item.is_valid():
+        if request.data['password'] != request.data['re_password']:
+            return Response({'password': 'Пароли не совпадают'}, status=400)
+        if 'organization' not in request.data:
+            return Response({'organization': 'Не указана организация'}, status=400)
+        if 'name' not in request.data['organization']:
+            return Response({'organization': 'Не указано наименование организации'}, status=400)
+        if 'inn' not in request.data['organization']:
+            return Response({'organization': 'Не указан ИНН организации'}, status=400)
+        if 'ogrn' not in request.data['organization']:
+            return Response({'organization': 'Не указан ОГРН организации'}, status=400)
+        if 'type' not in request.data['organization'] or 'id' not in request.data['organization']['type'] :
+            return Response({'organization': 'Не указан тип организации'}, status=400)
+        org, created = Organization.objects.get_or_create(inn=request.data['organization']['inn'])
+        if created:
+            org.name = request.data['organization']['name']
+            org.ogrn = request.data['organization']['ogrn']
+            org.type = OrganizationType.objects.get(id=request.data['organization']['type']['id'])
+            org.save()
+        User.objects.create_user(username=request.data['username'], organization=org,
+                                 password=request.data['password'], email=request.data['email'])\
+            .groups.add(Group.objects.get(name='Управляющие организации'))
+        return Response(status=200)
+    else:
+        return Response(item.errors, status=400)
+
+
 class UserViewSet(DevExtremeViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-
-    @action(detail=False)
-    def me(self, request):
-        me = request.user
-        serializer = self.serializer_class(me)
-        return Response(serializer.data)
-
-    @action(detail=False)
-    def org_users_count(self, request):
-        if 'inn' in request.GET:
-            try:
-                org = Organization.objects.get(inn=request.GET['inn'])
-                return Response({"count": org.user_set.count()})
-            except Organization.DoesNotExist:
-                pass
-        return Response({"count": 0})
-
-    @action(detail=False)
-    def is_email_already_used(self, request):
-        if 'email' in request.GET:
-            return Response({"result": User.objects.filter(email=request.GET['email']).count() > 0})
-        return Response({"result": False})
 
     def create(self, request, *args, **kwargs):
         item = self.serializer_class(data=request.data)
@@ -161,7 +203,6 @@ class UserViewSet(DevExtremeViewSet):
                 return Response({'password': 'Пароли не совпадают'}, status=400)
             if 'organization' not in request.data or 'id' not in request.data['organization']:
                 return Response({'organization': 'Не выбрана организация'}, status=400)
-
             org = Organization.objects.get(id=request.data['organization']['id'])
             groups = upd_many_to_many('groups', request, None, Group)
             is_staff = Group.objects.get(name='Администраторы') in groups

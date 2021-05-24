@@ -17,8 +17,6 @@ from . import views
 from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
-
-
 from rest_framework.routers import SimpleRouter
 
 from .models import User
@@ -34,5 +32,10 @@ router.register("groups", views.GroupViewSet, basename=User)
 urlpatterns = [
     path('files/create/', views.FileViewSet.as_view({'post': 'upload'})),
     path('send_message/', views.send_message),
+    path('users/me/', views.me),
+    path('users/register/', views.register),
+    path('users/org_users_count/', views.org_users_count),
+    path('users/is_email_already_used/', views.is_email_already_used),
+    path('users/is_username_already_used/', views.is_username_already_used),
 ]
 urlpatterns += router.urls
