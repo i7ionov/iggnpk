@@ -8,6 +8,11 @@
     <dx-text-box [(value)]="user.username" placeholder="Логин" width="100%">
       <dx-validator>
         <dxi-validation-rule type="required" message="Введите логин"></dxi-validation-rule>
+        <dxi-validation-rule
+          type="async"
+          message="Логин уже используется"
+          [validationCallback]="isUsernameUsed">
+        </dxi-validation-rule>
       </dx-validator>
     </dx-text-box>
   </div>

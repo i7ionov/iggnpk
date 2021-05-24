@@ -17,7 +17,6 @@ import {CustomStoreService} from "../../services/custom-store.service";
 import {UserService} from "../../services/user.service";
 
 
-
 @Component({
   selector: 'app-register-form',
   templateUrl: './register-form.component.html',
@@ -57,7 +56,24 @@ export class RegisterFormComponent implements OnInit {
     })
   }
 
+  isUsernameUsed(params) {
+    console.log(this.userService)
+    return new Promise((resolve, reject) => {
+      this.userService.getUsernameIsUsed(params.value)
+        .toPromise()
+        .then((res: any) => {
+          resolve(!res.result);
+        })
+        .catch(error => {
+          console.error("Server-side validation error", error);
+
+          reject("Cannot contact validation server");
+        });
+    })
+  }
+
   isEmailUsed(params) {
+    console.log(this.userService)
     return new Promise((resolve, reject) => {
       this.userService.getEmailIsUsed(params.value)
         .toPromise()
@@ -79,6 +95,7 @@ export class RegisterFormComponent implements OnInit {
               private customStoreService: CustomStoreService) {
     this.orgUsersCount = this.orgUsersCount.bind(this);
     this.isEmailUsed = this.isEmailUsed.bind(this);
+    this.isUsernameUsed = this.isUsernameUsed.bind(this);
     this.orgTypes = customStoreService.getSearchCustomStore(organizationTypeService);
   }
 
@@ -87,7 +104,7 @@ export class RegisterFormComponent implements OnInit {
     if (!args.validationGroup.validate().isValid) {
       return;
     }
-    this.userService.create(this.user).subscribe(res => {
+    this.userService.register(this.user).subscribe(res => {
 
       let result = alert("<i>Регистрация учетной записи произведена успешно.<br>" +
         "Ожидайте активации учетной записи сотрудником Инспекции.<br>" +
@@ -103,8 +120,6 @@ export class RegisterFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
-
 
 
   }

@@ -27,8 +27,8 @@ export class UserService {
     return this.http.get<User>(`${environment.backend_url}${this.url}/${id}/`);
   }
 
-  create(org: User): Observable<User> {
-    return this.http.post<User>(`${environment.backend_url}${this.url}/`, org);
+  create(user: User): Observable<User> {
+    return this.http.post<User>(`${environment.backend_url}${this.url}/`, user);
   }
 
   list(params): Observable<User> {
@@ -42,6 +42,7 @@ export class UserService {
   me(params): Observable<User> {
     return this.http.get<User>(`${environment.backend_url}${this.url}/me/`);
   }
+
   update(id, user: any, sendmail = false): Observable<User> {
     return this.http.patch<User>(`${environment.backend_url}${this.url}/${id}/?sendmail=${sendmail}`, user)
   }
@@ -54,5 +55,12 @@ export class UserService {
     return this.http.get<any>(`${environment.backend_url}${this.url}/is_email_already_used/?email=${email}`)
   }
 
+  getUsernameIsUsed(username): Observable<any> {
+    return this.http.get<any>(`${environment.backend_url}${this.url}/is_username_already_used/?username=${username}`)
+  }
+
+  register(user: User): Observable<User> {
+    return this.http.post<User>(`${environment.backend_url}${this.url}/register/`, user);
+  }
 
 }
