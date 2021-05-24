@@ -164,13 +164,14 @@ class UserViewSet(DevExtremeViewSet):
 
             org = Organization.objects.get(id=request.data['organization']['id'])
             groups = upd_many_to_many('groups', request, None, Group)
+            is_staff = Group.objects.get(name='Администраторы') in groups
             if 'is_active' not in request.data:
                 is_active = False
             else:
                 is_active = request.data['is_active']
             if len(groups) == 0:
                 groups.append(Group.objects.get(name='Управляющие организации'))
-            item.save(organization=org, groups=groups, is_active=is_active)
+            item.save(organization=org, groups=groups, is_active=is_active, is_staff=is_staff)
             user = User.objects.get(id=item.instance.id)
             user.set_password(request.data['password'])
             user.save()
@@ -190,7 +191,8 @@ class UserViewSet(DevExtremeViewSet):
                 instance.set_password(request.data['password'])
             org = upd_foreign_key('organization', data, instance, Organization)
             groups = upd_many_to_many('groups', request, None, Group)
-            serializer.save(organization=org, groups=groups)
+            is_staff = Group.objects.get(name='Администраторы') in groups
+            serializer.save(organization=org, groups=groups, is_staff=is_staff)
             if 'sendmail' in request.GET and request.GET['sendmail'] == 'true':
                 if serializer.data['is_active']:
                     message = 'активировна'

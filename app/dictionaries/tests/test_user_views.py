@@ -60,6 +60,7 @@ class UserCreateViewSetTest(BaseTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(user.username, '123')
         self.assertEqual(user.is_active, True)
+        self.assertEqual(user.is_staff,True)
         self.assertEqual(user.organization.id, self.org.id)
         self.assertTrue(user.check_password('123'))
         self.assertEqual({self.g1, self.g2}, set(user.groups.all()))
@@ -84,6 +85,7 @@ class UserCreateViewSetTest(BaseTest):
         data.pop('groups')
         response = client.post(f'{endpoint_url}', data, format='json')
         user = User.objects.last()
+        self.assertEqual(user.is_staff, False)
         self.assertEqual({self.g1}, set(user.groups.all()))
 
     def test_needs_authentification(self):
@@ -126,6 +128,7 @@ class UserUpdateViewSetTest(BaseTest):
         user = User.objects.get(id=self.user.id)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(user.username, '321')
+        self.assertEqual(user.is_staff, True)
         self.assertEqual(user.organization.id, self.new_org.id)
         self.assertTrue(user.check_password('321'))
         self.assertEqual({self.g1, self.g2}, set(user.groups.all()))
