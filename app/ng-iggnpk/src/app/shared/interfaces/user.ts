@@ -7,6 +7,7 @@ export interface Permission {
 export class User {
   id?: number;
   is_active?: boolean;
+  is_staff?: boolean;
   username?: string;
   email?: string;
   password?: string;

@@ -74,7 +74,7 @@ export class CapitalRepairNotifyComponent implements OnInit {
 
   get organizationSelectIsReadOnly() {
     if (this.auth.current_user) {
-      return this.auth.current_user.groups.indexOf(UserGroup.Admin) == -1;
+      return !this.auth.current_user.is_staff;
     } else {
       return false;
     }
@@ -90,14 +90,14 @@ export class CapitalRepairNotifyComponent implements OnInit {
 
   setPermissions(user) {
 
-    if (this.notify.organization.id == this.auth.current_user.organization.id || user.groups.indexOf(UserGroup.Admin) != -1) {
+    if (this.notify.organization.id == this.auth.current_user.organization.id || this.auth.current_user.is_staff) {
       if (this.notify.status.id == NotifyStatus.Approving) {
         this.acceptButtonVisibility = false;
         this.sendForApprovalButtonVisibility = false;
         this.saveButtonVisibility = false;
         this.rejectButtonVisibility = true;
         this.excludeButtonVisibility = false;
-        if (user.groups.indexOf(UserGroup.Admin) != -1) {
+        if (this.auth.current_user.is_staff) {
           this.acceptButtonVisibility = true;
         }
       } else if (this.notify.status.id == NotifyStatus.Editing) {
@@ -112,7 +112,7 @@ export class CapitalRepairNotifyComponent implements OnInit {
         this.rejectButtonVisibility = false;
         this.acceptButtonVisibility = false;
         this.excludeButtonVisibility = false;
-        if (user.groups.indexOf(UserGroup.Admin) != -1) {
+        if (this.auth.current_user.is_staff) {
 
           this.excludeButtonVisibility = true;
           this.saveButtonVisibility = true;
@@ -123,7 +123,7 @@ export class CapitalRepairNotifyComponent implements OnInit {
         this.acceptButtonVisibility = false;
         this.saveButtonVisibility = false;
         this.excludeButtonVisibility = false;
-        if (user.groups.indexOf(UserGroup.Admin) != -1) {
+        if (this.auth.current_user.is_staff) {
           this.acceptButtonVisibility = true;
           this.saveButtonVisibility = true;
         }
@@ -143,7 +143,7 @@ export class CapitalRepairNotifyComponent implements OnInit {
             this.setPermissions(this.auth.current_user);
           }
         );
-        if (this.auth.current_user.groups.indexOf(UserGroup.Admin) !== -1) {
+        if (this.auth.current_user.is_staff) {
           this.notifyService.getHistory(this.id).subscribe(res => {
             this.history = res;
           });

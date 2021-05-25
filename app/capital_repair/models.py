@@ -65,8 +65,8 @@ class Notify(models.Model):
                                                    blank=True)
     account_number = models.CharField(max_length=300, blank=True, verbose_name='Номер счета')
     account_opening_date = models.DateField(verbose_name='Дата открытия счета', blank=True, null=True)
-    monthly_contribution_amount = models.FloatField(verbose_name='Ежемесячный размер взноса')
-    protocol_details = models.CharField(max_length=1000, verbose_name='Реквизиты протокола')
+    monthly_contribution_amount = models.FloatField(verbose_name='Ежемесячный размер взноса', blank=True, null=True)
+    protocol_details = models.CharField(max_length=1000, verbose_name='Реквизиты протокола', blank=True, null=True)
     comment = models.TextField(verbose_name='Комментарий', null=True, blank=True)
     comment2 = models.TextField(verbose_name='Комментарий', null=True, blank=True)
     status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True, verbose_name='Статус',

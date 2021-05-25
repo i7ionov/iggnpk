@@ -83,7 +83,7 @@ export class ContributionsInfromationFormComponent implements OnInit {
 
   get dateIsReadOnly() {
     if (this.auth.current_user) {
-      return this.auth.current_user.groups.indexOf(UserGroup.Admin) == -1
+      return !this.auth.current_user.is_staff
     } else {
       return false
     }
@@ -116,13 +116,13 @@ export class ContributionsInfromationFormComponent implements OnInit {
 
   setPermissions(user) {
 
-    if (this.contrib_info.notify.organization.id == this.auth.current_user.organization.id || user.groups.indexOf(UserGroup.Admin) != -1) {
+    if (this.contrib_info.notify.organization.id == this.auth.current_user.organization.id || user.is_staff) {
       if (this.contrib_info.status.id == NotifyStatus.Approving) {
         this.acceptButtonVisibility = false;
         this.sendForApprovalButtonVisibility = false;
         this.saveButtonVisibility = false;
         this.rejectButtonVisibility = true;
-        if (user.groups.indexOf(UserGroup.Admin) != -1) {
+        if (user.is_staff) {
           this.acceptButtonVisibility = true;
         }
       } else if (this.contrib_info.status.id == NotifyStatus.Editing) {
@@ -135,7 +135,7 @@ export class ContributionsInfromationFormComponent implements OnInit {
         this.sendForApprovalButtonVisibility = false;
         this.rejectButtonVisibility = false;
         this.acceptButtonVisibility = false;
-        if (user.groups.indexOf(UserGroup.Admin) != -1) {
+        if (user.is_staff) {
           this.saveButtonVisibility = true;
         }
       } else {
@@ -159,7 +159,7 @@ export class ContributionsInfromationFormComponent implements OnInit {
             this.setPermissions(this.auth.current_user);
           }
         );
-        if (this.auth.current_user.groups.indexOf(UserGroup.Admin) !== -1) {
+        if (this.auth.current_user.is_staff) {
           this.contribInfoService.getHistory(this.id).subscribe(res => {
             this.history = res;
           });
