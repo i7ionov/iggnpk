@@ -8,7 +8,7 @@ import {Service} from "./custom-store.service";
 const defaultDataSource = {
   "mkd_in_reg_program": {"total": 0, "tsj": 0, "jk": 0, "uk": 0, "ro": 0},
   "total_area": {"total": 0, "tsj": 0, "jk": 0, "uk": 0, "ro": 0},
-  "last_year_funds_spent": {
+  "funds_spent": {
     "total": 0,
     "tsj": 0,
     "jk": 0,
@@ -77,7 +77,8 @@ const defaultDataSource = {
     "jk": 0,
     "uk": 0,
     "ro": 0
-  }
+  },
+
 }
 
 @Injectable({

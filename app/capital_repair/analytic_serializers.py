@@ -10,7 +10,7 @@ class CrReportSerializer(serializers.Serializer):
 
     mkd_in_reg_program = serializers.DictField()
     total_area = serializers.DictField()
-    last_year_funds_spent = serializers.DictField()
+    funds_spent = serializers.DictField()
     assessed_contributions_total = serializers.DictField()
     received_contributions_total = serializers.DictField()
     level_of_fundraising_total = serializers.DictField()

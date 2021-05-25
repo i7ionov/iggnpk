@@ -120,8 +120,8 @@ class CrReport:
         for sub_field in self._sub_fields:
             received = self.received_contributions_current[sub_field] or 0
             fund_balance = self._report['fund_balance'][sub_field] or 0
-            last_year_funds_spent = self.last_year_funds_spent[sub_field] or 0
-            result[sub_field] = (fund_balance - received + last_year_funds_spent) / 1000000
+            funds_spent = self.funds_spent[sub_field] or 0
+            result[sub_field] = (fund_balance - received + funds_spent) / 1000000
         return result
 
     @property
@@ -131,6 +131,25 @@ class CrReport:
         for sub_field in self._sub_fields:
             fund_balance = self._report['fund_balance'][sub_field] or 0
             result[sub_field] = fund_balance / 1000000
+        return result
+
+    @property
+    def fund_balance(self):
+        """Остаток денежных средств на начало отчетного периода"""
+        result = {}
+        for sub_field in self._sub_fields:
+            fund_balance = self._report['fund_balance'][sub_field] or 0
+            result[sub_field] = fund_balance / 1000000
+        return result
+
+    @property
+    def funds_spent(self):
+        """Сумма списанных денежных средств в отчетном периоде"""
+        result = {}
+        for sub_field in self._sub_fields:
+            funds_spent = self._report['funds_spent'][sub_field] or 0
+            last_year_funds_spent = self.last_year_funds_spent[sub_field] or 0
+            result[sub_field] = funds_spent - last_year_funds_spent
         return result
 
     def _initiate_report(self):
