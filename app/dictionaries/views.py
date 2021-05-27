@@ -261,16 +261,9 @@ class FileViewSet(viewsets.ViewSet):
     parser_class = (FileUploadParser, MultiPartParser, FormParser,)
 
     def retrieve(self, request, *args, **kwargs):
-        if 'sessionid' not in request.COOKIES:
-            return Response({'response': "Недостаточно прав"}, status=403)
         if 'pk' not in kwargs:
             return Response({'response': "Неверно указан id файла"}, status=400)
-        session = Session.objects.get(session_key=request.COOKIES['sessionid'])
-        uid = session.get_decoded().get('_auth_user_id')
-        user = User.objects.get(pk=uid)
         file = File.objects.get(pk=kwargs['pk'])
-        if file.owner != user.id and user.is_staff is False:
-            return Response({'response': "Недостаточно прав"}, status=403)
         return sendfile(request, file.datafile.name)
 
     def upload(self, request, format=None):
