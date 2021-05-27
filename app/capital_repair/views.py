@@ -148,7 +148,7 @@ class NotifiesViewSet(DevExtremeViewSet):
         if request.user.is_staff is False:
             return Response('У вас нет соответствующих прав', status=400)
         user = UserSerializer(request.user)
-        send_acts.delay(request.GET, user.data['email'])
+        send_acts(request.GET, user.data['email'])
         return Response({},
                         status=200)
 

@@ -39,6 +39,7 @@ import {ApplicationPipesModule} from '../../shared/pipes/app-pipes.module';
 })
 export class CapitalRepairNotifyComponent implements OnInit {
   SubmitType = SubmitType;
+  file_backend_url = environment.file_url
   history: any = {};
   @ViewChild('form', {static: false}) form: DxFormComponent;
   @ViewChild('credit_organization_select', {static: false}) credit_organization_select: CreditOrganizationSelectComponent;

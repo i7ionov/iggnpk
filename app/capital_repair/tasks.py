@@ -26,10 +26,10 @@ def generate_excel(request_GET, template_path, ids, model, mail):
                           mail)
 @shared_task
 def send_acts(request_GET, mail):
-    Act.zip_acts(request_GET, mail)
+    file_id = Act.zip_acts(request_GET, mail)
     email = EmailMessage(
         f'Акты',
-        f'Ссылка на скачивание файла https://iggnpk.ru/media/temp/export_{mail}.zip',
+        f'Ссылка на скачивание файла https://iggnpk.ru/api/v1/dict/files/{file_id}/',
         'noreply@iggnpk.ru',
         [mail],
         headers={'Reply-To': 'noreply@iggnpk.ru'}

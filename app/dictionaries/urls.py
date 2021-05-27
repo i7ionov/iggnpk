@@ -28,6 +28,7 @@ router.register("addresses", views.AddressViewSet, basename=User)
 router.register("houses", views.HouseViewSet, basename=User)
 router.register("users", views.UserViewSet, basename=User)
 router.register("groups", views.GroupViewSet, basename=User)
+router.register("files", views.FileViewSet, basename=User)
 
 urlpatterns = [
     path('files/create/', views.FileViewSet.as_view({'post': 'upload'})),

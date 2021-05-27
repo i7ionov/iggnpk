@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'djoser',
     'simple_history',
     'django_celery_beat',
+    'django_sendfile',
     'tools',
     'dictionaries',
     'capital_repair'

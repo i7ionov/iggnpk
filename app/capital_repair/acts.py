@@ -1,13 +1,17 @@
+from io import BytesIO, StringIO
 from datetime import date
 from dateutil.relativedelta import relativedelta
+from django.core.files.base import ContentFile
+
 from capital_repair.models import Notify, ContributionsInformationMistake, ContributionsInformation
-from dictionaries.models import Organization
+from dictionaries.models import Organization, File, User
 from tools import dev_extreme, date_tools
 from iggnpk import settings
 from docxtpl import DocxTemplate
 import io
 import os
 import zipfile
+from django.core.files import File as DjangoFile
 
 class Act:
     @staticmethod
@@ -85,16 +89,26 @@ class Act:
                        'mistakes_text': mistakes_text})
         return contexts
 
+    @staticmethod
+    def add_file_into_db(bytes_file, mail):
+        user = User.objects.get(email=mail)
+        content_file = ContentFile(bytes_file.getbuffer())
+        file, _ = File.objects.get_or_create(owner=user, name='acts.zip')
+        file.datafile.save('acts.zip', content_file, save=True)
+        return file.id
 
     @staticmethod
     def zip_acts(request_GET, mail):
-        zip_file = zipfile.ZipFile(os.path.join(settings.MEDIA_ROOT, 'temp', f'export_{mail}.zip'), "w")
-        contexts = Act.generate_act_contexts(request_GET)
-        for context in contexts:
-            doc = DocxTemplate(os.path.join(settings.MEDIA_ROOT, 'templates', 'act_backend.docx'))
-            doc.render(context)
-            f = io.BytesIO()
-            doc.save(f)
-            org = context['organization']
-            zip_file.writestr(org.name.replace('/', '') + ', ' + org.inn + '.docx', f.getvalue())
-        zip_file.close()
+        bytes_file = BytesIO()
+        with zipfile.ZipFile(bytes_file, "w") as zip_file:
+            contexts = Act.generate_act_contexts(request_GET)
+            for context in contexts:
+                doc = DocxTemplate(os.path.join(settings.MEDIA_ROOT, 'templates', 'act_backend.docx'))
+                doc.render(context)
+                f = io.BytesIO()
+                doc.save(f)
+                org = context['organization']
+                zip_file.writestr(org.name.replace('/', '') + ', ' + org.inn + '.docx', f.getvalue())
+        file_id = Act.add_file_into_db(bytes_file, mail)
+
+        return file_id

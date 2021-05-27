@@ -30,7 +30,7 @@ export class ContributionsInformationMistakes {
   providedIn: 'root'
 })
 export class ContributionsInformationMistakeService {
-  url = '/api/v1/cr/contrib_info_mistake';
+  public url = '/api/v1/cr/contrib_info_mistake';
 
   constructor(private http: HttpClient) {
   }

@@ -1,8 +1,12 @@
 import os
 
+from django.contrib.sessions.models import Session
+from django_sendfile import sendfile
+
 from django.contrib.auth.models import Group
 from django.core.files.storage import default_storage
 from django.db.models import Q
+
 from rest_framework.exceptions import ParseError
 from rest_framework.parsers import FileUploadParser, MultiPartParser, FormParser
 from rest_framework.views import APIView
@@ -250,11 +254,24 @@ class UserViewSet(DevExtremeViewSet):
         return Response({'response': "У вас нет соответствующих прав"}, status=400)
 
 
-class FileViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated, ]
+class FileViewSet(viewsets.ViewSet):
+    permission_classes = []
     queryset = File.objects.all()
     serializer_class = FileSerializer
     parser_class = (FileUploadParser, MultiPartParser, FormParser,)
+
+    def retrieve(self, request, *args, **kwargs):
+        if 'sessionid' not in request.COOKIES:
+            return Response({'response': "Недостаточно прав"}, status=403)
+        if 'pk' not in kwargs:
+            return Response({'response': "Неверно указан id файла"}, status=400)
+        session = Session.objects.get(session_key=request.COOKIES['sessionid'])
+        uid = session.get_decoded().get('_auth_user_id')
+        user = User.objects.get(pk=uid)
+        file = File.objects.get(pk=kwargs['pk'])
+        if file.owner != user.id and user.is_staff is False:
+            return Response({'response': "Недостаточно прав"}, status=403)
+        return sendfile(request, file.datafile.name)
 
     def upload(self, request, format=None):
         if 'file' not in request.data:
