@@ -263,7 +263,7 @@ class FileViewSet(viewsets.ViewSet):
     def retrieve(self, request, *args, **kwargs):
         if 'pk' not in kwargs:
             return Response({'response': "Неверно указан id файла"}, status=400)
-        file = File.objects.get(pk=kwargs['pk'])
+        file = File.objects.get(uuid=kwargs['pk'])
         return sendfile(request, file.datafile.name)
 
     def upload(self, request, format=None):

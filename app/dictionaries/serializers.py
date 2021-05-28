@@ -70,7 +70,7 @@ class FileSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = File
         fields = '__all__'
-        read_only_fields = ('created', 'datafile', 'owner', 'size', 'name')
+        read_only_fields = ('created', 'datafile', 'owner', 'size', 'name', 'uuid')
 
     def get_size(self, obj):
         try:

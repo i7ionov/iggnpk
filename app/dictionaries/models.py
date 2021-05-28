@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Permission
 from django.contrib.auth.base_user import BaseUserManager
@@ -92,6 +94,7 @@ class File(models.Model):
     owner = models.ForeignKey(User, to_field='id', on_delete=models.SET_NULL, null=True, blank=True)
     datafile = models.FileField(upload_to=upload_path_handler, null=True, blank=True)
     name = models.CharField(max_length=100, verbose_name='Название файла')
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     class Meta:
         verbose_name = "Файл"

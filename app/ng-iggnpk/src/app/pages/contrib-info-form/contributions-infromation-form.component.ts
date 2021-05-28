@@ -44,6 +44,7 @@ import saveAs from "file-saver"
 export class ContributionsInfromationFormComponent implements OnInit {
   SubmitType = SubmitType;
   history: any = {};
+  file_backend_url = environment.file_url
   @ViewChild("form", {static: false}) form: DxFormComponent;
   @ViewChild("mistakes", {static: false}) mistakes: DxSelectBoxComponent;
 
