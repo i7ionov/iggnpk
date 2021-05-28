@@ -93,9 +93,9 @@ class Act:
     def add_file_into_db(bytes_file, mail):
         user = User.objects.get(email=mail)
         content_file = ContentFile(bytes_file.getbuffer())
-        file, _ = File.objects.get_or_create(owner=user, name='acts.zip')
+        file = File(owner=user, name='acts.zip')
         file.datafile.save('acts.zip', content_file, save=True)
-        return file.id
+        return file.uuid
 
     @staticmethod
     def zip_acts(request_GET, mail):
@@ -109,6 +109,6 @@ class Act:
                 doc.save(f)
                 org = context['organization']
                 zip_file.writestr(org.name.replace('/', '') + ', ' + org.inn + '.docx', f.getvalue())
-        file_id = Act.add_file_into_db(bytes_file, mail)
+        uuid = Act.add_file_into_db(bytes_file, mail)
 
-        return file_id
+        return uuid
