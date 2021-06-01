@@ -69,7 +69,7 @@ export class UsersComponent implements OnInit {
   userActivityChange($event: boolean, cell: any) {
     let result = confirm("<i>Отправить электронное письмо об активации/деактивации учетной записи?</i>", "Уведомление");
     result.then((dialogResult) => {
-      this.userService.update(cell.key, {id: cell.key, is_active: $event}, dialogResult).subscribe();
+      this.userService.update(cell.key, {id: cell.key, is_active: $event, sendmail:dialogResult}).subscribe();
     });
 
   }

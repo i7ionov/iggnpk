@@ -644,6 +644,7 @@ class NotifiesGenerateActsViewSetTest(BaseTest):
         response = client.get(f'{endpoint_url}generate_acts/', {})
         self.assertEqual(response.status_code, 403)
 
+
 class NotifiesGetHistoryViewSetTest(BaseTest):
     def test_response_200_object(self):
         notify = mixer.blend(Notify, organization=self.uk.organization)

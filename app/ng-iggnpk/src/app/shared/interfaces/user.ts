@@ -8,6 +8,7 @@ export class User {
   id?: number;
   is_active?: boolean;
   is_staff?: boolean;
+  sendmail?: boolean;
   username?: string;
   email?: string;
   password?: string;

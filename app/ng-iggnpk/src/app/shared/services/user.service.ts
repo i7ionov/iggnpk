@@ -43,8 +43,8 @@ export class UserService {
     return this.http.get<User>(`${environment.backend_url}${this.url}/me/`);
   }
 
-  update(id, user: any, sendmail = false): Observable<User> {
-    return this.http.patch<User>(`${environment.backend_url}${this.url}/${id}/?sendmail=${sendmail}`, user)
+  update(id, user: any): Observable<User> {
+    return this.http.patch<User>(`${environment.backend_url}${this.url}/${id}/`, user)
   }
 
   getOrgUserCount(inn): Observable<any> {

@@ -25,7 +25,6 @@ class HousesListViewSetTest(BaseTest):
         client = APIClient(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
         response = client.get(
             f'{endpoint_url}?searchValue=%22{house.number}%22&searchExpr=%22number%22&take=10&skip=0&filter=["address_id","=",{addr.id}]')
-        print(response.data)
         self.assertTrue('items' in response.data)
         self.assertTrue('totalCount' in response.data)
         self.assertTrue('summary' in response.data)

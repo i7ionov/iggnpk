@@ -92,7 +92,8 @@ export class ProfileComponent implements OnInit {
     const isFormValid = this.form.instance.validate().isValid;
     if (isFormValid) {
       if (this.id != '0') {
-        this.userService.update(this.id, this.user, sendEmail).subscribe(res => {
+        this.user.sendmail = sendEmail
+        this.userService.update(this.id, this.user).subscribe(res => {
             notify({
               message: 'Форма сохранена',
               position: {

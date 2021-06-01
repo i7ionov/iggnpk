@@ -4,10 +4,12 @@ from rest_framework.response import Response
 
 from tools import dev_extreme
 from tools.permissions import ModelPermissions
+from tools.service import ServiceException
 
 
 class DevExtremeViewSet(viewsets.ModelViewSet, mixins.ListModelMixin):
     permission_classes = [permissions.IsAuthenticated, ModelPermissions]
+    service = None
     queryset = None
     search_queryset_for_all = None
     search_queryset_for_uk = None
@@ -71,3 +73,17 @@ class DevExtremeViewSet(viewsets.ModelViewSet, mixins.ListModelMixin):
                     'totalCount': self.totalCount,
                     'summary': [self.totalCount]}
         return Response(data)
+
+    def create(self, request, *args, **kwargs):
+        try:
+            data = self.service.create(request.data, request.user)
+            return Response(data)
+        except ServiceException as e:
+            return Response(e.errors, status=400)
+
+    def update(self, request, *args, **kwargs):
+        try:
+            data = self.service.update(self.get_object(), request.data, request.user)
+            return Response(data)
+        except ServiceException as e:
+            return Response(e.errors, status=400)
