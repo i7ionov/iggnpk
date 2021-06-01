@@ -13,4 +13,4 @@ class SendActsTest(BaseTest):
         self.assertEqual(zip_acts.call_count, 1)
         m = mail.outbox[0]
         self.assertTrue('test@email.ru' in mail.outbox[0].to)
-        self.assertEqual(mail.outbox[0].body,'Ссылка на скачивание файла https://iggnpk.ru/media/temp/export_test@email.ru.zip')
+        self.assertIn('Ссылка на скачивание файла https://iggnpk.ru/', mail.outbox[0].body)
