@@ -1,42 +1,21 @@
-import io
 import os
-from datetime import datetime, date
-from io import BytesIO
-from django.contrib.auth.decorators import permission_required
-from django.db.models import Avg, Sum
-from django.db.models import Q
-from rest_framework.parsers import FileUploadParser
-from rest_framework.views import APIView
+from datetime import date
 from rest_framework.response import Response
-from rest_framework import permissions, mixins
-from django.http import HttpResponse
-
+from rest_framework import permissions
 from capital_repair.tasks import send_acts, generate_excel
 from dictionaries.serializers import UserSerializer
 from iggnpk import settings
-from tools import date_tools
-from tools.export_to_excel import export_to_excel
 from tools.history_serializer import HistorySerializer
-from tools.permissions import ModelPermissions
-from tools.service import upd_foreign_key, upd_many_to_many
 from tools.viewsets import DevExtremeViewSet
 from . import services
 from .acts import Act
 from .analytic import CrReport
 from .analytic_serializers import CrReportSerializer
-from .models import CreditOrganization, Branch, Notify, Status, ContributionsInformation, ContributionsInformationMistake
-from dictionaries.models import Organization, House, File
+from .models import CreditOrganization, Notify, ContributionsInformation, ContributionsInformationMistake
 from .serializers import NotifySerializer, \
     ContributionsInformationSerializer, ContributionsInformationMistakeSerializer, CreditOrganizationSerializer
-from rest_framework.decorators import api_view, action
+from rest_framework.decorators import action
 from rest_framework import viewsets
-from tools import dev_extreme
-from django.shortcuts import get_object_or_404
-from docxtpl import DocxTemplate
-import zipfile
-from django.db.models import Sum
-
-from .services import ServiceException
 
 
 class CreditOrganizationsViewSet(DevExtremeViewSet):
@@ -55,7 +34,6 @@ class NotifiesViewSet(DevExtremeViewSet):
     additional_fields = service.private_fields
     lookup_fields = ['id', 'account_number', 'house__address__area','house__address__city', 'house__address__street', 'house__number']
     serializer_class = NotifySerializer
-
 
     def search_filter(self, queryset):
         if not self.request.user.is_staff:
@@ -84,7 +62,7 @@ class NotifiesViewSet(DevExtremeViewSet):
             return Response('У вас нет соответствующих прав', status=400)
         user = UserSerializer(request.user)
         ids = self.filter_queryset(self.queryset).values_list('id', flat=True)
-        generate_excel.delay(request.GET, os.path.join(settings.MEDIA_ROOT, 'templates', 'notifies.xlsx'), list(ids), 'capital_repair.notify', user.data['email'])
+        generate_excel.delay(os.path.join(settings.MEDIA_ROOT, 'templates', 'notifies.xlsx'), list(ids), 'capital_repair.notify', user.data['email'])
         return Response({},
                         status=200)
 
@@ -128,7 +106,7 @@ class ContributionsInformationViewSet(DevExtremeViewSet):
             return Response('У вас нет соответствующих прав', status=400)
         user = UserSerializer(request.user)
         ids = self.filter_queryset(self.queryset).values_list('id', flat=True)
-        generate_excel.delay(request.GET, os.path.join(settings.MEDIA_ROOT, 'templates', 'contributions.xlsx'), list(ids),
+        generate_excel.delay(os.path.join(settings.MEDIA_ROOT, 'templates', 'contributions.xlsx'), list(ids),
                              'capital_repair.contributionsinformation', user.data['email'])
         return Response({},
                         status=200)

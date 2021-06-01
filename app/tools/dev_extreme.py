@@ -1,5 +1,4 @@
 import simplejson as json
-from datetime import datetime
 from django.db.models import Q
 
 from tools.date_tools import normalize_date
@@ -7,6 +6,7 @@ from tools.get_value import get_value
 
 
 def filtered_query(request_GET, query, distinct_field=None):
+    """ Производит фильтрацию query по параметрам, переданным в request_GET от компоненов DevExtreme """
     if 'skip' in request_GET:
         start = int(request_GET['skip'])
     else:

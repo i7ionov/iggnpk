@@ -2,12 +2,11 @@ import os
 from datetime import datetime
 import requests
 import xlrd
-
 from capital_repair.models import Status, Notify
 from dictionaries.models import Organization, Address, House, OrganizationType
 from capital_repair import models
 from iggnpk import settings
-from tools.address_normalizer import normalize_city, normalize_street, normalize_number
+from dictionaries.address_normalizer import normalize_city, normalize_street, normalize_number
 from tools.get_value import cut_value
 
 
@@ -18,44 +17,8 @@ def safe_address_delete(id):
         pass
 
 
-def patch():
-    """Нужно будет потом далить после патча"""
-    for id in ['2696', '90', '11457', '11675', '11675', '11677', '14929', '11457', '11675', '15320']:
-        safe_address_delete(id)
-
-    for a in Address.objects.filter(area='Верещагинский муниципальный район', place='Зюкайское сельское поселение',
-                                    city='п. Зюкайка'):
-        a.delete()
-    for a in Address.objects.filter(city__icontains='Липовая'):
-        a.city = a.city.replace(' 1', '').replace(' 2', '')
-        a.save()
-
-    for a in Address.objects.all():
-        a.city = normalize_city(a.city)
-        a.street = normalize_street(a.street)
-        a.save()
-
-    for h in House.objects.all():
-        h.number = normalize_number(h.number)
-        h.save()
-
-    for h in House.objects.all():
-        if House.objects.filter(number=h.number, address_id=h.address.id).count==1 :
-            continue
-        elif h.notify_set.count()>0:
-            for temp_h in House.objects.filter(number=h.number, address_id=h.address.id):
-                if h.id != temp_h.id:
-                    for temp_n in temp_h.notify_set.all():
-                        temp_n.house_id = h.id
-                        temp_n.save()
-                    temp_h.delete()
-
-        else:
-            h.delete()
-
-
-
 def regional_program(path):
+    """Выгрузка информации о домах из реестра капитального ремонта"""
     for h in House.objects.all():
         h.included_in_the_regional_program = False
         h.save()

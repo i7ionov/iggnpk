@@ -1,12 +1,10 @@
 from django.contrib.auth.models import Permission, Group
-
 from .models import User, House, Address, Organization, File, OrganizationType
 from rest_framework import serializers
 from tools.dynamic_fields_model_serializer import DynamicFieldsModelSerializer
 
 
 class OrganizationTypeSerializer(DynamicFieldsModelSerializer):
-
     class Meta:
         model = OrganizationType
         fields = '__all__'
@@ -14,6 +12,7 @@ class OrganizationTypeSerializer(DynamicFieldsModelSerializer):
 
 class OrganizationSerializer(DynamicFieldsModelSerializer):
     type = OrganizationTypeSerializer(required=False, read_only=True)
+
     class Meta:
         model = Organization
         fields = '__all__'

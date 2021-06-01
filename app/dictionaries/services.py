@@ -1,9 +1,8 @@
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
-
 from dictionaries.models import Address, OrganizationType, Organization, User
 from dictionaries.serializers import HouseSerializer, OrganizationSerializer, AddressSerializer, UserSerializer
-from tools.address_normalizer import normalize_number, normalize_street, normalize_city
+from dictionaries.address_normalizer import normalize_number, normalize_street, normalize_city
 from tools.replace_quotes import replace_quotes
 from tools.service import ServiceException, upd_foreign_key, upd_many_to_many
 

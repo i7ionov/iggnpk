@@ -1,17 +1,17 @@
-import os
-from datetime import datetime, date
+from datetime import datetime
 import openpyxl
 from django.core.exceptions import FieldDoesNotExist
-from openpyxl.styles import Alignment, NamedStyle
 from django.db import models
 from django.core.mail import EmailMessage
-from iggnpk import settings
 from openpyxl.writer.excel import save_virtual_workbook
 
-from tools.get_value import datetime_handler, get_value
+from tools.get_value import get_value
 
 
-def export_to_excel(template_path, query_set, email, output = None):
+def export_to_excel(template_path, query_set, email):
+    """ Экспортирует записи модели в формате xlsx и отправляет на указанный email.
+        :param template_path путь к шаблону excel
+        :param query_set query set для экспорта"""
     wb = openpyxl.load_workbook(template_path)
     ws = wb.worksheets[0]
     fields = []
@@ -19,7 +19,7 @@ def export_to_excel(template_path, query_set, email, output = None):
     col = 0
     while ws.cell(row_offset, col + 1).value:
         fields.append(ws.cell(row_offset, col + 1).value)
-        col+=1
+        col += 1
     for row, item in enumerate(query_set):
         for col, field in enumerate(fields):
             try:
@@ -71,9 +71,6 @@ def export_to_excel(template_path, query_set, email, output = None):
     email.send()
 
     return 'Hello there!'
-
-
-
 
 
 def get_model_columns(field_list, model, prefix='', parent_verbose_name=''):

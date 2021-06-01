@@ -1,32 +1,20 @@
 import os
-
-from django.contrib.sessions.models import Session
 from django_sendfile import sendfile
-
 from django.contrib.auth.models import Group
 from django.core.files.storage import default_storage
-from django.db.models import Q
-
 from rest_framework.exceptions import ParseError
 from rest_framework.parsers import FileUploadParser, MultiPartParser, FormParser
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
-
 from iggnpk import settings
-from tools.address_normalizer import normalize_number, normalize_street, normalize_city
-from tools.replace_quotes import replace_quotes
-from tools.service import upd_foreign_key, upd_many_to_many, ServiceException
+from tools.service import ServiceException
 from tools.viewsets import DevExtremeViewSet
 from .models import User, House, Address, Organization, File, OrganizationType
 from .serializers import UserSerializer, HouseSerializer, AddressSerializer, OrganizationSerializer, FileSerializer, \
     OrganizationTypeSerializer, GroupSerializer
 from rest_framework.decorators import api_view, action
-from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
-from tools import dev_extreme
 from django.core.mail import send_mail
-
 from .services import HouseService, OrganizationService, AddressService, UserService
 from .tasks import import_houses_from_register_of_KR
 
@@ -37,7 +25,6 @@ class HouseViewSet(DevExtremeViewSet):
     serializer_class = HouseSerializer
     lookup_fields = ['number']
     parser_class = (FileUploadParser, MultiPartParser, FormParser,)
-
 
     @action(detail=False, methods=['post'])
     def export_from_reg_program(self, request, *args, **kwargs):
@@ -77,7 +64,6 @@ class GroupViewSet(DevExtremeViewSet):
     permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-
 
 
 @api_view(['GET'])

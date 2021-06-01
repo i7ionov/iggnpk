@@ -1,5 +1,6 @@
 from datetime import datetime, date
 
+
 def get_value(item, field, to_string=True, separator='.'):
     """
     Метод позволяет получить строковое значение у объекта item, хранящееся в поле field.

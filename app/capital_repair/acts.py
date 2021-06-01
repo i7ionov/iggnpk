@@ -1,9 +1,8 @@
-from io import BytesIO, StringIO
+from io import BytesIO
 from datetime import date
 from dateutil.relativedelta import relativedelta
 from django.core.files.base import ContentFile
-
-from capital_repair.models import Notify, ContributionsInformationMistake, ContributionsInformation
+from capital_repair.models import Notify, ContributionsInformationMistake
 from dictionaries.models import Organization, File, User
 from tools import dev_extreme, date_tools
 from iggnpk import settings
@@ -11,12 +10,12 @@ from docxtpl import DocxTemplate
 import io
 import os
 import zipfile
-from django.core.files import File as DjangoFile
+
 
 class Act:
     @staticmethod
     def report_month():
-        """Возвращает месяц, до начала которого должны были подать отчет о взносах: январь, апрель, июль или октябрь"""
+        """ Возвращает месяц, до начала которого должны были подать отчет о взносах: январь, апрель, июль или октябрь """
         if date.today() < date(date.today().year, 3, 20):
             month = 1
         elif date.today() < date(date.today().year, 6, 20):
@@ -29,25 +28,25 @@ class Act:
 
     @staticmethod
     def is_not_in_reporting_period(d):
-        """Определяет, относится ли эта дата к отчетному периоду. True - не относится"""
+        """ Определяет, относится ли эта дата к отчетному периоду. True - не относится """
         month = Act.report_month()
         return d < (date(date.today().year, month, 1) + relativedelta(months=-1))
 
     @staticmethod
     def reporting_quarter_date():
-        """Возвращает дату начала отчетного периода"""
+        """ Возвращает дату начала отчетного периода """
         month = Act.report_month()
         return date(date.today().year, month, 20) + relativedelta(months=-1)
 
     @staticmethod
     def last_reporting_date():
-        """Возвращает дату окончания отчетного периода"""
+        """ Возвращает дату окончания отчетного периода """
         month = Act.report_month()
         return date(date.today().year, month, 1)
 
     @staticmethod
     def generate_act_contexts(request_GET):
-        """Создает массив данных (контекстов) для последующей подстановки в темплейты актов"""
+        """ Создает массив данных (контекстов) для последующей подстановки в темплейты актов """
         contexts = []
         queryset = Notify.objects.all()
         queryset, total_queryset, total_count = dev_extreme.filtered_query(request_GET, queryset)
@@ -91,6 +90,7 @@ class Act:
 
     @staticmethod
     def add_file_into_db(bytes_file, mail):
+        """ Добавляет сгенерированый файл в базу данных """
         user = User.objects.get(email=mail)
         content_file = ContentFile(bytes_file.getbuffer())
         file = File(owner=user, name='acts.zip')
@@ -99,6 +99,7 @@ class Act:
 
     @staticmethod
     def zip_acts(request_GET, mail):
+        """ Генерирует акты, пакует в zip архив и возвращает uuid файла для скачивания """
         bytes_file = BytesIO()
         with zipfile.ZipFile(bytes_file, "w") as zip_file:
             contexts = Act.generate_act_contexts(request_GET)
@@ -110,5 +111,4 @@ class Act:
                 org = context['organization']
                 zip_file.writestr(org.name.replace('/', '') + ', ' + org.inn + '.docx', f.getvalue())
         uuid = Act.add_file_into_db(bytes_file, mail)
-
         return uuid

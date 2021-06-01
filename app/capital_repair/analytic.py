@@ -12,6 +12,7 @@ from tools.get_value import get_value
 
 
 def to_fixed(numObj, digits=0):
+    """ Возвращает число за заданным количеством знаков после запятой """
     return f"{numObj:.{digits}f}"
 
 class CrReportItem:
@@ -21,6 +22,7 @@ class CrReportItem:
         self.value = value
 
 class CrReport:
+    """ Ежеквартальный отчет по капитальному ремонту """
     _fields = ['assessed_contributions_total',
                'assessed_contributions_current',
                'received_contributions_total',
@@ -43,8 +45,8 @@ class CrReport:
 
     @property
     def assessed_contributions_total(self):
-        """Начислено взносов на капитальный ремонт с начала действия региональной программы капитального ремонта
-           по начало отчетного периода"""
+        """ Начислено взносов на капитальный ремонт с начала действия региональной программы капитального ремонта
+            по начало отчетного периода """
         result = {}
         for sub_field in self._sub_fields:
             total = self._report['assessed_contributions_total'][sub_field] or 0
@@ -54,8 +56,8 @@ class CrReport:
 
     @property
     def received_contributions_total(self):
-        """Собрано средств по взносам на капитальный ремонт с начала действия региональной программы
-           капитального ремонта по начало отчетного периода"""
+        """ Собрано средств по взносам на капитальный ремонт с начала действия региональной программы
+            капитального ремонта по начало отчетного периода """
         result = {}
         for sub_field in self._sub_fields:
             total = self._report['received_contributions_total'][sub_field] or 0
@@ -65,8 +67,8 @@ class CrReport:
 
     @property
     def level_of_fundraising_total(self):
-        """Уровень собираемости средств собственников с начала действия региональной программы капитального ремонта
-           по начало отчетного периода"""
+        """ Уровень собираемости средств собственников с начала действия региональной программы капитального ремонта
+            по начало отчетного периода """
         result = {}
         for sub_field in self._sub_fields:
             assessed = self.assessed_contributions_total[sub_field] or 1
@@ -76,7 +78,7 @@ class CrReport:
 
     @property
     def assessed_contributions_current(self):
-        """Начислено взносов на капитальный ремонт с начала отчетного периода"""
+        """ Начислено взносов на капитальный ремонт с начала отчетного периода """
         result = {}
         for sub_field in self._sub_fields:
             current = self._report['assessed_contributions_current'][sub_field] or 0
@@ -85,7 +87,7 @@ class CrReport:
 
     @property
     def received_contributions_current(self):
-        """Собрано средств по взносам на капитальный ремонт с начала отчетного периода"""
+        """ Собрано средств по взносам на капитальный ремонт с начала отчетного периода """
         result = {}
         for sub_field in self._sub_fields:
             current = self._report['received_contributions_current'][sub_field] or 0
@@ -94,7 +96,7 @@ class CrReport:
 
     @property
     def level_of_fundraising_current(self):
-        """Уровень собираемости средств собственников с начала отчетного периода"""
+        """ Уровень собираемости средств собственников с начала отчетного периода """
         result = {}
         for sub_field in self._sub_fields:
             assessed = self.assessed_contributions_current[sub_field] or 1
@@ -104,7 +106,7 @@ class CrReport:
 
     @property
     def total_debt(self):
-        """Совокупная задолженность собственников по уплате взносов на капитальный ремонт на отчетную дату"""
+        """ Совокупная задолженность собственников по уплате взносов на капитальный ремонт на отчетную дату """
         result = {}
         for sub_field in self._sub_fields:
             assessed = self.assessed_contributions_total[sub_field] or 0
@@ -115,7 +117,7 @@ class CrReport:
 
     @property
     def fund_balance_total(self):
-        """Остаток денежных средств на начало отчетного периода"""
+        """ Остаток денежных средств на начало отчетного периода """
         result = {}
         for sub_field in self._sub_fields:
             received = self.received_contributions_current[sub_field] or 0
@@ -126,7 +128,7 @@ class CrReport:
 
     @property
     def fund_balance_total_and_current(self):
-        """Остаток денежных средств на начало отчетного периода"""
+        """ Остаток денежных средств на начало отчетного периода """
         result = {}
         for sub_field in self._sub_fields:
             fund_balance = self._report['fund_balance'][sub_field] or 0
@@ -135,7 +137,7 @@ class CrReport:
 
     @property
     def fund_balance(self):
-        """Остаток денежных средств на начало отчетного периода"""
+        """ Остаток денежных средств на начало отчетного периода """
         result = {}
         for sub_field in self._sub_fields:
             fund_balance = self._report['fund_balance'][sub_field] or 0
@@ -144,7 +146,7 @@ class CrReport:
 
     @property
     def funds_spent(self):
-        """Сумма списанных денежных средств в отчетном периоде"""
+        """ Сумма списанных денежных средств в отчетном периоде """
         result = {}
         for sub_field in self._sub_fields:
             funds_spent = self._report['funds_spent'][sub_field] or 0
@@ -153,6 +155,7 @@ class CrReport:
         return result
 
     def _initiate_report(self):
+        """ Инициализирует словари отчета. Заполняет данные нулями """
         for field in self._fields:
             self._report[field] = {}
         for field in self._fields:
@@ -160,6 +163,7 @@ class CrReport:
                 self._report[field][item_field] = 0
 
     def _populate_report_dict(self, query):
+        """ Загружает первичные данные из базы """
         for field in self._fields:
             for sub_field, value in self._sub_fields.items():
                 if value:
@@ -184,6 +188,7 @@ class CrReport:
                 self.total_area[sub_field] = 0
 
     def _populate_last_year_funds_spent_dict(self, query):
+        """ Загружает информацию о потраченых средствах за прошлый год """
         for sub_field, value in self._sub_fields.items():
             if value:
                 self.last_year_funds_spent[sub_field] = query.filter(notify__organization__type__text__in=value) \
@@ -212,15 +217,10 @@ class CrReport:
             if type(value) == dict:
                 for k, v in value.items():
                     yield CrReportItem(f'{f}__{k}', f'field {f}__{k}', v)
-                    # yield {'name': f'{f}__{k}', 'verbose_name:': f'field {f}__{k}', 'value': v}
-
-
-
-
-
 
 
 def report_to_excel(report):
+    """Старый отчет, оставил для инфы о формулах расчета"""
     wb = openpyxl.load_workbook(os.path.join(settings.MEDIA_ROOT, 'templates', 'cr_report.xlsx'))
     ws = wb.worksheets[0]
     a = report.assessed_contributions_total

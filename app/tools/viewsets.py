@@ -1,7 +1,6 @@
 from django.db.models import Q
 from rest_framework import viewsets, mixins, permissions
 from rest_framework.response import Response
-
 from tools import dev_extreme
 from tools.permissions import ModelPermissions
 from tools.service import ServiceException
@@ -36,7 +35,6 @@ class DevExtremeViewSet(viewsets.ModelViewSet, mixins.ListModelMixin):
         context = super(DevExtremeViewSet, self).get_serializer_context()
         return context
 
-    # TODO: по-хорошему, поисковый фильтр нужно переложить на фронтенд
     def search_filter(self, queryset):
         return queryset
 

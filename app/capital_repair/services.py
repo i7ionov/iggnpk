@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from capital_repair.models import Status, CreditOrganization, Notify, ContributionsInformation, \
     ContributionsInformationMistake
 from capital_repair.serializers import NotifySerializer, ContributionsInformationSerializer
