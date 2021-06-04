@@ -14,6 +14,7 @@ import os
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
+from loguru import logger
 
 try:
     from .local_settings import *
@@ -31,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'rest_framework',
     "rest_framework.authtoken",
     'corsheaders',
@@ -38,6 +40,7 @@ INSTALLED_APPS = [
     'simple_history',
     'django_celery_beat',
     'django_sendfile',
+
     'tools',
     'dictionaries',
     'capital_repair'
@@ -136,3 +139,4 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication'
     )
 }
+logger.add("requests.log", rotation="1 month", enqueue=True, serialize=True)

@@ -16,3 +16,4 @@ openpyxl==3.0.5
 freezegun
 sentry-sdk==1.0.0
 django-sendfile2==0.6.0
+loguru==0.5.3

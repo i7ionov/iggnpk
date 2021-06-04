@@ -1,7 +1,9 @@
 from django.db.models import Q
+from loguru import logger
 from rest_framework import viewsets, mixins, permissions
 from rest_framework.response import Response
 from tools import dev_extreme
+from tools.ip_addr import get_client_ip
 from tools.permissions import ModelPermissions
 from tools.service import ServiceException
 
@@ -73,15 +75,42 @@ class DevExtremeViewSet(viewsets.ModelViewSet, mixins.ListModelMixin):
         return Response(data)
 
     def create(self, request, *args, **kwargs):
+        logger.info(
+            f"{request.user.username} ip:{get_client_ip(request)} " +
+            f"trying to create {self.queryset.model._meta.verbose_name} " +
+            f"with data {request.data}")
         try:
             data = self.service.create(request.data, request.user)
+            logger.info(
+                f"{request.user.username} ip:{get_client_ip(request)} " +
+                f"succesfully created {self.queryset.model._meta.verbose_name} with " +
+                f"object id: {data['id']}")
             return Response(data)
         except ServiceException as e:
+            logger.info(
+                f"{request.user.username} ip:{get_client_ip(request)} " +
+                f"failed to create {self.queryset.model._meta.verbose_name} " +
+                f"with data {request.data}. Error: {e.errors}")
+
             return Response(e.errors, status=400)
 
     def update(self, request, *args, **kwargs):
+        logger.info(
+            f"{request.user.username} ip:{get_client_ip(request)} " +
+            f"trying to update {self.queryset.model._meta.verbose_name} with id: {kwargs['pk']} " +
+            f"with data {request.data}")
+
         try:
             data = self.service.update(self.get_object(), request.data, request.user)
+            logger.info(
+                f"{request.user.username} ip:{get_client_ip(request)} " +
+                f"succesfully updated {self.queryset.model._meta.verbose_name} " +
+                f"object id: {data['id']}")
+
             return Response(data)
         except ServiceException as e:
+            logger.info(
+                f"{request.user.username} ip:{get_client_ip(request)} " +
+                f"failed to update {self.queryset.model._meta.verbose_name} with id: {kwargs['pk']}" +
+                f"with data {request.data}. Error: {e.errors}")
             return Response(e.errors, status=400)
