@@ -139,4 +139,4 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication'
     )
 }
-logger.add("requests.log", rotation="1 month", enqueue=True, serialize=True)
+logger.add("logs/requests.log", rotation="1 month", enqueue=True, serialize=True)
