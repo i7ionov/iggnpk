@@ -133,6 +133,15 @@ class UserUpdateViewSetTest(BaseTest):
         self.assertTrue(user.check_password('321'))
         self.assertEqual({self.g1, self.g2}, set(user.groups.all()))
 
+    def test_updating_objects_without_groups_not_erasing_existing(self):
+        """Если в параметрах data не передается поле groups, в существующем объекте это поле не должно обнуляться"""
+        client = APIClient(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
+        data = dict(self.data)
+        data.pop('groups')
+        response = client.patch(f'{endpoint_url}{self.user.id}/', data, format='json')
+        user = User.objects.get(id=self.user.id)
+        self.assertEqual({self.g1}, set(user.groups.all()))
+
     def test_needs_authentification(self):
         client = APIClient()
         data = dict(self.data)

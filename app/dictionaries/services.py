@@ -135,7 +135,7 @@ class UserService:
                         raise ServiceException('Пароли не совпадают')
                     instance.set_password(data['password'])
                 org = upd_foreign_key('organization', data, instance, Organization)
-                groups = upd_many_to_many('groups', data, None, Group)
+                groups = upd_many_to_many('groups', data, instance, Group)
                 is_staff = Group.objects.get(name='Администраторы') in groups
                 serializer.save(organization=org, groups=groups, is_staff=is_staff)
                 self._send_activation_mail(data, serializer)
