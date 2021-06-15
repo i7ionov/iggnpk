@@ -1,6 +1,7 @@
 <script src="home.component.ts"></script><h2 class="content-block">Главная</h2>
 <div class="content-block">
-  <div class="dx-card responsive-paddings">
+
+  <div class="dx-card responsive-paddings" *ngIf="dashboard_visibility">
      <dx-button
                         stylingMode="contained"
                         text="В Excel"
