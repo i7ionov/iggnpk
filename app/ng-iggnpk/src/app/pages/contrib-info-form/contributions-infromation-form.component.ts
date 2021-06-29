@@ -320,8 +320,8 @@ export class ContributionsInfromationFormComponent implements OnInit {
     // "item" can be null
     let latest_contrib_date = '';
     let address = '';
-    if (item && item.latest_contrib_date) {
-      latest_contrib_date = `(${item.latest_contrib_date})`
+    if (item && item.last_contrib) {
+      latest_contrib_date = `(${item.last_contrib.date})`
     }
     if (item && item.house)
     {
