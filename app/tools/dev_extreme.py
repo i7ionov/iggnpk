@@ -91,7 +91,11 @@ def build_q_object(filter_request):
             if type(a) is str:
                 a = a.replace('.', '__')
                 temp = normalize_date(temp)
-                a = add_operator(a, operator)
+                if operator == '<>' and temp is None:
+                    a = a + '__isnull'
+                    temp = False
+                else:
+                    a = add_operator(a, operator, temp)
 
                 return Q(**{a: temp})
             else:
@@ -103,7 +107,7 @@ def build_q_object(filter_request):
     return result
 
 
-def add_operator(field, operator):
+def add_operator(field, operator, value):
     operators = {'contains': '__icontains', '<': '__lt', '<=': '__lte', '>': '__gt', '>=': '__gte', '<>': '__ne' }
     if operator in operators.keys():
         return field + operators[operator]
