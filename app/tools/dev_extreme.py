@@ -134,6 +134,7 @@ def populate_group_category(request_GET, queryset):
     selector = groups[0]['selector']
     selector = selector.replace('.', '__')
     items, totalItems, count = filtered_query(request_GET, queryset, selector)
+    result.append({'key': None, 'items': None, 'count': 1})
     if 'groupInterval' in groups[0]:
         if groups[0]['groupInterval'] == 'year':
             result.append({'key': None, 'items': []})
