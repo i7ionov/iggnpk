@@ -47,58 +47,66 @@ class FilteredQueryTest(BaseTest):
 class BuildQObjectTest(BaseTest):
     def test_accept_contains(self):
         filter_request = ["id", "=", 1]
-        self.assertEqual(Q(**{'id': 1}), build_q_object(filter_request))
+        self.assertEqual(Q(**{'id': 1}), build_q_object(filter_request, Organization))
 
     def test_accept_lt(self):
         filter_request = ["id", "<", 1]
-        self.assertEqual(Q(**{'id__lt': 1}), build_q_object(filter_request))
+        self.assertEqual(Q(**{'id__lt': 1}),  build_q_object(filter_request, Organization))
 
     def test_accept_lte(self):
         filter_request = ["id", "<=", 1]
-        self.assertEqual(Q(**{'id__lte': 1}), build_q_object(filter_request))
+        self.assertEqual(Q(**{'id__lte': 1}),  build_q_object(filter_request, Organization))
 
     def test_accept_gt(self):
         filter_request = ["id", ">", 1]
-        self.assertEqual(Q(**{'id__gt': 1}), build_q_object(filter_request))
+        self.assertEqual(Q(**{'id__gt': 1}),  build_q_object(filter_request, Organization))
 
     def test_accept_gte(self):
         filter_request = ["id", ">=", 1]
-        self.assertEqual(Q(**{'id__gte': 1}), build_q_object(filter_request))
+        self.assertEqual(Q(**{'id__gte': 1}),  build_q_object(filter_request, Organization))
 
     def test_accept_ne(self):
         filter_request = ["id", "<>", 1]
-        self.assertEqual(Q(**{'id__ne': 1}), build_q_object(filter_request))
+        self.assertEqual(Q(**{'id__ne': 1}),  build_q_object(filter_request, Organization))
+
+    def test_not_null_date(self):
+        filter_request = ["date", "<>", None]
+        self.assertEqual(Q(**{'date__isnull': False}),  build_q_object(filter_request, ContributionsInformation))
+
+    def test_not_blank_date(self):
+        filter_request = ["date", "<>", '']
+        self.assertEqual(None,  build_q_object(filter_request, ContributionsInformation))
 
     def test_accept_complicated_filter(self):
         filter_request = [
             ["id", "=", 1],
             "and",
-            ["!", ["doc_number", "=", "2664Л-1"]],
+            ["!", ["comment", "=", "2664Л-1"]],
             "and",
             [
                 [
-                    ["doc_date", ">=", "2015/09/29"],
+                    ["date", ">=", "2015/09/29"],
                     "and",
-                    ["doc_date", "<", "2015/09/30"]
+                    ["date", "<", "2015/09/30"]
                 ],
                 "or",
                 [
-                    ["doc_date", ">=", "2017/01/01"],
+                    ["date", ">=", "2017/01/01"],
                     "and",
-                    ["doc_date", "<", "2018/01/01"]
+                    ["date", "<", "2018/01/01"]
                 ]
             ]
         ]
         q = Q(**{'id': 1}) & \
-            ~Q(**{'doc_number': '2664Л-1'}) & \
+            ~Q(**{'comment': '2664Л-1'}) & \
             (
                 (
-                        Q(**{'doc_date__gte': '2015-09-29'}) &
-                        Q(**{'doc_date__lt': '2015-09-30'})
+                        Q(**{'date__gte': '2015-09-29'}) &
+                        Q(**{'date__lt': '2015-09-30'})
                 ) |
                 (
-                        Q(**{'doc_date__gte': '2017-01-01'}) &
-                        Q(**{'doc_date__lt': '2018-01-01'})
+                        Q(**{'date__gte': '2017-01-01'}) &
+                        Q(**{'date__lt': '2018-01-01'})
                 )
             )
-        self.assertEqual(q, build_q_object(filter_request))
+        self.assertEqual(q,  build_q_object(filter_request, ContributionsInformation))

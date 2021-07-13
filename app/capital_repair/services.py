@@ -22,7 +22,7 @@ class ContributionsInformationService:
             notify = self._get_notify(data, None, user)
             files = upd_many_to_many('files', data, None, File)
             mistakes = self._get_mistakes(data, None, user)
-            serializer.save(date=datetime.today().date(), status=status, files=files, notify=notify, last_notify=notify,
+            serializer.save(date=datetime.today().date(), status=status, files=files, notify=notify,
                             mistakes=mistakes)
             return serializer.data
         else:
@@ -56,7 +56,15 @@ class ContributionsInformationService:
             notify = self._get_notify(data, instance, user)
             files = upd_many_to_many('files', data, instance, File)
             mistakes = self._get_mistakes(data, instance, user)
-            serializer.save(files=files, status=status, notify=notify, last_notify=notify, mistakes=mistakes, date=date)
+            if status.id == 3:
+                self._set_old_last_notify_to_none(notify)
+                last_notify = notify
+                notify.latest_contrib_date = date
+                notify.save()
+            else:
+                last_notify = None
+
+            serializer.save(files=files, status=status, notify=notify, last_notify=last_notify, mistakes=mistakes, date=date)
             return serializer.data
         else:
             raise ServiceException(serializer.errors)
@@ -85,7 +93,6 @@ class ContributionsInformationService:
     def _get_notify(self, data, instance, user):
         """Возвращает уведомление для записи"""
         notify = upd_foreign_key('notify', data, instance, Notify)
-        self._set_old_last_notify_to_none(notify)
         if notify.organization.id != user.organization.id and not user.is_staff:
             raise ServiceException(
                 'Организация, указанная в уведомлениии, не соответствует организации пользователя')

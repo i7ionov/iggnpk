@@ -188,7 +188,7 @@ class ContribInfoCreateViewSetTest(BaseTest):
         self.assertTrue(response.status_code, 200)
         self.assertTrue(response.data['id'], ContributionsInformation.objects.last())
 
-    def test_sets_as_last_contrib_in_notify(self):
+    def test_does_not_sets_as_last_contrib_in_notify(self):
         notify = mixer.blend(Notify, organization=self.uk.organization)
         old_contrib = mixer.blend(ContributionsInformation, notify=notify, last_notify=notify)
         client = APIClient(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
@@ -201,7 +201,7 @@ class ContribInfoCreateViewSetTest(BaseTest):
         }
         response = client.post(f'{endpoint_url}', json_data, format='json')
         notify = Notify.objects.get(pk=notify.pk)
-        self.assertEqual(notify.last_contrib.pk, response.data['id'])
+        self.assertEqual(notify.last_contrib, old_contrib)
 
     def test_needs_authentification(self):
         client = APIClient()
@@ -341,6 +341,23 @@ class ContribInfoUpdateViewSetTest(BaseTest):
         contrib = ContributionsInformation.objects.get(id=contrib.id)
         self.assertTrue(response.status_code, 400)
         self.assertEqual(contrib.delta_total, None)
+
+    def test_setting_status_3_updates_last_notify(self):
+        notify = mixer.blend(Notify, organization=self.uk.organization)
+        old_contrib = mixer.blend(ContributionsInformation, notify=notify, last_notify=notify)
+        contrib = mixer.blend(ContributionsInformation, notify=notify)
+        client = APIClient(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
+        json_data = {
+            "id": contrib.id,
+            "notify": {"id": notify.id},
+            "status": {"id": 3},
+            "files": [],
+            "mistakes": []
+        }
+        response = client.patch(f'{endpoint_url}{contrib.id}/', json_data, format='json')
+        notify = Notify.objects.get(pk=notify.pk)
+        self.assertEqual(notify.last_contrib, contrib)
+        self.assertEqual(notify.latest_contrib_date, contrib.date)
 
     def test_needs_authentification(self):
         client = APIClient()

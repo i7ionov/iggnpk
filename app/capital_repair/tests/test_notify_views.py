@@ -92,13 +92,13 @@ class NotifiesListViewSetTest(BaseTest):
         self.assertTrue('items' in response.data)
         self.assertTrue('totalCount' in response.data)
         self.assertTrue('key' in response.data['items'][0])
-        self.assertEqual(response.data['items'][1]['key'], 2012)
-        self.assertEqual(response.data['items'][2]['key'], 2013)
-        self.assertEqual(response.data['items'][1]['items'][0]['key'], 11)
-        self.assertEqual(response.data['items'][1]['items'][0]['items'][0]['key'], 15)
-        self.assertEqual(response.data['items'][1]['items'][1]['key'], 12)
-        self.assertEqual(response.data['items'][1]['items'][1]['items'][0]['key'], 14)
-        self.assertEqual(response.data['items'][1]['items'][1]['items'][1]['key'], 15)
+        self.assertEqual(response.data['items'][2]['key'], 2012)
+        self.assertEqual(response.data['items'][3]['key'], 2013)
+        self.assertEqual(response.data['items'][2]['items'][0]['key'], 11)
+        self.assertEqual(response.data['items'][2]['items'][0]['items'][0]['key'], 15)
+        self.assertEqual(response.data['items'][2]['items'][1]['key'], 12)
+        self.assertEqual(response.data['items'][2]['items'][1]['items'][0]['key'], 14)
+        self.assertEqual(response.data['items'][2]['items'][1]['items'][1]['key'], 15)
 
     def test_allow_search_by_defined_fields(self):
         """Должен производиться поиск по следующим полям: id, номер счета, поля адреса"""

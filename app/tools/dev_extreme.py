@@ -1,4 +1,5 @@
 import simplejson as json
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 
 from tools.date_tools import normalize_date
@@ -17,8 +18,11 @@ def filtered_query(request_GET, query, distinct_field=None):
         end = query.count()
     if 'filter' in request_GET and request_GET['filter'] != 'undefined':
         """"[["id","=",1],"and",["!",["doc_number","=","+2664Л-1"]]]"""
-        q = build_q_object(json.loads(request_GET['filter']))
-        query = query.filter(q)
+        q = build_q_object(json.loads(request_GET['filter']), query.model)
+        try:
+            query = query.filter(q)
+        except ValidationError:
+            pass
     if 'searchValue' in request_GET:
         if request_GET['searchExpr']!='undefined':
             field = request_GET['searchExpr'].replace("\"", "")
@@ -44,7 +48,7 @@ def filtered_query(request_GET, query, distinct_field=None):
     return paged_query, query, query.count()
 
 
-def build_q_object(filter_request):
+def build_q_object(filter_request, model):
     """
     :param filter_request: [
                             ["id","=",1],
@@ -65,6 +69,7 @@ def build_q_object(filter_request):
                                 ]
                             ]
                             ]
+    :param model: Model
     :return: Q object
     """
     result = None
@@ -72,7 +77,7 @@ def build_q_object(filter_request):
     operator = None
     for i in range(0, len(filter_request)):
         if type(filter_request[i]) is list:
-            temp = build_q_object(filter_request[i])
+            temp = build_q_object(filter_request[i], model)
             if result is None:
                 if operator == '!':
                     temp = ~temp
@@ -94,15 +99,27 @@ def build_q_object(filter_request):
                 if operator == '<>' and temp is None:
                     a = a + '__isnull'
                     temp = False
+                elif operator == '=' and temp is None:
+                    a = a + '__isnull'
+                    temp = True
                 else:
-                    a = add_operator(a, operator, temp)
-
+                     a = add_operator(a, operator, temp)
+                try:
+                    model.objects.filter(Q(**{a: temp}))
+                except ValidationError:
+                    return None
                 return Q(**{a: temp})
             else:
                 if operator == 'and':
-                    result = result & temp
+                    if result and temp:
+                        result = result & temp
+                    elif temp:
+                        result = temp
                 elif operator == 'or':
-                    result = result | temp
+                    if result and temp:
+                        result = result | temp
+                    elif temp:
+                        result = temp
                 operator = None
     return result
 
