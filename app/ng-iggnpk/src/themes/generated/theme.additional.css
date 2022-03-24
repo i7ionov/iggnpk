@@ -1400,7 +1400,6 @@
   opacity: 1;
 }
 .dx-swatch-additional .dx-card {
-  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);
   box-shadow: 0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);
   border-radius: 4px;
   background-color: #363640;
@@ -1414,8 +1413,6 @@
   line-height: 1.2857;
   padding: 0;
   display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex;
 }
 .dx-swatch-additional .dx-field input,
@@ -1456,8 +1453,6 @@
   color: #fff;
   font-size: 12px;
   cursor: default;
-  -webkit-align-self: center;
-  -ms-flex-item-align: center;
   align-self: center;
   padding-right: 15px;
 }
@@ -1560,6 +1555,13 @@
 }
 .dx-swatch-additional .dx-button {
   min-width: 36px;
+  height: 36px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  background-color: #363640;
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,.4);
 }
 .dx-swatch-additional .dx-button .dx-button-content {
   padding: 6px;
@@ -1675,18 +1677,7 @@
 }
 .dx-swatch-additional .dx-button.dx-button-has-icon:not(.dx-button-has-text):not(.dx-shape-standard) {
   border-radius: 50%;
-  -webkit-box-shadow: none;
   box-shadow: none;
-}
-.dx-swatch-additional .dx-button {
-  height: 36px;
-  position: relative;
-  overflow: hidden;
-  border-radius: 4px;
-  background-color: #363640;
-  color: #fff;
-  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.4);
-  box-shadow: 0 1px 3px rgba(0,0,0,.4);
 }
 .dx-swatch-additional .dx-button .dx-button-content .dx-inkripple {
   overflow: hidden;
@@ -1694,22 +1685,18 @@
 }
 .dx-swatch-additional .dx-button.dx-state-hover {
   background-color: #494956;
-  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.4);
   box-shadow: 0 1px 3px rgba(0,0,0,.4);
 }
 .dx-swatch-additional .dx-button.dx-state-focused {
   background-color: #494956;
-  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.48);
   box-shadow: 0 1px 3px rgba(0,0,0,.48);
 }
 .dx-swatch-additional .dx-button.dx-state-active {
   background-color: #7d7d92;
-  -webkit-box-shadow: 0 4px 6px rgba(0,0,0,.48);
   box-shadow: 0 4px 6px rgba(0,0,0,.48);
 }
 .dx-swatch-additional .dx-button.dx-state-disabled {
   background: rgba(255,255,255,.1);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button.dx-state-disabled .dx-icon {
@@ -1725,7 +1712,6 @@
   border-radius: 4px;
   background-color: #ff5722;
   color: rgba(0,0,0,.87);
-  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.4);
   box-shadow: 0 1px 3px rgba(0,0,0,.4);
 }
 .dx-swatch-additional .dx-button.dx-button-default .dx-icon {
@@ -1733,22 +1719,18 @@
 }
 .dx-swatch-additional .dx-button.dx-button-default.dx-state-hover {
   background-color: #ff784d;
-  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.4);
   box-shadow: 0 1px 3px rgba(0,0,0,.4);
 }
 .dx-swatch-additional .dx-button.dx-button-default.dx-state-focused {
   background-color: #ff784d;
-  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.48);
   box-shadow: 0 1px 3px rgba(0,0,0,.48);
 }
 .dx-swatch-additional .dx-button.dx-button-default.dx-state-active {
   background-color: #ffc4b1;
-  -webkit-box-shadow: 0 4px 6px rgba(0,0,0,.48);
   box-shadow: 0 4px 6px rgba(0,0,0,.48);
 }
 .dx-swatch-additional .dx-button.dx-button-default.dx-state-disabled {
   background: rgba(255,255,255,.1);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button.dx-button-default.dx-state-disabled .dx-icon {
@@ -1764,7 +1746,6 @@
   border-radius: 4px;
   background-color: #e91e63;
   color: rgba(0,0,0,.87);
-  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.4);
   box-shadow: 0 1px 3px rgba(0,0,0,.4);
 }
 .dx-swatch-additional .dx-button.dx-button-danger .dx-icon {
@@ -1772,22 +1753,18 @@
 }
 .dx-swatch-additional .dx-button.dx-button-danger.dx-state-hover {
   background-color: #ed457e;
-  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.4);
   box-shadow: 0 1px 3px rgba(0,0,0,.4);
 }
 .dx-swatch-additional .dx-button.dx-button-danger.dx-state-focused {
   background-color: #ed457e;
-  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.48);
   box-shadow: 0 1px 3px rgba(0,0,0,.48);
 }
 .dx-swatch-additional .dx-button.dx-button-danger.dx-state-active {
   background-color: #f279a2;
-  -webkit-box-shadow: 0 4px 6px rgba(0,0,0,.48);
   box-shadow: 0 4px 6px rgba(0,0,0,.48);
 }
 .dx-swatch-additional .dx-button.dx-button-danger.dx-state-disabled {
   background: rgba(255,255,255,.1);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button.dx-button-danger.dx-state-disabled .dx-icon {
@@ -1803,7 +1780,6 @@
   border-radius: 4px;
   background-color: #8bc34a;
   color: rgba(0,0,0,.87);
-  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.4);
   box-shadow: 0 1px 3px rgba(0,0,0,.4);
 }
 .dx-swatch-additional .dx-button.dx-button-success .dx-icon {
@@ -1811,22 +1787,18 @@
 }
 .dx-swatch-additional .dx-button.dx-button-success.dx-state-hover {
   background-color: #a0ce6b;
-  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.4);
   box-shadow: 0 1px 3px rgba(0,0,0,.4);
 }
 .dx-swatch-additional .dx-button.dx-button-success.dx-state-focused {
   background-color: #a0ce6b;
-  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.48);
   box-shadow: 0 1px 3px rgba(0,0,0,.48);
 }
 .dx-swatch-additional .dx-button.dx-button-success.dx-state-active {
   background-color: #bbdc95;
-  -webkit-box-shadow: 0 4px 6px rgba(0,0,0,.48);
   box-shadow: 0 4px 6px rgba(0,0,0,.48);
 }
 .dx-swatch-additional .dx-button.dx-button-success.dx-state-disabled {
   background: rgba(255,255,255,.1);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button.dx-button-success.dx-state-disabled .dx-icon {
@@ -1841,7 +1813,6 @@
 .dx-swatch-additional .dx-button.dx-button-back {
   background-color: transparent;
   color: #fff;
-  -webkit-box-shadow: none;
   box-shadow: none;
   border-radius: 50%;
   min-width: 36px;
@@ -1849,17 +1820,14 @@
 .dx-swatch-additional .dx-button.dx-button-back.dx-state-focused,
 .dx-swatch-additional .dx-button.dx-button-back.dx-state-hover {
   background-color: rgba(255,255,255,.08);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button.dx-button-back.dx-state-active {
   background-color: rgba(255,255,255,.3);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button.dx-button-back.dx-state-disabled {
   background: 0 0;
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button.dx-button-back.dx-state-disabled .dx-icon {
@@ -1904,7 +1872,6 @@
 .dx-swatch-additional .dx-button-mode-text {
   background-color: transparent;
   color: #fff;
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-text .dx-icon {
@@ -1913,17 +1880,14 @@
 .dx-swatch-additional .dx-button-mode-text.dx-state-focused,
 .dx-swatch-additional .dx-button-mode-text.dx-state-hover {
   background-color: rgba(255,255,255,.08);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-text.dx-state-active {
   background-color: rgba(255,255,255,.3);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-text.dx-state-disabled {
   background: 0 0;
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-text.dx-state-disabled .dx-icon {
@@ -1938,7 +1902,6 @@
 .dx-swatch-additional .dx-button-mode-text.dx-button-default {
   background-color: transparent;
   color: #ff5722;
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-text.dx-button-default .dx-icon {
@@ -1947,17 +1910,14 @@
 .dx-swatch-additional .dx-button-mode-text.dx-button-default.dx-state-focused,
 .dx-swatch-additional .dx-button-mode-text.dx-button-default.dx-state-hover {
   background-color: rgba(255,87,34,.08);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-text.dx-button-default.dx-state-active {
   background-color: rgba(255,87,34,.36);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-text.dx-button-default.dx-state-disabled {
   background: 0 0;
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-text.dx-button-default.dx-state-disabled .dx-icon {
@@ -1972,7 +1932,6 @@
 .dx-swatch-additional .dx-button-mode-text.dx-button-danger {
   background-color: transparent;
   color: #e91e63;
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-text.dx-button-danger .dx-icon {
@@ -1981,17 +1940,14 @@
 .dx-swatch-additional .dx-button-mode-text.dx-button-danger.dx-state-focused,
 .dx-swatch-additional .dx-button-mode-text.dx-button-danger.dx-state-hover {
   background-color: rgba(233,30,99,.08);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-text.dx-button-danger.dx-state-active {
   background-color: rgba(233,30,99,.36);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-text.dx-button-danger.dx-state-disabled {
   background: 0 0;
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-text.dx-button-danger.dx-state-disabled .dx-icon {
@@ -2006,7 +1962,6 @@
 .dx-swatch-additional .dx-button-mode-text.dx-button-success {
   background-color: transparent;
   color: #8bc34a;
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-text.dx-button-success .dx-icon {
@@ -2015,17 +1970,14 @@
 .dx-swatch-additional .dx-button-mode-text.dx-button-success.dx-state-focused,
 .dx-swatch-additional .dx-button-mode-text.dx-button-success.dx-state-hover {
   background-color: rgba(139,195,74,.08);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-text.dx-button-success.dx-state-active {
   background-color: rgba(139,195,74,.36);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-text.dx-button-success.dx-state-disabled {
   background: 0 0;
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-text.dx-button-success.dx-state-disabled .dx-icon {
@@ -2040,7 +1992,6 @@
 .dx-swatch-additional .dx-button-mode-outlined {
   background-color: transparent;
   color: #fff;
-  -webkit-box-shadow: none;
   box-shadow: none;
   border: 1px solid rgba(255,255,255,.24);
 }
@@ -2050,17 +2001,14 @@
 .dx-swatch-additional .dx-button-mode-outlined.dx-state-focused,
 .dx-swatch-additional .dx-button-mode-outlined.dx-state-hover {
   background-color: rgba(255,255,255,.08);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-outlined.dx-state-active {
   background-color: rgba(255,255,255,.3);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-outlined.dx-state-disabled {
   background: 0 0;
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-outlined.dx-state-disabled .dx-icon {
@@ -2075,7 +2023,6 @@
 .dx-swatch-additional .dx-button-mode-outlined.dx-button-default {
   background-color: transparent;
   color: #ff5722;
-  -webkit-box-shadow: none;
   box-shadow: none;
   border: 1px solid #ff5722;
 }
@@ -2085,17 +2032,14 @@
 .dx-swatch-additional .dx-button-mode-outlined.dx-button-default.dx-state-focused,
 .dx-swatch-additional .dx-button-mode-outlined.dx-button-default.dx-state-hover {
   background-color: rgba(255,87,34,.08);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-outlined.dx-button-default.dx-state-active {
   background-color: rgba(255,87,34,.36);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-outlined.dx-button-default.dx-state-disabled {
   background: 0 0;
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-outlined.dx-button-default.dx-state-disabled .dx-icon {
@@ -2110,7 +2054,6 @@
 .dx-swatch-additional .dx-button-mode-outlined.dx-button-danger {
   background-color: transparent;
   color: #e91e63;
-  -webkit-box-shadow: none;
   box-shadow: none;
   border: 1px solid #e91e63;
 }
@@ -2120,17 +2063,14 @@
 .dx-swatch-additional .dx-button-mode-outlined.dx-button-danger.dx-state-focused,
 .dx-swatch-additional .dx-button-mode-outlined.dx-button-danger.dx-state-hover {
   background-color: rgba(233,30,99,.08);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-outlined.dx-button-danger.dx-state-active {
   background-color: rgba(233,30,99,.36);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-outlined.dx-button-danger.dx-state-disabled {
   background: 0 0;
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-outlined.dx-button-danger.dx-state-disabled .dx-icon {
@@ -2145,7 +2085,6 @@
 .dx-swatch-additional .dx-button-mode-outlined.dx-button-success {
   background-color: transparent;
   color: #8bc34a;
-  -webkit-box-shadow: none;
   box-shadow: none;
   border: 1px solid #8bc34a;
 }
@@ -2155,17 +2094,14 @@
 .dx-swatch-additional .dx-button-mode-outlined.dx-button-success.dx-state-focused,
 .dx-swatch-additional .dx-button-mode-outlined.dx-button-success.dx-state-hover {
   background-color: rgba(139,195,74,.08);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-outlined.dx-button-success.dx-state-active {
   background-color: rgba(139,195,74,.36);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-outlined.dx-button-success.dx-state-disabled {
   background: 0 0;
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-button-mode-outlined.dx-button-success.dx-state-disabled .dx-icon {
@@ -2221,7 +2157,6 @@
   width: 100%;
   height: 100%;
   background-color: rgba(112,112,133,.7);
-  -webkit-box-shadow: 0 0 0 1px transparent;
   box-shadow: 0 0 0 1px transparent;
 }
 .dx-swatch-additional .dx-scrollbar-hoverable {
@@ -2232,7 +2167,6 @@
 }
 .dx-swatch-additional .dx-scrollbar-hoverable .dx-scrollable-scroll.dx-state-invisible .dx-scrollable-scroll-content {
   background-color: rgba(0,0,0,0);
-  -webkit-box-shadow: 0 0 0 1px transparent;
   box-shadow: 0 0 0 1px transparent;
 }
 .dx-swatch-additional .dx-scrollbar-vertical .dx-scrollable-scroll {
@@ -2249,16 +2183,16 @@
   transition: background-color .5s linear 1s,width .2s linear 150ms;
 }
 .dx-swatch-additional .dx-scrollbar-vertical.dx-scrollbar-hoverable .dx-scrollable-scroll .dx-scrollable-scroll-content {
-  -webkit-transition: background-color .15s linear .15s,-webkit-box-shadow .15s linear .15s;
-  transition: box-shadow .15s linear .15s,background-color .15s linear .15s,-webkit-box-shadow .15s linear .15s;
+  -webkit-transition: box-shadow .15s linear .15s,background-color .15s linear .15s;
+  transition: box-shadow .15s linear .15s,background-color .15s linear .15s;
 }
 .dx-swatch-additional .dx-scrollbar-vertical.dx-scrollbar-hoverable .dx-scrollable-scroll.dx-state-invisible {
   -webkit-transition: background-color .5s linear 1s,width .2s linear .15s;
   transition: background-color .5s linear 1s,width .2s linear .15s;
 }
 .dx-swatch-additional .dx-scrollbar-vertical.dx-scrollbar-hoverable .dx-scrollable-scroll.dx-state-invisible .dx-scrollable-scroll-content {
-  -webkit-transition: background-color .5s linear 1s,-webkit-box-shadow .5s linear 1s;
-  transition: box-shadow .5s linear 1s,background-color .5s linear 1s,-webkit-box-shadow .5s linear 1s;
+  -webkit-transition: box-shadow .5s linear 1s,background-color .5s linear 1s;
+  transition: box-shadow .5s linear 1s,background-color .5s linear 1s;
 }
 .dx-swatch-additional .dx-scrollbar-vertical.dx-scrollbar-hoverable.dx-scrollable-scrollbar-active,
 .dx-swatch-additional .dx-scrollbar-vertical.dx-scrollbar-hoverable.dx-scrollable-scrollbar-active .dx-scrollable-scroll,
@@ -2285,16 +2219,16 @@
   transition: background-color .5s linear 1s,height .2s linear .15s;
 }
 .dx-swatch-additional .dx-scrollbar-horizontal.dx-scrollbar-hoverable .dx-scrollable-scroll .dx-scrollable-scroll-content {
-  -webkit-transition: background-color .15s linear .15s,-webkit-box-shadow .15s linear .15s;
-  transition: box-shadow .15s linear .15s,background-color .15s linear .15s,-webkit-box-shadow .15s linear .15s;
+  -webkit-transition: box-shadow .15s linear .15s,background-color .15s linear .15s;
+  transition: box-shadow .15s linear .15s,background-color .15s linear .15s;
 }
 .dx-swatch-additional .dx-scrollbar-horizontal.dx-scrollbar-hoverable .dx-scrollable-scroll.dx-state-invisible {
   -webkit-transition: background-color .5s linear 1s,height .2s linear .15s;
   transition: background-color .5s linear 1s,height .2s linear .15s;
 }
 .dx-swatch-additional .dx-scrollbar-horizontal.dx-scrollbar-hoverable .dx-scrollable-scroll.dx-state-invisible .dx-scrollable-scroll-content {
-  -webkit-transition: background-color .5s linear 1s,-webkit-box-shadow .5s linear 1s;
-  transition: box-shadow .5s linear 1s,background-color .5s linear 1s,-webkit-box-shadow .5s linear 1s;
+  -webkit-transition: box-shadow .5s linear 1s,background-color .5s linear 1s;
+  transition: box-shadow .5s linear 1s,background-color .5s linear 1s;
 }
 .dx-swatch-additional .dx-scrollbar-horizontal.dx-scrollbar-hoverable.dx-scrollable-scrollbar-active,
 .dx-swatch-additional .dx-scrollbar-horizontal.dx-scrollbar-hoverable.dx-scrollable-scrollbar-active .dx-scrollable-scroll,
@@ -2359,13 +2293,11 @@
   position: absolute;
   height: 48px;
   border-radius: 0;
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-tabs-nav-button.dx-button.dx-tabs-nav-button.dx-button-has-icon:not(.dx-button-has-text) {
   background-color: transparent;
   color: rgba(255,255,255,.54);
-  -webkit-box-shadow: none;
   box-shadow: none;
   border-radius: 0;
 }
@@ -2375,17 +2307,14 @@
 .dx-swatch-additional .dx-tabs-nav-button.dx-button.dx-tabs-nav-button.dx-button-has-icon:not(.dx-button-has-text).dx-state-focused,
 .dx-swatch-additional .dx-tabs-nav-button.dx-button.dx-tabs-nav-button.dx-button-has-icon:not(.dx-button-has-text).dx-state-hover {
   background-color: rgba(255,255,255,.08);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-tabs-nav-button.dx-button.dx-tabs-nav-button.dx-button-has-icon:not(.dx-button-has-text).dx-state-active {
   background-color: rgba(255,255,255,.3);
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-tabs-nav-button.dx-button.dx-tabs-nav-button.dx-button-has-icon:not(.dx-button-has-text).dx-state-disabled {
   background: 0 0;
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-tabs-nav-button.dx-button.dx-tabs-nav-button.dx-button-has-icon:not(.dx-button-has-text).dx-state-disabled .dx-icon {
@@ -2504,12 +2433,10 @@
 .dx-swatch-additional .dx-nav-item.dx-state-active,
 .dx-swatch-additional .dx-rtl .dx-nav-item.dx-state-active {
   border: none;
-  -webkit-box-shadow: none;
   box-shadow: none;
 }
 .dx-swatch-additional .dx-nav-item.dx-state-focused,
 .dx-swatch-additional .dx-rtl .dx-nav-item.dx-state-focused {
-  -webkit-box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
 }
 .dx-swatch-additional .dx-nav-item.dx-state-disabled .dx-icon,
@@ -2775,7 +2702,6 @@
   width: 10%;
   height: 100%;
   overflow: hidden;
-  -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
 .dx-swatch-additional .dx-loadindicator-segment1 .dx-loadindicator-segment-inner {
