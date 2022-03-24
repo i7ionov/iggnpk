@@ -1,11 +1,11 @@
-import { Component, OnInit, NgModule, Input, ViewChild } from '@angular/core';
+import {Component, OnInit, NgModule, Input, ViewChild} from '@angular/core';
 import {SideNavigationMenuModule, HeaderModule, FooterComponent} from '../../shared/components';
 import {AppInfoService, AuthService, ScreenService} from '../../shared/services';
-import { DxDrawerModule } from 'devextreme-angular/ui/drawer';
-import { DxScrollViewModule, DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
-import { CommonModule } from '@angular/common';
+import {DxDrawerModule} from 'devextreme-angular/ui/drawer';
+import {DxScrollViewModule, DxScrollViewComponent} from 'devextreme-angular/ui/scroll-view';
+import {CommonModule} from '@angular/common';
 
-import { navigation } from '../../app-navigation';
+import {navigation} from '../../app-navigation';
 import {Router, NavigationEnd, RouterModule} from '@angular/router';
 import {FileSizePipe} from "../../shared/pipes/filesize.pipe";
 
@@ -15,7 +15,7 @@ import {FileSizePipe} from "../../shared/pipes/filesize.pipe";
   styleUrls: ['./side-nav-outer-toolbar.component.scss']
 })
 export class SideNavOuterToolbarComponent implements OnInit {
-  @ViewChild(DxScrollViewComponent, { static: true }) scrollView: DxScrollViewComponent;
+  @ViewChild(DxScrollViewComponent, {static: true}) scrollView: DxScrollViewComponent;
   menuItems;
   selectedRoute = '';
 
@@ -29,15 +29,29 @@ export class SideNavOuterToolbarComponent implements OnInit {
   minMenuSize = 0;
   shaderEnabled = false;
 
-  constructor(private screen: ScreenService, private router: Router, private appInfo: AppInfoService, private authService: AuthService) { }
+  constructor(private screen: ScreenService, private router: Router, private appInfo: AppInfoService, private authService: AuthService) {
+  }
+
 
   ngOnInit() {
-    this.menuItems = navigation.filter(i=>{
-      if (i.permissions) {
-        return this.authService.current_user.permissions.findIndex(p=> p.codename==i.permissions)>0
-      }
-      else {return true}
-    });
+    const filterMenu = (menu) => {
+      let result = [];
+      result = menu.filter(i => {
+        if (i.permissions) {
+          return this.authService.current_user.permissions.findIndex(p => p.codename === i.permissions) > 0;
+        } else {
+          return true;
+        }
+      });
+      result.forEach((i) => {
+        if (i.items) {
+          i.items = filterMenu(i.items);
+        }
+      });
+      return result;
+    };
+
+    this.menuItems = filterMenu(navigation);
 
 
     this.menuOpened = this.screen.sizes['screen-large'];
@@ -102,8 +116,9 @@ export class SideNavOuterToolbarComponent implements OnInit {
 }
 
 @NgModule({
-  imports: [ SideNavigationMenuModule, DxDrawerModule, HeaderModule, DxScrollViewModule, CommonModule, RouterModule],
-  exports: [ SideNavOuterToolbarComponent ],
-  declarations: [ SideNavOuterToolbarComponent ]
+  imports: [SideNavigationMenuModule, DxDrawerModule, HeaderModule, DxScrollViewModule, CommonModule, RouterModule],
+  exports: [SideNavOuterToolbarComponent],
+  declarations: [SideNavOuterToolbarComponent]
 })
-export class SideNavOuterToolbarModule { }
+export class SideNavOuterToolbarModule {
+}

@@ -7,7 +7,7 @@ export const navigation = [
   {
     text: 'Капитальный ремонт',
     icon: 'toolbox',
-    permissions: 'view_notify',
+    permissions: 'view_contributionsinformation',
     items: [
       {
         text: 'Реестр взносов',
@@ -15,7 +15,8 @@ export const navigation = [
       },
       {
         text: 'Реестр уведомлений о выбранном собственниками помещений в многоквартирном доме способе формирования фонда капитального ремонта на специальном счете',
-        path: 'pages/capital-repair-notifies'
+        path: 'pages/capital-repair-notifies',
+        permissions: 'change_notify',
       }
     ]
   }
@@ -23,7 +24,7 @@ export const navigation = [
   {
     text: 'Администрирование',
     icon: 'preferences',
-    permissions: 'view_user',
+    permissions: 'change_user',
     items: [
       {
         text: 'Пользователи',
