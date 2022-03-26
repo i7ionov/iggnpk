@@ -90,6 +90,18 @@ export class ContributionsInfromationFormComponent implements OnInit {
     }
   };
 
+  addDays(date, days) {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  }
+
+  formatDate(date) {
+    const ye = new Intl.DateTimeFormat('en', {year: 'numeric'}).format(date);
+    const mo = new Intl.DateTimeFormat('en', {month: '2-digit'}).format(date);
+    const da = new Intl.DateTimeFormat('en', {day: '2-digit'}).format(date);
+    return `${ye}-${mo}-${da}`;
+  }
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -102,13 +114,18 @@ export class ContributionsInfromationFormComponent implements OnInit {
     this.contribInfoDataSource = customStoreService.getSearchCustomStore(notifyService);
     this.contribInfoDataSource.pageSize(10);
     //отображаются только согласованые уведомления, у которых не указана ороанизация Фонд кап. ремонта ПК(5902990563)
-    this.contribInfoDataSource.filter([["status.id", "=", '3'],'and', ["organization.inn", "<>", '5902990563']]);
+    //и по которым недавно не подавались сведения о взносах
+    const today = new Date();
+    const t2 = this.formatDate(this.addDays(today, -10));
+    const t1 = this.formatDate(today);
+    this.contribInfoDataSource.filter([['status.id', '=', '3'], 'and', ['organization.inn', '<>', '5902990563'], 'and',
+      ['!', [['contributionsinformation__date', '>', t2], 'and', ['contributionsinformation__date', '<=', t1]]]]);
     this.mistakesDataSource = customStoreService.getSearchCustomStore(contribInfoMistakesService);
   }
 
   act() {
     const data = getContent(this.contrib_info.notify, this.contrib_info.mistakes)
-    generate(`${environment.backend_url}/media/templates/act.docx`, data).then(a=>{
+    generate(`${environment.backend_url}/media/templates/act.docx`, data).then(a => {
       saveAs(a, "file.docx")
     })
 
@@ -323,12 +340,9 @@ export class ContributionsInfromationFormComponent implements OnInit {
     if (item && item.last_contrib) {
       latest_contrib_date = `(${item.last_contrib.date})`
     }
-    if (item && item.house)
-    {
+    if (item && item.house) {
       address = `${item.house.address.city}, ${item.house.address.street}, ${item.house.number}`;
-    }
-    else
-    {
+    } else {
       address = 'нет';
     }
     return item && `№${item.id}, ${item.account_number} Адрес: ${address} ${latest_contrib_date}`;
