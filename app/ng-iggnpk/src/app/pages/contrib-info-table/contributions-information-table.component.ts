@@ -127,6 +127,8 @@ export class ContributionsInformationTableComponent implements OnInit {
       widget: 'dxButton',
       options: {
         width: 200,
+        stylingMode: 'contained',
+        type: 'success',
         text: 'Новая запись',
         onClick: this.add.bind(this)
       }
