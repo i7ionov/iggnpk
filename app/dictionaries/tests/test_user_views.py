@@ -172,12 +172,15 @@ class UserDeleteViewSetTest(BaseTest):
     def test_delete_object(self):
         client = APIClient(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
         response = client.delete(f'{endpoint_url}{self.user.id}/')
-        user = User.objects.get(id=self.user.id)
-        self.assertEqual(response.status_code, 200)
+        try:
+            User.objects.get(id=self.user.id)
+            raise AssertionError()
+        except User.DoesNotExist:
+            pass
+        self.assertEqual(response.status_code, 204)
 
     def test_needs_authentification(self):
         client = APIClient()
-        data = dict(self.data)
         response = client.delete(f'{endpoint_url}{self.user.id}/')
         self.assertEqual(response.status_code, 401)
 
@@ -186,6 +189,5 @@ class UserDeleteViewSetTest(BaseTest):
         self.uk.save()
         self.uk = User.objects.get(id=self.uk.id)  # обновление закэшированых разрешений
         client = APIClient(HTTP_AUTHORIZATION='Token ' + self.uk_token.key)
-        data = dict(self.data)
         response = client.delete(f'{endpoint_url}{self.user.id}/')
         self.assertEqual(response.status_code, 403)
