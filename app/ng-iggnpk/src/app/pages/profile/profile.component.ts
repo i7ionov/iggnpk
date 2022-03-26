@@ -58,8 +58,7 @@ export class ProfileComponent implements OnInit {
             this.old_is_active = this.user.is_active
           }
         );
-      }
-      else {
+      } else {
         console.log(this.user)
         this.user.groups = []
         this.old_is_active = false
@@ -78,7 +77,7 @@ export class ProfileComponent implements OnInit {
 
   onFormSubmit(e) {
     if (this.user.is_active !== this.old_is_active) {
-      let result = confirm("<i>Отправить электронное письмо об активации/деактивации учетной записи?</i>", "Уведомление");
+      const result = confirm("<i>Отправить электронное письмо об активации/деактивации учетной записи?</i>", "Уведомление");
       result.then((dialogResult) => {
         this.save(dialogResult)
         this.old_is_active = this.user.is_active
@@ -86,6 +85,35 @@ export class ProfileComponent implements OnInit {
     } else {
       this.save(false)
     }
+  }
+
+  delete(e) {
+    const result = confirm("<i>Вы уверены, что хотите удалить эту учетную запись?</i>", "Удаление учетной записи");
+    result.then((dialogResult) => {
+      if (dialogResult) {
+        this.userService.delete(this.id, this.user).subscribe(res => {
+            notify({
+              message: 'Учетная запись удалена',
+              position: {
+                my: 'center top',
+                at: 'center top'
+              }
+            }, 'success', 3000);
+            this.router.navigate([`/pages/users/`]);
+          }, error1 => {
+            console.log(error1);
+            notify({
+              message: 'Форма не сохранена. ' + error1.statusText,
+              position: {
+                my: 'center top',
+                at: 'center top'
+              }
+            }, 'error', 3000);
+          }
+        );
+      }
+
+    });
   }
 
   save(sendEmail) {

@@ -103,6 +103,7 @@ class UserCreateViewSetTest(BaseTest):
         response = client.post(f'{endpoint_url}', data, format='json')
         self.assertEqual(response.status_code, 403)
 
+
 class UserUpdateViewSetTest(BaseTest):
     def setUp(self):
         super(UserUpdateViewSetTest, self).setUp()
@@ -155,4 +156,36 @@ class UserUpdateViewSetTest(BaseTest):
         client = APIClient(HTTP_AUTHORIZATION='Token ' + self.uk_token.key)
         data = dict(self.data)
         response = client.patch(f'{endpoint_url}{self.user.id}/', data, format='json')
+        self.assertEqual(response.status_code, 403)
+
+
+class UserDeleteViewSetTest(BaseTest):
+    def setUp(self):
+        super(UserDeleteViewSetTest, self).setUp()
+        self.org = mixer.blend(Organization)
+        self.new_org = mixer.blend(Organization)
+        self.g1 = Group.objects.get(name='Управляющие организации')
+        self.g2 = Group.objects.get(name='Администраторы')
+        self.user = mixer.blend(User, organization=self.org, groups=[self.g1])
+        self.user2 = mixer.blend(User, organization=self.org, groups=[self.g1])
+
+    def test_delete_object(self):
+        client = APIClient(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
+        response = client.delete(f'{endpoint_url}{self.user.id}/')
+        user = User.objects.get(id=self.user.id)
+        self.assertEqual(response.status_code, 200)
+
+    def test_needs_authentification(self):
+        client = APIClient()
+        data = dict(self.data)
+        response = client.delete(f'{endpoint_url}{self.user.id}/')
+        self.assertEqual(response.status_code, 401)
+
+    def test_needs_permission(self):
+        self.uk.groups.set([])
+        self.uk.save()
+        self.uk = User.objects.get(id=self.uk.id)  # обновление закэшированых разрешений
+        client = APIClient(HTTP_AUTHORIZATION='Token ' + self.uk_token.key)
+        data = dict(self.data)
+        response = client.delete(f'{endpoint_url}{self.user.id}/')
         self.assertEqual(response.status_code, 403)

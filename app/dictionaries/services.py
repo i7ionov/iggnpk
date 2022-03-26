@@ -144,6 +144,14 @@ class UserService:
                 raise ServiceException(serializer.errors)
         raise ServiceException('У вас нет соответствующих прав')
 
+    def delete(self, instance, user):
+        if user.has_perm('dictionaries.delete_user'):
+            instance.delete()
+            return True
+        raise ServiceException('У вас нет соответствующих прав')
+
+
+
     def _send_activation_mail(self, data, serializer):
         """Отправка уведомления об активации/деактивации учетной записи"""
         if 'sendmail' in data and data['sendmail']:

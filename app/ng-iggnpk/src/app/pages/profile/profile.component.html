@@ -62,7 +62,7 @@
 
       </div>
 
-        <dxo-label [visible]="false"></dxo-label>
+      <dxo-label [visible]="false"></dxo-label>
 
 
     </dx-form>
@@ -70,6 +70,10 @@
     <div class="buttons-line">
       <dx-button type="success" text="Сохранить" [width]="150"
                  (onClick)="onFormSubmit($event)"></dx-button>
+
+
+      <dx-button type="danger" text="Удалить" [width]="150"
+                 (onClick)="delete($event)"></dx-button>
 
     </div>
   </form>

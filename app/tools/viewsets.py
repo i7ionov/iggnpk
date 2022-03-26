@@ -114,3 +114,24 @@ class DevExtremeViewSet(viewsets.ModelViewSet, mixins.ListModelMixin):
                 f"failed to update {self.queryset.model._meta.verbose_name} with id: {kwargs['pk']}" +
                 f"with data {request.data}. Error: {e.errors}")
             return Response(e.errors, status=400)
+
+    def destroy(self, request, *args, **kwargs):
+        logger.info(
+            f"{request.user.username} ip:{get_client_ip(request)} " +
+            f"trying to delete {self.queryset.model._meta.verbose_name} with id: {kwargs['pk']} " +
+            f"with data {request.data}")
+
+        try:
+            self.service.delete(self.get_object(), request.user)
+            logger.info(
+                f"{request.user.username} ip:{get_client_ip(request)} " +
+                f"succesfully delete {self.queryset.model._meta.verbose_name} " +
+                f"object id: {kwargs['pk']}")
+
+            return Response(status=204)
+        except ServiceException as e:
+            logger.info(
+                f"{request.user.username} ip:{get_client_ip(request)} " +
+                f"failed to delete {self.queryset.model._meta.verbose_name} with id: {kwargs['pk']}" +
+                f"with data {request.data}. Error: {e.errors}")
+            return Response(e.errors, status=400)

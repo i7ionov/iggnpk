@@ -47,6 +47,10 @@ export class UserService {
     return this.http.patch<User>(`${environment.backend_url}${this.url}/${id}/`, user)
   }
 
+  delete(id): Observable<User> {
+    return this.http.delete<any>(`${environment.backend_url}${this.url}/${id}/`)
+  }
+
   getOrgUserCount(inn): Observable<any> {
     return this.http.get<any>(`${environment.backend_url}${this.url}/org_users_count/?inn=${inn}`)
   }
