@@ -91,7 +91,7 @@ export class ProfileComponent implements OnInit {
     const result = confirm("<i>Вы уверены, что хотите удалить эту учетную запись?</i>", "Удаление учетной записи");
     result.then((dialogResult) => {
       if (dialogResult) {
-        this.userService.delete(this.id, this.user).subscribe(res => {
+        this.userService.delete(this.id).subscribe(res => {
             notify({
               message: 'Учетная запись удалена',
               position: {
