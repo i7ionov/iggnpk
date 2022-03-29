@@ -13,6 +13,20 @@
     <dxo-header-filter
       [visible]="true"></dxo-header-filter>
     <dxo-filter-panel [visible]="true"></dxo-filter-panel>
+    <dxo-scrolling showScrollbar="always">
+
+    </dxo-scrolling>
+    <dxo-paging [pageSize]="20"></dxo-paging>
+    <dxo-column-chooser [enabled]="true" mode="dragAndDrop"></dxo-column-chooser>
+    <dxo-pager
+      [showPageSizeSelector]="true"
+      [allowedPageSizes]="[5, 10, 20, 50]"
+      [showInfo]="true">
+    </dxo-pager>
+    <dxo-remote-operations
+      [groupPaging]="true">
+    </dxo-remote-operations>
+    <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
     <dxi-column
       dataField="id"
       width="100"
