@@ -118,8 +118,9 @@ export class ContributionsInfromationFormComponent implements OnInit {
     const today = new Date();
     const t2 = this.formatDate(this.addDays(today, -10));
     const t1 = this.formatDate(today);
-    this.contribInfoDataSource.filter([['status.id', '=', '3'], 'and', ['organization.inn', '<>', '5902990563'], 'and',
-      ['!', [['contributionsinformation__date', '>', t2], 'and', ['contributionsinformation__date', '<=', t1]]]]);
+    //this.contribInfoDataSource.filter([['status.id', '=', '3'], 'and', ['organization.inn', '<>', '5902990563'], 'and',
+    //  ['!', [['contributionsinformation__date', '>', t2], 'and', ['contributionsinformation__date', '<=', t1]]]]);
+    this.contribInfoDataSource.filter([['status.id', '=', '3'], 'and', ['organization.inn', '<>', '5902990563']]);
     this.mistakesDataSource = customStoreService.getSearchCustomStore(contribInfoMistakesService);
   }
 
