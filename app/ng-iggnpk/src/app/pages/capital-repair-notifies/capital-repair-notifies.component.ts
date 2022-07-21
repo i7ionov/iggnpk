@@ -115,16 +115,17 @@ export class CapitalRepairNotifiesComponent implements OnInit {
         onClick: this.add.bind(this)
       }
     });
-    if (this.comment_visibility) {
-      e.toolbarOptions.items.unshift({
-        location: 'after',
-        widget: 'dxButton',
-        options: {
-          icon: 'xlsxfile',
-          onClick: this.exportToExcel.bind(this)
-        }
-      });
-    }
+
+    e.toolbarOptions.items.unshift({
+      location: 'after',
+      widget: 'dxButton',
+      options: {
+        icon: 'xlsxfile',
+        text: 'В Excel',
+        onClick: this.exportToExcel.bind(this)
+      }
+    })
+
     e.toolbarOptions.items.unshift({
       location: 'after',
       widget: 'dxButton',

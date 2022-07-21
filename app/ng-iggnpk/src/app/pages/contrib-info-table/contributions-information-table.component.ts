@@ -133,16 +133,17 @@ export class ContributionsInformationTableComponent implements OnInit {
         onClick: this.add.bind(this)
       }
     })
-    if (this.comment_visibility) {
-      e.toolbarOptions.items.unshift({
-        location: 'after',
-        widget: 'dxButton',
-        options: {
-          icon: 'xlsxfile',
-          onClick: this.exportToExcel.bind(this)
-        }
-      });
-    }
+
+    e.toolbarOptions.items.unshift({
+      location: 'after',
+      widget: 'dxButton',
+      options: {
+        icon: 'xlsxfile',
+        text: 'В Excel',
+        onClick: this.exportToExcel.bind(this)
+      }
+    })
+
     e.toolbarOptions.items.unshift({
       location: 'after',
       widget: 'dxButton',
@@ -153,6 +154,7 @@ export class ContributionsInformationTableComponent implements OnInit {
     })
 
   }
+
   exportToExcel() {
     const params = '?filter=' + JSON.stringify(this.dataGrid.instance.getCombinedFilter());
     // window.location.href= environment.backend_url + `/api/v1/cr/notifies/export_to_excel/${params}`;
@@ -169,6 +171,7 @@ export class ContributionsInformationTableComponent implements OnInit {
     });
 
   }
+
   exportActs() {
     this.dataGrid.instance.beginCustomLoading('загрузка')
     let params = '?filter=' + JSON.stringify(this.dataGrid.instance.getCombinedFilter())
