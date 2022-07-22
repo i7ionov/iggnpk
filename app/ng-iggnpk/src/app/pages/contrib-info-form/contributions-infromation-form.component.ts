@@ -144,7 +144,7 @@ export class ContributionsInfromationFormComponent implements OnInit {
         if (user.is_staff) {
           this.acceptButtonVisibility = true;
         }
-      } else if (this.contrib_info.status.id == NotifyStatus.Editing) {
+      } else if (this.contrib_info.status.id == NotifyStatus.Editing || this.contrib_info.status.id == NotifyStatus.Rejected) {
         this.saveButtonVisibility = true;
         this.sendForApprovalButtonVisibility = true;
         this.rejectButtonVisibility = false;

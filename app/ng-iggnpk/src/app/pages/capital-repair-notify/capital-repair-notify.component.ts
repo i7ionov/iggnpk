@@ -101,7 +101,7 @@ export class CapitalRepairNotifyComponent implements OnInit {
         if (this.auth.current_user.is_staff) {
           this.acceptButtonVisibility = true;
         }
-      } else if (this.notify.status.id == NotifyStatus.Editing) {
+      } else if (this.notify.status.id == NotifyStatus.Editing || this.notify.status.id == NotifyStatus.Rejected) {
         this.saveButtonVisibility = true;
         this.sendForApprovalButtonVisibility = true;
         this.rejectButtonVisibility = false;

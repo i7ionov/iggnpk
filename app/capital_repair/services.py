@@ -34,7 +34,7 @@ class ContributionsInformationService:
         if not user.is_staff:
             if data['status']['id'] > 2:
                 raise ServiceException('Неправильный статус')
-            if instance.status.id > 2:
+            if instance.status.id > 2 and instance.status.id != 5:
                 raise ServiceException('Вы не можете редактировать эту запись')
             exclude_fields.append('comment2')
 
@@ -131,7 +131,7 @@ class NotifyService:
     def update(self, instance, data, user):
         exclude_fields = []
         if not user.is_staff:
-            if instance.status.id > 2:
+            if instance.status.id > 2 and instance.status.id != 5:
                 raise ServiceException('Вы не можете редактировать эту запись')
             if data['status']['id'] > 2:
                 raise ServiceException('Неправильный статус')
