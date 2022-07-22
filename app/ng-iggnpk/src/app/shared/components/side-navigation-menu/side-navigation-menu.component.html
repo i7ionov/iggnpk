@@ -1,29 +1,39 @@
 <ng-content></ng-content>
+<div>
+  <div class="menu-container">
+    <dx-tree-view
+      expandEvent="click"
+      width="100%"
+      [items]="items"
+      (onInitialized)="onMenuInitialized($event)"
+      (onItemClick)="onItemClick($event)"
+      (onContentReady)="updateSelection($event)"
+      (onSelectionChanged)="updateSelection($event)"
+      [selectByClick]="true"
+      selectionMode="single"
+      keyExpr="path"
+      itemTemplate="list-item">
+      <div *dxTemplate="let data of 'list-item'; let index = index">
+        <div class="dx-item-content dx-treeview-item-content">
+          <table>
+            <tr>
+              <td *ngIf="!!data.icon"><i class="dx-icon menu-icon dx-icon-{{ data.icon }}"></i></td>
+              <td><span>{{ data.text }}</span></td>
+            </tr>
+          </table>
 
-<div class="menu-container">
-  <dx-tree-view
-    expandEvent="click"
-    width="100%"
-    [items]="items"
-    (onInitialized)="onMenuInitialized($event)"
-    (onItemClick)="onItemClick($event)"
-    (onContentReady)="updateSelection($event)"
-    (onSelectionChanged)="updateSelection($event)"
-    [selectByClick]="true"
-    selectionMode="single"
-    keyExpr="path"
-    itemTemplate="list-item">
-    <div *dxTemplate="let data of 'list-item'; let index = index">
-      <div class="dx-item-content dx-treeview-item-content">
-        <table>
-          <tr>
-            <td *ngIf="!!data.icon"><i  class="dx-icon menu-icon dx-icon-{{ data.icon }}"></i></td>
-            <td><span>{{ data.text }}</span></td>
-          </tr>
-        </table>
-
+        </div>
       </div>
-    </div>
 
-  </dx-tree-view>
+
+    </dx-tree-view>
+
+
+  </div>
+
+  <div *ngIf="!compactMode" style="padding-left: 20px">
+    <a href="https://iggn.permkrai.ru/download.php?id=106299">Постановление Правительства Пермского края от 30 июня 2016 г. <br>N 430-п</a>
+
+  </div>
+
 </div>
