@@ -159,6 +159,7 @@
 
 
     <dx-file-uploader *ngIf="saveButtonVisibility" name="file" [uploadUrl]="uploadUrl"
+                      selectButtonText="Прикрепите файл" type="success"
                       [uploadHeaders]="{'Authorization': uploadAuthorization}"
 
                       (onUploaded)="onUploaded($event)" [showFileList]="true" [maxFileSize]="200*1024*1024"

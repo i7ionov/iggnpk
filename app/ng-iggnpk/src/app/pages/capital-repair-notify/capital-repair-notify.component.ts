@@ -173,15 +173,18 @@ export class CapitalRepairNotifyComponent implements OnInit {
     let is_form_valid = true;
     let is_credit_org_valid = true;
     let is_house_valid = true;
+    let is_files_attached = true;
     if (e != SubmitType.Exclusion && !this.skip_verification) {
       is_form_valid = this.form.instance.validate().isValid;
       is_credit_org_valid = this.credit_organization_select.validate().isValid;
       is_house_valid = this.house_input.validate().isValid;
+      is_files_attached = this.notify.files.length !== 0;
     }
 
     if (is_form_valid &&
       is_credit_org_valid &&
-      is_house_valid) {
+      is_house_valid &&
+      is_files_attached) {
       switch (e) {
         case SubmitType.Sending: {
           this.notify.status.id = NotifyStatus.Approving;
@@ -243,8 +246,12 @@ export class CapitalRepairNotifyComponent implements OnInit {
         );
       }
     } else {
+      let statusText = '';
+      if (!is_files_attached){
+        statusText = 'Приложите файл. ';
+      }
       notify({
-        message: 'Форма не сохранена.',
+        message: statusText + "Форма не сохранена.",
         position: {
           my: 'center top',
           at: 'center top'
