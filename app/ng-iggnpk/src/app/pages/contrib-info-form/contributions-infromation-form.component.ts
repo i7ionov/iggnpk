@@ -229,7 +229,9 @@ export class ContributionsInfromationFormComponent implements OnInit {
     this.contrib_info.delta_total = this.delta;
     if (e != SubmitType.Exclusion && !this.skip_verification) {
       is_form_valid = this.form.instance.validate().isValid;
-      is_files_attached = this.contrib_info.files.length !== 0;
+      if (this.saveButtonVisibility) {
+        is_files_attached = this.contrib_info.files.length !== 0;
+      }
     }
 
     if (is_form_valid &&
@@ -242,7 +244,12 @@ export class ContributionsInfromationFormComponent implements OnInit {
           break;
         }
         case SubmitType.Rejecting: {
-          this.contrib_info.status.id = NotifyStatus.Editing;
+          if (this.auth.current_user.is_staff) {
+            this.contrib_info.status.id = NotifyStatus.Rejected;
+          } else {
+            this.contrib_info.status.id = NotifyStatus.Editing;
+          }
+
           break;
         }
         case SubmitType.Accepting: {
@@ -303,7 +310,7 @@ export class ContributionsInfromationFormComponent implements OnInit {
       }
     } else {
       let statusText = '';
-      if (!is_files_attached){
+      if (!is_files_attached) {
         statusText = 'Приложите файл. ';
       }
       notify({
@@ -365,7 +372,8 @@ enum NotifyStatus {
   Editing = 1,
   Approving,
   Approved,
-  Excluded
+  Excluded,
+  Rejected
 }
 
 enum SubmitType {

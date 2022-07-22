@@ -178,7 +178,9 @@ export class CapitalRepairNotifyComponent implements OnInit {
       is_form_valid = this.form.instance.validate().isValid;
       is_credit_org_valid = this.credit_organization_select.validate().isValid;
       is_house_valid = this.house_input.validate().isValid;
-      is_files_attached = this.notify.files.length !== 0;
+      if (this.saveButtonVisibility) {
+        is_files_attached = this.notify.files.length !== 0;
+      }
     }
 
     if (is_form_valid &&
@@ -191,7 +193,11 @@ export class CapitalRepairNotifyComponent implements OnInit {
           break;
         }
         case SubmitType.Rejecting: {
-          this.notify.status.id = NotifyStatus.Editing;
+          if (this.auth.current_user.is_staff) {
+            this.notify.status.id = NotifyStatus.Rejected;
+          } else {
+            this.notify.status.id = NotifyStatus.Editing;
+          }
           break;
         }
         case SubmitType.Accepting: {
@@ -294,7 +300,8 @@ enum NotifyStatus {
   Editing = 1,
   Approving,
   Approved,
-  Excluded
+  Excluded,
+  Rejected
 }
 
 enum SubmitType {
